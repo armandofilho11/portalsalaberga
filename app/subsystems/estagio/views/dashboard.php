@@ -887,6 +887,12 @@ $CLS = [
             padding: 1.5rem;
         }
 
+        .modal-selection-shell {
+            width: min(92vw, 65rem);
+            max-width: 65rem;
+            padding: 1.25rem;
+        }
+
         .modal_box .modal-danger-action {
             border: 1px solid #991b1b !important;
             color: #ffffff !important;
@@ -2642,8 +2648,8 @@ $CLS = [
                         </div>
 
                         <div id="modalSelecionarAluno-<?= $vagaId ?>" class="<?= $CLS['modal_overlay'] ?>">
-                            <div class="<?= $CLS['modal_box'] ?> w-[92vw] max-w-[1280px] min-w-0" style="max-width: min(92vw, 1280px); width: min(92vw, 1280px);">
-                                <div class="mb-6 rounded-2xl border border-green-500/15 bg-gradient-to-r from-green-500/10 via-white/5 to-transparent p-4 sm:p-5">
+                            <div class="<?= $CLS['modal_box'] ?> modal-selection-shell min-w-0">
+                                <div class="mb-4 rounded-2xl border border-green-500/15 bg-gradient-to-r from-green-500/10 via-white/5 to-transparent p-4">
                                     <div class="flex items-start justify-between gap-4">
                                         <div class="flex items-start gap-4">
                                             <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-green-500/15 text-green-300 ring-1 ring-green-500/20">
@@ -2663,7 +2669,7 @@ $CLS = [
                                     </div>
                                 </div>
 
-                                <div class="mb-6 grid gap-3 md:grid-cols-4">
+                                <div class="mb-4 grid gap-3 md:grid-cols-4">
                                     <div class="rounded-2xl border border-white/10 bg-white/5 p-3">
                                         <p class="text-[10px] uppercase tracking-[0.2em] text-gray-400">Alunos aptos</p>
                                         <p class="mt-2 text-xl font-bold text-white"><?= count($alunosDisponiveis ?? []) ?></p>
