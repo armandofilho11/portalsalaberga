@@ -550,7 +550,7 @@ $firstAccessError = $firstAccessErrorMessages[$firstAccessErrorCode] ?? null;
                 <!-- Logo Container -->
                 <div class="text-center mb-6 sm:mb-8">
                     <div class="inline-block p-3 sm:p-4 rounded-2xl">
-                        <img src="https://i.postimg.cc/0N0dsxrM/Bras-o-do-Cear-svg-removebg-preview.png"
+                        <img src="../../assets/img/S.png"
                             alt="Logo Sistema"
                             class="w-16 h-16 sm:w-20 sm:h-20 object-contain">
                     </div>
@@ -627,7 +627,12 @@ $firstAccessError = $firstAccessErrorMessages[$firstAccessErrorCode] ?? null;
                                 Nova Senha
                             </label>
                             <i class="fas fa-lock absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 text-primary text-base sm:text-lg"></i>
-                            <i class="fas fa-eye toggle-password absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-secondary cursor-pointer transition-colors duration-300 text-base sm:text-lg"></i>
+                            <button type="button"
+                                class="toggle-password absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-secondary cursor-pointer transition-colors duration-300 text-base sm:text-lg bg-transparent border-0 p-0"
+                                aria-label="Mostrar senha"
+                                aria-pressed="false">
+                                <i class="fas fa-eye" aria-hidden="true"></i>
+                            </button>
                         </div>
                     </div>
 
@@ -646,7 +651,12 @@ $firstAccessError = $firstAccessErrorMessages[$firstAccessErrorCode] ?? null;
                                 Confirmar Senha
                             </label>
                             <i class="fas fa-lock absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 text-primary text-base sm:text-lg"></i>
-                            <i class="fas fa-eye toggle-password absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-secondary cursor-pointer transition-colors duration-300 text-base sm:text-lg"></i>
+                            <button type="button"
+                                class="toggle-password absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-secondary cursor-pointer transition-colors duration-300 text-base sm:text-lg bg-transparent border-0 p-0"
+                                aria-label="Mostrar confirmação da senha"
+                                aria-pressed="false">
+                                <i class="fas fa-eye" aria-hidden="true"></i>
+                            </button>
                         </div>
                     </div>
 
@@ -707,16 +717,19 @@ $firstAccessError = $firstAccessErrorMessages[$firstAccessErrorCode] ?? null;
             // Enhanced password visibility toggle
             togglePassword.forEach(toggle => {
                 toggle.addEventListener('click', function() {
-                    const input = this.previousElementSibling.previousElementSibling;
-                    const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
-                    input.setAttribute('type', type);
+                    const input = this.closest('.relative').querySelector('input[type="password"], input[type="text"]');
+                    const icon = this.querySelector('i');
+                    const isVisible = input.type === 'password';
+                    const passwordDescription = input.id === 'confirmar_senha' ? 'confirmação da senha' : 'senha';
+                    input.type = isVisible ? 'text' : 'password';
 
-                    // Enhanced icon animation
-                    this.classList.toggle('fa-eye');
-                    this.classList.toggle('fa-eye-slash');
-                    this.style.transform = 'scale(1.2) rotate(10deg)';
+                    icon.classList.toggle('fa-eye', !isVisible);
+                    icon.classList.toggle('fa-eye-slash', isVisible);
+                    this.setAttribute('aria-pressed', String(isVisible));
+                    this.setAttribute('aria-label', `${isVisible ? 'Ocultar' : 'Mostrar'} ${passwordDescription}`);
+                    icon.style.transform = 'scale(1.2) rotate(10deg)';
                     setTimeout(() => {
-                        this.style.transform = 'scale(1) rotate(0deg)';
+                        icon.style.transform = 'scale(1) rotate(0deg)';
                     }, 200);
                 });
             });

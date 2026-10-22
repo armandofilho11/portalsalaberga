@@ -1433,10 +1433,10 @@ $temSistemasPermitidos = count(array_intersect($sistemasDisponiveis, $sistemasPe
 
                 <!-- Card 7: Conecte PCD -->
                 <?php if (in_array('PCD', $sistemasPermitidos, true)) { ?>
-                    <a href="../../subsystems/conectePCD/" class="app-card-link">
+                    <a href="../../subsystems/SISTEMA-PCDatualizado/" class="app-card-link">
                         <div class="app-card w-{100px} h-full">
                             <div class="icon-wrapper">
-                                <img src="../assets/img/logos_sistemas/PCD2.jpeg" alt="Ícone PCD's" class="app-icon">
+                                <img src="../assets/img/logos_sistemas/PCD2.png" alt="Ícone PCD's" class="app-icon">
 
                             </div>
                             <h3 class="app-name">Conect PCD</h3>
