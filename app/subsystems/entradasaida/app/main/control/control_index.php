@@ -132,6 +132,7 @@ if (in_array($_POST['acao'] ?? '', ['preparar_saida_estagio_qr', 'registrar_said
         'preparar_saida_estagio_qr',
         'registrar_saida_estagio_qr',
         'registrar_atraso_qr',
+        'listar_atrasos_hoje',
         'listar_ausencias_estagio'
     ], true), true);
 
@@ -593,7 +594,7 @@ if (($_POST['acao'] ?? '') === 'editar_registro_consulta') {
 
 if (($_POST['acao'] ?? '') === 'validar_justificativa_atraso') {
     exigirSessaoOuAcessoLocal();
-    exigirPermissaoRecepcao(false);
+    exigirPermissaoRecepcao(true);
 
     $redirect = '../views/inicio.php?section=atrasos&validacao=erro';
     $csrfToken = $_SESSION['csrf_token'] ?? '';
