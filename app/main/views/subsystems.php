@@ -498,44 +498,16 @@ $temSistemasPermitidos = count(array_intersect($sistemasDisponiveis, $sistemasPe
             transition: filter 0.16s ease, transform 0.3s ease;
         }
 
+        .app-icon--system {
+            display: block;
+            width: 64px;
+            height: 64px;
+            object-fit: contain;
+        }
+
         .app-icon-pcd {
             filter: brightness(0.62) saturate(0.7);
             transition: filter 0.16s ease, transform 0.3s ease;
-        }
-
-        .app-icon-estagio,
-        .app-icon-demandas,
-        .app-icon-pdt,
-        .app-icon-stock {
-            width: 64px;
-            height: 64px;
-            background: linear-gradient(135deg, #719C79 0%, #5C8969 55%, #437053 100%);
-            -webkit-mask-position: center;
-            mask-position: center;
-            -webkit-mask-size: contain;
-            mask-size: contain;
-            -webkit-mask-repeat: no-repeat;
-            mask-repeat: no-repeat;
-        }
-
-        .app-icon-estagio {
-            -webkit-mask-image: url('../assets/img/logos_sistemas/estagio.png');
-            mask-image: url('../assets/img/logos_sistemas/estagio.png');
-        }
-
-        .app-icon-demandas {
-            -webkit-mask-image: url('../assets/img/logos_sistemas/demandas.png');
-            mask-image: url('../assets/img/logos_sistemas/demandas.png');
-        }
-
-        .app-icon-pdt {
-            -webkit-mask-image: url('../assets/img/logos_sistemas/pdt.png');
-            mask-image: url('../assets/img/logos_sistemas/pdt.png');
-        }
-
-        .app-icon-stock {
-            -webkit-mask-image: url('../assets/img/logos_sistemas/estoque.png');
-            mask-image: url('../assets/img/logos_sistemas/estoque.png');
         }
 
         .app-name {
@@ -1312,13 +1284,6 @@ $temSistemasPermitidos = count(array_intersect($sistemasDisponiveis, $sistemasPe
             transition-duration: 0.18s;
         }
 
-        .app-icon-estagio,
-        .app-icon-demandas,
-        .app-icon-pdt,
-        .app-icon-stock {
-            transition: background-color 0.18s ease;
-        }
-
     </style>
 </head>
 
@@ -1389,7 +1354,7 @@ $temSistemasPermitidos = count(array_intersect($sistemasDisponiveis, $sistemasPe
                     <a href="../../subsystems/controle_de_estoque/default.php" class="app-card-link">
                         <div class="app-card w-{100px} h-full">
                             <div class="icon-wrapper">
-                                <span class="app-icon-stock" role="img" aria-label="Ícone Controle de Estoque"></span>
+                                <img src="../assets/img/logos_sistemas/controle-estoque-icon.png" alt="Ícone Controle de Estoque" class="app-icon app-icon--system">
                             </div>
                             <h3 class="app-name">Controle de Estoque</h3>
                             <span class="category-tag">Sistema</span>
@@ -1426,7 +1391,7 @@ $temSistemasPermitidos = count(array_intersect($sistemasDisponiveis, $sistemasPe
                     <a href="../../subsystems/estagio/views/dashboard.php" class="app-card-link">
                         <div class="app-card w-{100px} h-full">
                             <div class="icon-wrapper">
-                                <div class="app-icon-estagio"></div>
+                                <img src="../assets/img/logos_sistemas/estagio-icon.png" alt="Ícone Estágio" class="app-icon app-icon--system">
                             </div>
                             <h3 class="app-name">Estágio</h3>
                             <span class="category-tag">Sistema</span>
@@ -1439,7 +1404,7 @@ $temSistemasPermitidos = count(array_intersect($sistemasDisponiveis, $sistemasPe
                     <a href="../../subsystems/demandas/default.php" class="app-card-link">
                         <div class="app-card w-{100px} h-full">
                             <div class="icon-wrapper">
-                                <div class="app-icon-demandas"></div>
+                                <img src="../assets/img/logos_sistemas/demandas-icon.png" alt="Ícone Demandas" class="app-icon app-icon--system">
                             </div>
                             <h3 class="app-name">Demandas</h3>
                             <span class="category-tag">Sistema</span>
@@ -1453,7 +1418,7 @@ $temSistemasPermitidos = count(array_intersect($sistemasDisponiveis, $sistemasPe
                     <a href="../../subsystems/sist_PDT/default.php" class="app-card-link">
                         <div class="app-card w-{100px} h-full">
                             <div class="icon-wrapper">
-                                <div class="app-icon-pdt"></div>
+                                <img src="../assets/img/logos_sistemas/pdt-icon.png" alt="Ícone Professor DT" class="app-icon app-icon--system">
                             </div>
                             <h3 class="app-name">Professor DT</h3>
                             <span class="category-tag">Sistema</span>
