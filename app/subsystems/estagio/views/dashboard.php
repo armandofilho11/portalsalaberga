@@ -329,6 +329,17 @@ $CLS = [
             box-shadow: 0 8px 24px rgba(36, 51, 44, 0.08);
         }
 
+        html.light-mode .vaga-card-toggle {
+            background: #e6f0e9;
+            color: #155c37;
+        }
+
+        html.light-mode .vaga-card-toggle:hover,
+        html.light-mode .vaga-card-toggle:focus-visible {
+            background: #cfe5d6;
+            color: #0b4628;
+        }
+
         html.light-mode .kanban-column-sem .vaga-card { border-left-color: #dc2626 !important; }
         html.light-mode .kanban-column-em .vaga-card { border-left-color: #d97706 !important; }
         html.light-mode .kanban-column-fin .vaga-card { border-left-color: #059669 !important; }
