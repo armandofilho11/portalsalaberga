@@ -14,10 +14,6 @@ if (isset($_POST['aprovar']) && !empty($_POST['selecionados'])) {
     }
     $qtd = $select_model->aprovar_selecionados($selecionados);
 }
-if (isset($_POST['layout'])) {
-    $session->quebra_session();
-}
-
 if (!function_exists('dashboard_format_decimal')) {
     function dashboard_format_decimal($value, int $max_decimals = 3): string
     {
@@ -206,6 +202,16 @@ $CLS = [
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#1a1a1a">
     <meta name="description" content="Sistema de Estágio - Painel">
+    <script>
+        try {
+            if (localStorage.getItem('estagio-theme') === 'light') {
+                document.documentElement.classList.add('light-mode');
+                document.documentElement.classList.remove('dark');
+            }
+        } catch (error) {
+            console.warn('Não foi possível carregar a preferência de tema do Estágio:', error);
+        }
+    </script>
     <title>Painel - Sistema de Estágio</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -331,6 +337,17 @@ $CLS = [
             background: #ffffff !important;
             border-color: #d8e5dc !important;
             box-shadow: 0 8px 24px rgba(36, 51, 44, 0.08);
+        }
+
+        html.light-mode .vaga-card-toggle {
+            background: #e6f0e9;
+            color: #155c37;
+        }
+
+        html.light-mode .vaga-card-toggle:hover,
+        html.light-mode .vaga-card-toggle:focus-visible {
+            background: #cfe5d6;
+            color: #0b4628;
         }
 
         html.light-mode .kanban-column-sem .vaga-card { border-left-color: #dc2626 !important; }
@@ -2046,11 +2063,9 @@ $CLS = [
                     <i class="fas fa-sun" aria-hidden="true"></i>
                 </button>
                
-                <form action="" method="post">
-                    <button type="submit" name="layout" class="<?= $CLS['sidebar_link'] ?> text-red-400 hover:text-red-300 hover:bg-red-500/10 w-full text-left">
-                        <i class="fas fa-sign-out-alt w-5 mr-3"></i> Sair
-                    </button>
-                </form>
+                <a href="../../../main/views/subsystems.php" class="<?= $CLS['sidebar_link'] ?> text-red-400 hover:text-red-300 hover:bg-red-500/10 w-full" aria-label="Sair do sistema de estágio">
+                    <i class="fas fa-sign-out-alt w-5 mr-3"></i> Sair
+                </a>
             </div>
         </div>
     </aside>
@@ -2089,11 +2104,9 @@ $CLS = [
                     <i class="fas fa-sun" aria-hidden="true"></i>
                 </button>
                 <a href="#" class="<?= $CLS['sidebar_link'] ?>"><i class="fas fa-cog w-5 mr-3"></i> Configurações</a>
-                <form action="" method="post">
-                    <button type="submit" name="layout" class="<?= $CLS['sidebar_link'] ?> text-red-400 hover:text-red-300 hover:bg-red-500/10 w-full text-left">
-                        <i class="fas fa-sign-out-alt w-5 mr-3"></i> Sair
-                    </button>
-                </form>
+                <a href="../../../main/views/subsystems.php" class="<?= $CLS['sidebar_link'] ?> text-red-400 hover:text-red-300 hover:bg-red-500/10 w-full" aria-label="Sair do sistema de estágio">
+                    <i class="fas fa-sign-out-alt w-5 mr-3"></i> Sair
+                </a>
             </div>
         </div>
     </div>
@@ -3307,6 +3320,9 @@ $CLS = [
 function applyTheme(theme) {
     const lightMode = theme === 'light';
     document.documentElement.classList.toggle('light-mode', lightMode);
+    document.documentElement.classList.toggle('dark', !lightMode);
+    const themeColor = document.querySelector('meta[name="theme-color"]');
+    if (themeColor) themeColor.content = lightMode ? '#eaf3e8' : '#1a1a1a';
     const toggles = [document.getElementById('themeToggle'), document.getElementById('mobileThemeToggle')].filter(Boolean);
     toggles.forEach((toggle) => {
         const icon = toggle.querySelector('i');
@@ -3319,9 +3335,20 @@ function applyTheme(theme) {
 function toggleTheme() {
     const nextTheme = document.documentElement.classList.contains('light-mode') ? 'dark' : 'light';
     applyTheme(nextTheme);
+    try {
+        localStorage.setItem('estagio-theme', nextTheme);
+    } catch (error) {
+        console.warn('Não foi possível salvar a preferência de tema do Estágio:', error);
+    }
 }
 
-applyTheme('dark');
+let savedTheme = 'dark';
+try {
+    savedTheme = localStorage.getItem('estagio-theme') === 'light' ? 'light' : 'dark';
+} catch (error) {
+    console.warn('Não foi possível carregar a preferência de tema do Estágio:', error);
+}
+applyTheme(savedTheme);
 
 const PAGE_TITLES = {
     dashboard: 'Dashboard',
