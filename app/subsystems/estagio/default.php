@@ -1,3 +1,6 @@
 <?php
-    header("Location: ./views/dashboard.php");
+
+header("Location: app/main/");
+exit();
+
 ?>
