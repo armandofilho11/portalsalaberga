@@ -33,6 +33,9 @@ if (!$acessoLocalTemporario) {
     $session->simularLoginLocalParaTeste();
 }
 $ehRecepcao = $session->usuarioAtualEhRecepcao();
+$tiposUsuario = $_SESSION['tipos_usuario_permitidos'] ?? [];
+$ehAdminEntradaSaida = is_array($tiposUsuario) && in_array('Admin_entrada_saida', $tiposUsuario, true);
+$sectionRetorno = $ehAdminEntradaSaida ? 'entrada' : 'inicio';
 $permiteTemaPt = strtolower(trim((string) ($_SESSION['email'] ?? ''))) === 'otavio.ce@gmail.com';
 $select = new select_model();
 if (empty($_SESSION['csrf_token'])) {
@@ -56,6 +59,9 @@ $sectionInicial = $_GET['section'] ?? ($ehRecepcao ? 'inicio' : 'entrada');
 $sectionsPermitidas = ['inicio', 'entrada', 'saida', 'estagio', 'restricoes', 'relatorios', 'relatorio-entrada', 'relatorio-saida', 'consulta-saida', 'consulta-estagio', 'consulta-ausencias', 'relatorio-estagio', 'relatorio-dia', 'qrcode', 'ultimas-saidas', 'atrasos', 'cadastro'];
 if ($ehRecepcao) {
     $sectionsPermitidas = ['inicio', 'entrada', 'saida', 'estagio', 'consulta-ausencias', 'atrasos'];
+}
+if ($ehAdminEntradaSaida) {
+    $sectionsPermitidas = array_values(array_diff($sectionsPermitidas, ['inicio']));
 }
 if (!in_array($sectionInicial, $sectionsPermitidas, true)) {
     $sectionInicial = 'entrada';
@@ -188,7 +194,7 @@ $detalhesAtraso = static function ($registro) {
     const permiteTemaPt = <?= $permiteTemaPt ? 'true' : 'false' ?>;
     const themes = permiteTemaPt ? ['light', 'dark', 'lula'] : ['light', 'dark'];
     const labels = {light: 'Claro', dark: 'Escuro', lula: 'PT'};
-    const logoPt = '../../../../demandas/app/main/assets/pt-removebg-preview.png';
+    const logoPt = '../assets/pt-removebg-preview.png';
     let theme = 'light';
     try {
         const storedTheme = localStorage.getItem(storageKey);
@@ -6037,7 +6043,9 @@ input[type="radio"] {
         </div>
     </div>
 </div>
-<main class="main-content"><section class="page-section<?= $sectionInicial === 'inicio' ? ' active' : '' ?>" id="inicio" aria-label="Visão geral">
+<main class="main-content">
+<?php if (!$ehAdminEntradaSaida) { ?>
+<section class="page-section<?= $sectionInicial === 'inicio' ? ' active' : '' ?>" id="inicio" aria-label="Visão geral">
 
   
 
@@ -6130,6 +6138,7 @@ input[type="radio"] {
   
 
 </section>
+<?php } ?>
 
 <?php require __DIR__ . '/restricoes.php'; ?>
 
@@ -6275,7 +6284,7 @@ input[type="radio"] {
                 </div>
             </div>
             <div class="modal-form-footer">
-                <button type="button" class="modal-form-btn ghost" data-section-target="inicio">Cancelar</button>
+                <button type="button" class="modal-form-btn ghost" data-section-target="<?= htmlspecialchars($sectionRetorno, ENT_QUOTES, 'UTF-8') ?>">Cancelar</button>
                 <button type="submit" class="modal-form-btn primary">
                     <i class="fas fa-paper-plane mr-2"></i>
                     Registrar Atraso
@@ -6837,7 +6846,7 @@ $(document).ready(function() {
                 </div>
             </div>
             <div class="modal-form-footer">
-                <button type="button" class="modal-form-btn ghost" data-section-target="inicio">Cancelar</button>
+                <button type="button" class="modal-form-btn ghost" data-section-target="<?= htmlspecialchars($sectionRetorno, ENT_QUOTES, 'UTF-8') ?>">Cancelar</button>
                 <button type="submit" class="modal-form-btn primary">
                     <i class="fas fa-paper-plane mr-2"></i>
                     Registrar Saída
@@ -7295,7 +7304,7 @@ $(document).ready(function() {
           </div>
           <div class="modal-form-footer">
             <a href="#" data-section-target="ultimas-saidas" class="modal-form-btn ghost" title="Ver em tempo real" aria-label="Ver em tempo real"><i class="fas fa-eye"></i></a>
-            <button type="button" class="modal-form-btn ghost" data-section-target="inicio">Cancelar</button>
+            <button type="button" class="modal-form-btn ghost" data-section-target="<?= htmlspecialchars($sectionRetorno, ENT_QUOTES, 'UTF-8') ?>">Cancelar</button>
             <button type="submit" id="estagio-submitBtn" name="Registrar" class="modal-form-btn primary">
                 <span id="estagio-submitText" class="flex items-center justify-center gap-2">
                     <i class="fas fa-save"></i>
@@ -10776,7 +10785,7 @@ function normalizeStudentSearch(value) {
             </div>
           </div>
           <div class="modal-form-footer">
-            <button type="button" class="modal-form-btn ghost" data-section-target="inicio">Cancelar</button>
+            <button type="button" class="modal-form-btn ghost" data-section-target="<?= htmlspecialchars($sectionRetorno, ENT_QUOTES, 'UTF-8') ?>">Cancelar</button>
             <button type="submit" id="cadastro-submitBtn" class="modal-form-btn primary">
                 <span id="cadastro-submitText" class="flex items-center justify-center gap-2">
                     <i class="fas fa-user-plus text-sm"></i>
@@ -12661,7 +12670,7 @@ html[data-theme="lula"] body {
     --salaberga-ink: #351217;
     --salaberga-muted: #8a5960;
     background-color: #fff4f4;
-    background-image: linear-gradient(rgba(255, 247, 247, .32), rgba(255, 244, 244, .46)), url("../../../../demandas/app/main/assets/lula%20background.png");
+    background-image: linear-gradient(rgba(255, 247, 247, .32), rgba(255, 244, 244, .46)), url("../assets/lula%20background.png");
     background-position: center;
     background-repeat: no-repeat;
     background-size: 100vw 100vh;
