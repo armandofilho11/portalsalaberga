@@ -14,10 +14,6 @@ if (isset($_POST['aprovar']) && !empty($_POST['selecionados'])) {
     }
     $qtd = $select_model->aprovar_selecionados($selecionados);
 }
-if (isset($_POST['layout'])) {
-    $session->quebra_session();
-}
-
 if (!function_exists('dashboard_format_decimal')) {
     function dashboard_format_decimal($value, int $max_decimals = 3): string
     {
@@ -2046,11 +2042,9 @@ $CLS = [
                     <i class="fas fa-sun" aria-hidden="true"></i>
                 </button>
                
-                <form action="" method="post">
-                    <button type="submit" name="layout" class="<?= $CLS['sidebar_link'] ?> text-red-400 hover:text-red-300 hover:bg-red-500/10 w-full text-left">
-                        <i class="fas fa-sign-out-alt w-5 mr-3"></i> Sair
-                    </button>
-                </form>
+                <a href="../../../main/views/subsystems.php" class="<?= $CLS['sidebar_link'] ?> text-red-400 hover:text-red-300 hover:bg-red-500/10 w-full" aria-label="Sair do sistema de estágio">
+                    <i class="fas fa-sign-out-alt w-5 mr-3"></i> Sair
+                </a>
             </div>
         </div>
     </aside>
@@ -2089,11 +2083,9 @@ $CLS = [
                     <i class="fas fa-sun" aria-hidden="true"></i>
                 </button>
                 <a href="#" class="<?= $CLS['sidebar_link'] ?>"><i class="fas fa-cog w-5 mr-3"></i> Configurações</a>
-                <form action="" method="post">
-                    <button type="submit" name="layout" class="<?= $CLS['sidebar_link'] ?> text-red-400 hover:text-red-300 hover:bg-red-500/10 w-full text-left">
-                        <i class="fas fa-sign-out-alt w-5 mr-3"></i> Sair
-                    </button>
-                </form>
+                <a href="../../../main/views/subsystems.php" class="<?= $CLS['sidebar_link'] ?> text-red-400 hover:text-red-300 hover:bg-red-500/10 w-full" aria-label="Sair do sistema de estágio">
+                    <i class="fas fa-sign-out-alt w-5 mr-3"></i> Sair
+                </a>
             </div>
         </div>
     </div>
