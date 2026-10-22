@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../../model/sessions.php';
+require_once __DIR__ . '/../../model/select_model.php';
 require_once __DIR__ . '/../../assets/lib/fpdf/fpdf.php';
 
 date_default_timezone_set('America/Sao_Paulo');
@@ -55,6 +56,33 @@ function textoComprovantePdf(string $valor): string
     return $convertido;
 }
 
+function aulaAutorizada(DateTimeImmutable $chegada): ?int
+{
+    $hora = $chegada->format('H:i');
+    $aulas = [
+        1 => ['07:30', '08:20'],
+        2 => ['08:20', '09:10'],
+        3 => ['09:10', '10:20'],
+        4 => ['10:20', '11:10'],
+        5 => ['11:10', '12:00'],
+        6 => ['13:20', '14:10'],
+        7 => ['14:10', '15:00'],
+        8 => ['15:20', '16:10'],
+        9 => ['16:10', '17:00']
+    ];
+
+    foreach ($aulas as $numero => [$inicio, $fim]) {
+        if ($hora < $inicio) {
+            return $numero;
+        }
+        if ($hora < $fim) {
+            return $numero;
+        }
+    }
+
+    return null;
+}
+
 class PDFComprovanteTermico extends FPDF
 {
     public function imprimirCampo(string $texto): void
@@ -69,6 +97,33 @@ class PDFComprovanteTermico extends FPDF
 }
 
 try {
+    $camposAtraso = [];
+    if ($tipo === 'atraso') {
+        $idRegistro = filter_var(
+            $_POST['registro_id'] ?? null,
+            FILTER_VALIDATE_INT,
+            ['options' => ['min_range' => 1]]
+        );
+        if ($idRegistro === false) {
+            responderErroComprovante('Registro de atraso inválido.', 422);
+        }
+
+        $select = new select_model();
+        $dateTimeRegistro = $select->obterDataHoraAtraso($idRegistro);
+        if ($dateTimeRegistro === null) {
+            responderErroComprovante('Registro de atraso não encontrado.', 404);
+        }
+
+        $chegada = new DateTimeImmutable($dateTimeRegistro, new DateTimeZone('America/Sao_Paulo'));
+        $aula = aulaAutorizada($chegada);
+        $camposAtraso = [
+            ['Data e hora da chegada', $chegada->format('d/m/Y H:i')],
+            ['Autorizado a entrar para', $aula === null
+                ? 'Não há aula prevista neste horário'
+                : $aula . ' aula']
+        ];
+    }
+
     $campos = [
         'entrada' => [
             ['Nome', textoComprovante('aluno')],
@@ -81,6 +136,7 @@ try {
             ['Aluno', textoComprovante('aluno')],
             ['Matrícula', textoComprovante('matricula')],
             ['Turma', textoComprovante('turma')],
+            ...$camposAtraso,
             ['Motivo', textoComprovante('motivo')],
             ['Justificativa do atraso', textoComprovante('justificativa')]
         ],
