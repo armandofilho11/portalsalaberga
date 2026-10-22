@@ -202,6 +202,16 @@ $CLS = [
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#1a1a1a">
     <meta name="description" content="Sistema de Estágio - Painel">
+    <script>
+        try {
+            if (localStorage.getItem('estagio-theme') === 'light') {
+                document.documentElement.classList.add('light-mode');
+                document.documentElement.classList.remove('dark');
+            }
+        } catch (error) {
+            console.warn('Não foi possível carregar a preferência de tema do Estágio:', error);
+        }
+    </script>
     <title>Painel - Sistema de Estágio</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -3310,6 +3320,9 @@ $CLS = [
 function applyTheme(theme) {
     const lightMode = theme === 'light';
     document.documentElement.classList.toggle('light-mode', lightMode);
+    document.documentElement.classList.toggle('dark', !lightMode);
+    const themeColor = document.querySelector('meta[name="theme-color"]');
+    if (themeColor) themeColor.content = lightMode ? '#eaf3e8' : '#1a1a1a';
     const toggles = [document.getElementById('themeToggle'), document.getElementById('mobileThemeToggle')].filter(Boolean);
     toggles.forEach((toggle) => {
         const icon = toggle.querySelector('i');
@@ -3322,9 +3335,20 @@ function applyTheme(theme) {
 function toggleTheme() {
     const nextTheme = document.documentElement.classList.contains('light-mode') ? 'dark' : 'light';
     applyTheme(nextTheme);
+    try {
+        localStorage.setItem('estagio-theme', nextTheme);
+    } catch (error) {
+        console.warn('Não foi possível salvar a preferência de tema do Estágio:', error);
+    }
 }
 
-applyTheme('dark');
+let savedTheme = 'dark';
+try {
+    savedTheme = localStorage.getItem('estagio-theme') === 'light' ? 'light' : 'dark';
+} catch (error) {
+    console.warn('Não foi possível carregar a preferência de tema do Estágio:', error);
+}
+applyTheme(savedTheme);
 
 const PAGE_TITLES = {
     dashboard: 'Dashboard',
