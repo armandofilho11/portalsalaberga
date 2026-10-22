@@ -14,10 +14,6 @@ if (isset($_POST['aprovar']) && !empty($_POST['selecionados'])) {
     }
     $qtd = $select_model->aprovar_selecionados($selecionados);
 }
-if (isset($_POST['layout'])) {
-    $session->quebra_session();
-}
-
 if (!function_exists('dashboard_format_decimal')) {
     function dashboard_format_decimal($value, int $max_decimals = 3): string
     {
@@ -194,8 +190,8 @@ $CLS = [
     'card'          => 'bg-neutral-800/95 rounded-2xl p-6 shadow-xl border border-green-700/20 hover:border-green-500/40 hover:shadow-green-700/10 transition-all duration-300',
     'sidebar_link'  => 'nav-link flex items-center px-4 py-3 rounded-lg mb-1 text-white transition-all duration-200 hover:bg-green-700/20 hover:text-green-400 hover:translate-x-1',
     'sidebar_active'=> 'bg-green-700/30 text-green-400 font-semibold shadow-md shadow-green-700/10',
-    'modal_overlay' => 'fixed inset-0 bg-black/70 hidden items-center justify-center z-50 p-3 md:p-5 overflow-y-auto overflow-x-hidden',
-    'modal_box'     => 'modal_box bg-gradient-to-br from-neutral-800/95 to-neutral-900/95 border border-white/5 shadow-2xl rounded-2xl p-6 sm:p-8 w-[92vw] max-w-[1280px] min-w-0 max-h-[78vh] overflow-x-hidden overflow-y-auto',
+    'modal_overlay' => 'modal_overlay fixed inset-0 bg-black/70 hidden items-center justify-center z-50 p-3 md:p-5 overflow-hidden',
+    'modal_box'     => 'modal_box bg-gradient-to-br from-neutral-800/95 to-neutral-900/95 border border-white/5 shadow-2xl rounded-2xl p-6 sm:p-8 w-[92vw] max-w-[42rem] min-w-0',
     'checkbox'      => 'w-5 h-5 rounded accent-green-600 cursor-pointer',
 ];
 ?>
@@ -206,6 +202,16 @@ $CLS = [
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#1a1a1a">
     <meta name="description" content="Sistema de Estágio - Painel">
+    <script>
+        try {
+            if (localStorage.getItem('estagio-theme') === 'light') {
+                document.documentElement.classList.add('light-mode');
+                document.documentElement.classList.remove('dark');
+            }
+        } catch (error) {
+            console.warn('Não foi possível carregar a preferência de tema do Estágio:', error);
+        }
+    </script>
     <title>Painel - Sistema de Estágio</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -331,6 +337,17 @@ $CLS = [
             background: #ffffff !important;
             border-color: #d8e5dc !important;
             box-shadow: 0 8px 24px rgba(36, 51, 44, 0.08);
+        }
+
+        html.light-mode .vaga-card-toggle {
+            background: #e6f0e9;
+            color: #155c37;
+        }
+
+        html.light-mode .vaga-card-toggle:hover,
+        html.light-mode .vaga-card-toggle:focus-visible {
+            background: #cfe5d6;
+            color: #0b4628;
         }
 
         html.light-mode .kanban-column-sem .vaga-card { border-left-color: #dc2626 !important; }
@@ -849,6 +866,44 @@ $CLS = [
 
         html.light-mode .modal_overlay {
             background: rgba(18, 48, 29, 0.35) !important;
+        }
+
+        .modal_overlay {
+            overscroll-behavior: contain;
+        }
+
+        .modal_box {
+            max-height: calc(100vh - 1.5rem);
+            max-height: calc(100dvh - 1.5rem);
+            overflow-x: hidden;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            scrollbar-gutter: stable;
+        }
+
+        .modal_box--compact {
+            width: min(92vw, 32rem);
+            max-width: 32rem;
+            padding: 1.5rem;
+        }
+
+        .modal_box .modal-danger-action {
+            border: 1px solid #991b1b !important;
+            color: #ffffff !important;
+            background: #b91c1c !important;
+            background-image: none !important;
+            box-shadow: 0 5px 14px rgba(127, 29, 29, 0.22);
+        }
+
+        .modal_box .modal-danger-action:hover {
+            border-color: #7f1d1d !important;
+            color: #ffffff !important;
+            background: #991b1b !important;
+            background-image: none !important;
+        }
+
+        body.modal-open {
+            overflow: hidden;
         }
 
         html.light-mode .bg-cyan-950\/30,
@@ -2046,11 +2101,9 @@ $CLS = [
                     <i class="fas fa-sun" aria-hidden="true"></i>
                 </button>
                
-                <form action="" method="post">
-                    <button type="submit" name="layout" class="<?= $CLS['sidebar_link'] ?> text-red-400 hover:text-red-300 hover:bg-red-500/10 w-full text-left">
-                        <i class="fas fa-sign-out-alt w-5 mr-3"></i> Sair
-                    </button>
-                </form>
+                <a href="../../../main/views/subsystems.php" class="<?= $CLS['sidebar_link'] ?> text-red-400 hover:text-red-300 hover:bg-red-500/10 w-full" aria-label="Sair do sistema de estágio">
+                    <i class="fas fa-sign-out-alt w-5 mr-3"></i> Sair
+                </a>
             </div>
         </div>
     </aside>
@@ -2089,11 +2142,9 @@ $CLS = [
                     <i class="fas fa-sun" aria-hidden="true"></i>
                 </button>
                 <a href="#" class="<?= $CLS['sidebar_link'] ?>"><i class="fas fa-cog w-5 mr-3"></i> Configurações</a>
-                <form action="" method="post">
-                    <button type="submit" name="layout" class="<?= $CLS['sidebar_link'] ?> text-red-400 hover:text-red-300 hover:bg-red-500/10 w-full text-left">
-                        <i class="fas fa-sign-out-alt w-5 mr-3"></i> Sair
-                    </button>
-                </form>
+                <a href="../../../main/views/subsystems.php" class="<?= $CLS['sidebar_link'] ?> text-red-400 hover:text-red-300 hover:bg-red-500/10 w-full" aria-label="Sair do sistema de estágio">
+                    <i class="fas fa-sign-out-alt w-5 mr-3"></i> Sair
+                </a>
             </div>
         </div>
     </div>
@@ -2591,7 +2642,7 @@ $CLS = [
                         </div>
 
                         <div id="modalSelecionarAluno-<?= $vagaId ?>" class="<?= $CLS['modal_overlay'] ?>">
-                            <div class="<?= $CLS['modal_box'] ?> w-[92vw] max-w-[1280px] min-h-[52vh] min-w-0" style="max-width: min(92vw, 1280px); width: min(92vw, 1280px);">
+                            <div class="<?= $CLS['modal_box'] ?> w-[92vw] max-w-[1280px] min-w-0" style="max-width: min(92vw, 1280px); width: min(92vw, 1280px);">
                                 <div class="mb-6 rounded-2xl border border-green-500/15 bg-gradient-to-r from-green-500/10 via-white/5 to-transparent p-4 sm:p-5">
                                     <div class="flex items-start justify-between gap-4">
                                         <div class="flex items-start gap-4">
@@ -2680,7 +2731,7 @@ $CLS = [
                         </div>
 
                         <div id="modalAtualizarSelecao-<?= $vagaId ?>" class="<?= $CLS['modal_overlay'] ?>">
-                            <div class="<?= $CLS['modal_box'] ?> w-[92vw] max-w-[1100px] min-h-[48vh] min-w-0" style="max-width: min(92vw, 1100px); width: min(92vw, 1100px);">
+                            <div class="<?= $CLS['modal_box'] ?> w-[92vw] max-w-[1100px] min-w-0" style="max-width: min(92vw, 1100px); width: min(92vw, 1100px);">
                                 <div class="mb-6 rounded-2xl border border-amber-500/15 bg-gradient-to-r from-amber-500/10 via-white/5 to-transparent p-4 sm:p-5">
                                     <div class="flex items-start justify-between gap-4">
                                         <div class="flex items-start gap-4">
@@ -2766,7 +2817,7 @@ $CLS = [
                         </div>
 
                         <div id="modalConfirmarRemocaoAluno-<?= $vagaId ?>" class="<?= $CLS['modal_overlay'] ?>">
-                            <div class="<?= $CLS['modal_box'] ?> max-w-md text-center">
+                            <div class="<?= $CLS['modal_box'] ?> modal_box--compact text-center">
                                 <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-500/10 text-red-400 mb-4"><i class="fas fa-triangle-exclamation text-2xl"></i></div>
                                 <h3 class="text-xl font-bold text-white">Confirmar remoção</h3>
                                 <p class="text-gray-400 mt-2 mb-4">Deseja realmente remover o aluno <span id="nomeAlunoRemover-<?= $vagaId ?>" class="font-semibold text-white"></span> desta vaga?</p>
@@ -2776,14 +2827,14 @@ $CLS = [
                                     <input type="hidden" name="acao" value="remover_aluno_vaga">
                                     <div class="flex justify-center gap-3">
                                         <button type="button" onclick="closeModal('modalConfirmarRemocaoAluno-<?= $vagaId ?>')" class="<?= $CLS['btn_secondary'] ?>"><i class="fas fa-times"></i><span>Cancelar</span></button>
-                                        <button type="submit" class="<?= $CLS['btn_danger'] ?>"><i class="fas fa-trash-alt"></i><span>Continuar a remoção</span></button>
+                                        <button type="submit" class="<?= $CLS['btn_danger'] ?> modal-danger-action"><i class="fas fa-trash-alt"></i><span>Continuar a remoção</span></button>
                                     </div>
                                 </form>
                             </div>
                         </div>
 
                         <div id="modalCarta-<?= $vagaId ?>" class="<?= $CLS['modal_overlay'] ?>">
-                            <div class="<?= $CLS['modal_box'] ?> text-center">
+                            <div class="<?= $CLS['modal_box'] ?> modal_box--compact text-center">
                                 <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-700/10 text-green-400 mb-4"><i class="fas fa-file-alt text-2xl"></i></div>
                                 <h3 class="text-xl font-bold text-white">Gerar Carta de Encaminhamento</h3>
                                 <p class="text-gray-400 mt-2 mb-4">Preencha os dados para gerar a carta.</p>
@@ -2850,7 +2901,7 @@ $CLS = [
                         </div>
 
                         <div id="excluirVagaModal-<?= $vagaId ?>" class="<?= $CLS['modal_overlay'] ?>">
-                            <div class="<?= $CLS['modal_box'] ?> text-center">
+                            <div class="<?= $CLS['modal_box'] ?> modal_box--compact text-center">
                                 <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-500/10 text-red-500 mb-4"><i class="fas fa-exclamation-triangle text-2xl"></i></div>
                                 <h3 class="text-xl font-bold text-white">Confirmar Exclusão</h3>
                                 <p class="text-gray-400 mt-2">Tem certeza que deseja excluir esta vaga?</p>
@@ -2858,7 +2909,7 @@ $CLS = [
                                     <input type="hidden" name="id_excluir_vaga" value="<?= $vagaId ?>">
                                     <div class="flex justify-center gap-3">
                                         <button type="button" onclick="closeModal('excluirVagaModal-<?= $vagaId ?>')" class="<?= $CLS['btn_secondary'] ?>"><i class="fas fa-times"></i><span>Cancelar</span></button>
-                                        <button type="submit" class="<?= $CLS['btn_danger'] ?>"><i class="fas fa-trash-alt"></i><span>Excluir</span></button>
+                                        <button type="submit" class="<?= $CLS['btn_danger'] ?> modal-danger-action"><i class="fas fa-trash-alt"></i><span>Excluir</span></button>
                                     </div>
                                 </form>
                             </div>
@@ -3187,12 +3238,9 @@ $CLS = [
                 <div class="<?= $CLS['modal_box'] ?> max-w-xl">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-xl font-bold text-white">Detalhes do Aluno</h2>
-                        <button onclick="closeModal('detalhesAlunoModal')" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
+                        <button type="button" onclick="closeModal('detalhesAlunoModal')" aria-label="Fechar detalhes do aluno" class="flex h-10 w-10 items-center justify-center rounded-lg bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white"><i class="fas fa-times"></i></button>
                     </div>
                     <div id="detalhesAlunoContent" class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm"></div>
-                    <div class="mt-6 flex justify-end">
-                        <button onclick="closeModal('detalhesAlunoModal')" class="<?= $CLS['btn_secondary'] ?>"><i class="fas fa-times"></i><span>Fechar</span></button>
-                    </div>
                 </div>
             </div>
 
@@ -3288,13 +3336,13 @@ $CLS = [
             </div>
 
             <div id="confirmarExclusaoAlunoModal" class="<?= $CLS['modal_overlay'] ?>">
-                <div class="<?= $CLS['modal_box'] ?> text-center">
+                <div class="<?= $CLS['modal_box'] ?> modal_box--compact text-center">
                     <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-500/10 text-red-500 mb-4"><i class="fas fa-exclamation-triangle text-2xl"></i></div>
                     <h3 class="text-xl font-bold text-white">Confirmar Exclusão</h3>
                     <p class="text-gray-400 mt-2">Tem certeza que deseja excluir este aluno?</p>
                     <div class="mt-6 flex justify-center gap-3">
                         <button onclick="closeModal('confirmarExclusaoAlunoModal')" class="<?= $CLS['btn_secondary'] ?>"><i class="fas fa-times"></i><span>Cancelar</span></button>
-                        <button onclick="efetivarExclusaoAluno()" class="<?= $CLS['btn_danger'] ?>"><i class="fas fa-trash"></i><span>Excluir</span></button>
+                        <button type="button" onclick="efetivarExclusaoAluno()" class="<?= $CLS['btn_danger'] ?> modal-danger-action"><i class="fas fa-trash"></i><span>Excluir</span></button>
                     </div>
                 </div>
             </div>
@@ -3307,6 +3355,9 @@ $CLS = [
 function applyTheme(theme) {
     const lightMode = theme === 'light';
     document.documentElement.classList.toggle('light-mode', lightMode);
+    document.documentElement.classList.toggle('dark', !lightMode);
+    const themeColor = document.querySelector('meta[name="theme-color"]');
+    if (themeColor) themeColor.content = lightMode ? '#eaf3e8' : '#1a1a1a';
     const toggles = [document.getElementById('themeToggle'), document.getElementById('mobileThemeToggle')].filter(Boolean);
     toggles.forEach((toggle) => {
         const icon = toggle.querySelector('i');
@@ -3319,9 +3370,20 @@ function applyTheme(theme) {
 function toggleTheme() {
     const nextTheme = document.documentElement.classList.contains('light-mode') ? 'dark' : 'light';
     applyTheme(nextTheme);
+    try {
+        localStorage.setItem('estagio-theme', nextTheme);
+    } catch (error) {
+        console.warn('Não foi possível salvar a preferência de tema do Estágio:', error);
+    }
 }
 
-applyTheme('dark');
+let savedTheme = 'dark';
+try {
+    savedTheme = localStorage.getItem('estagio-theme') === 'light' ? 'light' : 'dark';
+} catch (error) {
+    console.warn('Não foi possível carregar a preferência de tema do Estágio:', error);
+}
+applyTheme(savedTheme);
 
 const PAGE_TITLES = {
     dashboard: 'Dashboard',
@@ -3484,12 +3546,16 @@ function openModal(id) {
 
     modal.classList.remove('hidden');
     modal.classList.add('flex');
+    document.body.classList.add('modal-open');
 }
 function closeModal(id) {
     const modal = document.getElementById(id);
     if (!modal) return;
     modal.classList.add('hidden');
     modal.classList.remove('flex');
+    if (!document.querySelector('.modal_overlay.flex:not(.hidden)')) {
+        document.body.classList.remove('modal-open');
+    }
 }
 function excluirFichaConcedente() {
     const select = document.querySelector('#relatorioConcedenteModal select[name="id"]');
@@ -3516,14 +3582,15 @@ function excluirFichaConcedente() {
     form.submit();
 }
 document.addEventListener('click', e => {
-    if (e.target.classList && e.target.classList.contains('fixed') && e.target.classList.contains('inset-0') && !e.target.classList.contains('hidden')) {
-        e.target.classList.add('hidden');
-        e.target.classList.remove('flex');
+    if (e.target instanceof HTMLElement && e.target.classList.contains('modal_overlay') && !e.target.classList.contains('hidden')) {
+        closeModal(e.target.id);
     }
 });
 document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
-        document.querySelectorAll('.fixed.inset-0.flex').forEach(m => { m.classList.add('hidden'); m.classList.remove('flex'); });
+        const openModals = document.querySelectorAll('.modal_overlay.flex:not(.hidden)');
+        const topModal = openModals[openModals.length - 1];
+        if (topModal) closeModal(topModal.id);
     }
 });
 
