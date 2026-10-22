@@ -36,6 +36,15 @@
         }
     };
 
+    const logThemeChange = () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+        console.info('[Demandas] Tema alterado:', {
+            theme: currentTheme,
+            nextTheme: THEMES[(THEMES.indexOf(currentTheme) + 1) % THEMES.length],
+            script: document.querySelector('script[src*="/js/theme.js"]')?.src || 'não identificado'
+        });
+    };
+
     const updateToggleButtons = () => {
         const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
         const buttons = document.querySelectorAll('.theme-toggle');
@@ -118,6 +127,7 @@
                 const nextTheme = THEMES[(currentIndex + 1) % THEMES.length];
                 applyTheme(nextTheme);
                 updateToggleButtons();
+                logThemeChange();
             });
         });
     });
