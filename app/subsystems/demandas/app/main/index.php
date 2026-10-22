@@ -6,6 +6,22 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+
+$sessaoPortalAtiva = isset($_SESSION['id'], $_SESSION['email'], $_SESSION['nome'])
+    && trim((string) $_SESSION['id']) !== ''
+    && trim((string) $_SESSION['email']) !== ''
+    && trim((string) $_SESSION['nome']) !== '';
+if (!empty($_SESSION['demandas_logout_redirect'])) {
+    unset($_SESSION['demandas_logout_redirect']);
+    session_write_close();
+    header('Location: ' . ($sessaoPortalAtiva
+        ? '../../../../main/views/subsystems.php'
+        : '../../../../main/index.php'));
+    exit;
+}
+
 try {
     $pdoProjetos = (new connect())->getConnection();
     $stmtProjetos = $pdoProjetos->query("SELECT id, nome FROM projetos WHERE ativo = 1 ORDER BY nome ASC");
@@ -78,6 +94,12 @@ if (isset($_SESSION['id_usuario']) && in_array($_SESSION['tipo'] ?? '', ['admini
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
     <script>
+        window.addEventListener('pageshow', (event) => {
+            if (event.persisted) {
+                window.location.reload();
+            }
+        });
+
         tailwind.config = {
             theme: {
                 extend: {
