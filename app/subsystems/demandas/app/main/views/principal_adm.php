@@ -352,6 +352,80 @@ $perfilUsuarioExibicao = $tipoSessao === 'master'
             transition: background-color 0.25s ease, color 0.25s ease;
         }
 
+        #mainAdm {
+            padding-bottom: 5rem;
+        }
+
+        .demandas-footer {
+            position: fixed;
+            inset: auto 0 0;
+            z-index: 40;
+            display: flex;
+            min-height: 3.5rem;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 0.65rem 1rem;
+            background: var(--theme-surface);
+            color: var(--theme-text-soft);
+            box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.1);
+            font-size: 0.75rem;
+        }
+
+        .demandas-footer::before {
+            position: absolute;
+            inset: 0 0 auto;
+            height: 4px;
+            background: linear-gradient(90deg, #006b35, #f6c400 48%, #ed8500 70%, #006b35);
+            content: "";
+        }
+
+        .demandas-footer__developers {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.4rem 1rem;
+        }
+
+        .demandas-footer a {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            color: var(--theme-text);
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+        .demandas-footer a:hover,
+        .demandas-footer a:focus-visible {
+            color: var(--dark-green);
+            transform: translateY(-3px);
+        }
+
+        .demandas-footer a i {
+            color: var(--dark-green);
+        }
+
+        @media (min-width: 1024px) {
+            .demandas-footer {
+                left: 16rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .demandas-footer {
+                flex-direction: column;
+                gap: 0.2rem;
+                padding: 0.55rem 0.75rem;
+                font-size: 0.68rem;
+            }
+
+            .demandas-footer__developers {
+                gap: 0.25rem 0.85rem;
+            }
+        }
+
         html[data-theme="lula"] body {
             background-image: linear-gradient(rgba(255, 247, 247, 0.32), rgba(255, 244, 244, 0.46)), url("../assets/lula background.png");
             background-position: center center;
@@ -749,7 +823,7 @@ $perfilUsuarioExibicao = $tipoSessao === 'master'
             .theme-toggle {
                 position: fixed;
                 right: 1.5rem;
-                bottom: 1.5rem;
+                bottom: 4.25rem;
                 width: 3.25rem;
                 height: 3.25rem;
                 padding: 0;
@@ -8139,6 +8213,20 @@ $perfilUsuarioExibicao = $tipoSessao === 'master'
             });
         })();
     </script>
+
+    <footer class="demandas-footer" aria-label="Desenvolvedores do sistema">
+        <span>Desenvolvido por</span>
+        <div class="demandas-footer__developers">
+            <a href="https://www.instagram.com/_kauanlmx/" target="_blank" rel="noopener noreferrer" aria-label="Instagram de Kauan Cristian">
+                <i class="fa-brands fa-instagram" aria-hidden="true"></i>
+                <span>Kauan Cristian</span>
+            </a>
+            <a href="https://www.instagram.com/cassioholanda_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram de Cassio Holanda">
+                <i class="fa-brands fa-instagram" aria-hidden="true"></i>
+                <span>Cassio Holanda</span>
+            </a>
+        </div>
+    </footer>
 
 </body>
 
