@@ -235,6 +235,135 @@ $fotoPerfil = isset($_SESSION['foto_perfil']) ? $_SESSION['foto_perfil'] : '';
         .notification-exit {
             transform: translateX(100%);
         }
+        .current-permission-actions {
+            display: flex;
+            flex: 0 0 auto;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        #currentPermissions {
+            box-sizing: border-box;
+            padding-right: 0.75rem;
+            scrollbar-gutter: stable;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(0, 90, 36, 0.55) transparent;
+        }
+        #currentPermissions::-webkit-scrollbar {
+            width: 0.5rem;
+        }
+        #currentPermissions::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        #currentPermissions::-webkit-scrollbar-thumb {
+            background: rgba(0, 90, 36, 0.45);
+            border: 2px solid transparent;
+            border-radius: 999px;
+            background-clip: padding-box;
+        }
+        #currentPermissions::-webkit-scrollbar-thumb:hover {
+            background: #005A24;
+            background-clip: padding-box;
+        }
+        .current-permission-action {
+            display: inline-flex;
+            width: 2.75rem;
+            height: 2.75rem;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid transparent;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .current-permission-action:hover {
+            transform: translateY(-2px);
+        }
+        .current-permission-action:focus-visible {
+            outline: 3px solid #FFA500;
+            outline-offset: 2px;
+        }
+        .current-permission-edit {
+            color: #005A24;
+            background: rgba(0, 90, 36, 0.08);
+            border-color: rgba(0, 90, 36, 0.24);
+        }
+        .current-permission-edit:hover {
+            color: #ffffff;
+            background: #005A24;
+            border-color: #005A24;
+            box-shadow: 0 5px 14px rgba(0, 90, 36, 0.22);
+        }
+        .current-permission-delete {
+            color: #b42318;
+            background: rgba(180, 35, 24, 0.07);
+            border-color: rgba(180, 35, 24, 0.24);
+        }
+        .current-permission-delete:hover {
+            color: #ffffff;
+            background: #b42318;
+            border-color: #b42318;
+            box-shadow: 0 5px 14px rgba(180, 35, 24, 0.2);
+        }
+        html.dark .current-permissions-panel {
+            color: #ffffff;
+            background: #2d2d2d !important;
+            border-color: #404040 !important;
+        }
+        html.dark #currentPermissions {
+            scrollbar-color: rgba(0, 179, 72, 0.65) transparent;
+        }
+        html.dark #currentPermissions::-webkit-scrollbar-thumb {
+            background: rgba(0, 179, 72, 0.55);
+            background-clip: padding-box;
+        }
+        html.dark #currentPermissions::-webkit-scrollbar-thumb:hover {
+            background: #00b348;
+            background-clip: padding-box;
+        }
+        html.dark .current-permission-card {
+            color: #ffffff !important;
+            background: #333333 !important;
+            border-color: #4a4a4a !important;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+        }
+        html.dark .current-permission-card:hover {
+            background: #383838 !important;
+            border-color: #00b348 !important;
+        }
+        html.dark .current-permission-name {
+            color: #ffffff !important;
+        }
+        html.dark .current-permission-type {
+            color: #d1d1d1 !important;
+        }
+        html.dark .current-permission-empty h6 {
+            color: #ffffff !important;
+        }
+        html.dark .current-permission-empty p {
+            color: #d1d1d1 !important;
+        }
+        html.dark .current-permission-edit {
+            color: #00b348 !important;
+            background: rgba(0, 179, 72, 0.1);
+            border-color: rgba(0, 179, 72, 0.55) !important;
+        }
+        html.dark .current-permission-edit:hover {
+            color: #ffffff !important;
+            background: #005a24 !important;
+            border-color: #005a24 !important;
+            box-shadow: 0 5px 14px rgba(0, 179, 72, 0.2);
+        }
+        html.dark .current-permission-delete {
+            color: #ff7777 !important;
+            background: rgba(220, 38, 38, 0.1);
+            border-color: rgba(248, 113, 113, 0.55) !important;
+        }
+        html.dark .current-permission-delete:hover {
+            color: #ffffff !important;
+            background: #dc2626 !important;
+            border-color: #dc2626 !important;
+            box-shadow: 0 5px 14px rgba(220, 38, 38, 0.22);
+        }
     </style>
 </head>
 <body class="text-gray-800 font-sans min-h-screen">
@@ -345,14 +474,14 @@ $fotoPerfil = isset($_SESSION['foto_perfil']) ? $_SESSION['foto_perfil'] : '';
                                     </div>
                                     
                                     <!-- Permissões Atuais -->
-                                    <div class="bg-gradient-to-r from-accent/20 to-white p-6 rounded-xl border border-accent/30">
+                                    <div class="current-permissions-panel bg-gradient-to-r from-accent/20 to-white p-6 rounded-xl border border-accent/30">
                                         <h5 class="text-lg font-semibold text-dark mb-4 flex items-center gap-2">
                                             <i class="fa-solid fa-list-check text-primary"></i>
                                             Permissões Atuais
                                         </h5>
                                         <div id="currentPermissions" class="space-y-3 max-h-64 overflow-y-auto">
                                             <?php if (empty($permissions)): ?>
-                                                <div class="text-center py-12">
+                                                <div class="current-permission-empty text-center py-12">
                                                     <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-r from-gray-100 to-gray-200 flex items-center justify-center shadow-lg">
                                                         <i class="fa-solid fa-shield-halved text-3xl text-gray-400"></i>
                                                     </div>
@@ -361,21 +490,21 @@ $fotoPerfil = isset($_SESSION['foto_perfil']) ? $_SESSION['foto_perfil'] : '';
                                                 </div>
                                             <?php else: ?>
                                                 <?php foreach ($permissions as $perm): ?>
-                                                    <div class="flex items-center justify-between p-4 bg-gradient-to-r from-white to-accent/20 rounded-xl border border-accent/50 shadow-sm hover:shadow-md transition-all duration-300 group">
+                                                    <div class="current-permission-card flex items-center justify-between p-4 bg-gradient-to-r from-white to-accent/20 rounded-xl border border-accent/50 shadow-sm hover:shadow-md transition-all duration-300 group">
                                                         <div class="flex items-center gap-4">
                                                             <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white shadow-md group-hover:scale-110 transition-transform">
                                                                 <i class="fa-solid fa-key text-base"></i>
                                                             </div>
                                                             <div>
-                                                                <div class="font-bold text-dark text-base"><?php echo htmlspecialchars($perm['nome_sistema']); ?></div>
-                                                                <div class="text-sm text-gray-600 font-medium"><?php echo htmlspecialchars($perm['tipo_usuario']); ?></div>
+                                                                <div class="current-permission-name font-bold text-dark text-base"><?php echo htmlspecialchars($perm['nome_sistema']); ?></div>
+                                                                <div class="current-permission-type text-sm text-gray-600 font-medium"><?php echo htmlspecialchars($perm['tipo_usuario']); ?></div>
                                                             </div>
                                                         </div>
-                                                        <div class="flex items-center gap-3">
-                                                            <button data-perm-id="<?php echo htmlspecialchars($perm['id']); ?>" data-sistema-id="<?php echo htmlspecialchars($perm['id_sistemas']); ?>" data-tipo-permissao-id="<?php echo htmlspecialchars($perm['id_tipos_usuarios']); ?>" onclick="openEditPermissionModal(this)" class="p-2.5 rounded-lg text-gray-600 hover:bg-primary hover:text-white hover:border-primary border-2 border-gray-200 transition-all duration-200 group-hover:scale-110">
+                                                        <div class="current-permission-actions">
+                                                            <button type="button" aria-label="Editar permissão" title="Editar permissão" data-perm-id="<?php echo htmlspecialchars($perm['id']); ?>" data-sistema-id="<?php echo htmlspecialchars($perm['id_sistemas']); ?>" data-tipo-permissao-id="<?php echo htmlspecialchars($perm['id_tipos_usuarios']); ?>" onclick="openEditPermissionModal(this)" class="current-permission-action current-permission-edit">
                                                                 <i class="fa-solid fa-pen text-sm"></i>
                                                             </button>
-                                                            <button onclick="openDeletePermissionModal(<?php echo $perm['id']; ?>, '<?php echo htmlspecialchars($perm['nome_sistema'] . ' - ' . $perm['tipo_usuario'], ENT_QUOTES, 'UTF-8'); ?>')" class="p-2.5 rounded-lg text-red-600 hover:bg-red-500 hover:text-white border-2 border-red-200 transition-all duration-200 group-hover:scale-110">
+                                                            <button type="button" aria-label="Excluir permissão" title="Excluir permissão" onclick="openDeletePermissionModal(<?php echo $perm['id']; ?>, '<?php echo htmlspecialchars($perm['nome_sistema'] . ' - ' . $perm['tipo_usuario'], ENT_QUOTES, 'UTF-8'); ?>')" class="current-permission-action current-permission-delete">
                                                                 <i class="fa-solid fa-trash text-sm"></i>
                                                             </button>
                                                         </div>
@@ -655,7 +784,7 @@ $fotoPerfil = isset($_SESSION['foto_perfil']) ? $_SESSION['foto_perfil'] : '';
             
             if (permissions.length === 0) {
                 permissionsContainer.innerHTML = `
-                    <div class="text-center py-12">
+                    <div class="current-permission-empty text-center py-12">
                         <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-r from-gray-100 to-gray-200 flex items-center justify-center shadow-lg">
                             <i class="fa-solid fa-shield-halved text-3xl text-gray-400"></i>
                         </div>
@@ -667,21 +796,21 @@ $fotoPerfil = isset($_SESSION['foto_perfil']) ? $_SESSION['foto_perfil'] : '';
                 let permissionsHTML = '';
                 permissions.forEach(perm => {
                     permissionsHTML += `
-                        <div class="flex items-center justify-between p-4 bg-gradient-to-r from-white to-accent/20 rounded-xl border border-accent/50 shadow-sm hover:shadow-md transition-all duration-300 group">
+                        <div class="current-permission-card flex items-center justify-between p-4 bg-gradient-to-r from-white to-accent/20 rounded-xl border border-accent/50 shadow-sm hover:shadow-md transition-all duration-300 group">
                             <div class="flex items-center gap-4">
                                 <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white shadow-md group-hover:scale-110 transition-transform">
                                     <i class="fa-solid fa-key text-base"></i>
                                 </div>
                                 <div>
-                                    <div class="font-bold text-dark text-base">${perm.nome_sistema}</div>
-                                    <div class="text-sm text-gray-600 font-medium">${perm.tipo_usuario}</div>
+                                    <div class="current-permission-name font-bold text-dark text-base">${perm.nome_sistema}</div>
+                                    <div class="current-permission-type text-sm text-gray-600 font-medium">${perm.tipo_usuario}</div>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-3">
-                                <button data-perm-id="${perm.id}" data-sistema-id="${perm.id_sistemas}" data-tipo-permissao-id="${perm.id_tipos_usuarios}" onclick="openEditPermissionModal(this)" class="p-2.5 rounded-lg text-gray-600 hover:bg-primary hover:text-white hover:border-primary border-2 border-gray-200 transition-all duration-200 group-hover:scale-110">
+                            <div class="current-permission-actions">
+                                <button type="button" aria-label="Editar permissão" title="Editar permissão" data-perm-id="${perm.id}" data-sistema-id="${perm.id_sistemas}" data-tipo-permissao-id="${perm.id_tipos_usuarios}" onclick="openEditPermissionModal(this)" class="current-permission-action current-permission-edit">
                                     <i class="fa-solid fa-pen text-sm"></i>
                                 </button>
-                                <button onclick="openDeletePermissionModal(${perm.id}, '${perm.nome_sistema} - ${perm.tipo_usuario}')" class="p-2.5 rounded-lg text-red-600 hover:bg-red-500 hover:text-white border-2 border-red-200 transition-all duration-200 group-hover:scale-110">
+                                <button type="button" aria-label="Excluir permissão" title="Excluir permissão" onclick="openDeletePermissionModal(${perm.id}, '${perm.nome_sistema} - ${perm.tipo_usuario}')" class="current-permission-action current-permission-delete">
                                     <i class="fa-solid fa-trash text-sm"></i>
                                 </button>
                             </div>
