@@ -13070,6 +13070,139 @@ html[data-theme="lula"] .sidebar > nav::-webkit-scrollbar-thumb {
 @media (prefers-reduced-motion: reduce) {
     .pt-theme-falling-star { display: none; }
 }
+
+.entryexit-footer {
+    position: fixed;
+    z-index: 80;
+    right: 0;
+    bottom: 0;
+    left: var(--sidebar-width, 256px);
+    display: flex;
+    min-height: 3.5rem;
+    align-items: center;
+    justify-content: center;
+    gap: .75rem;
+    padding: .65rem 1rem;
+    background: #fff;
+    color: var(--salaberga-muted);
+    box-shadow: 0 -4px 18px rgba(0, 0, 0, .1);
+    font-size: .75rem;
+}
+
+.entryexit-footer::before {
+    position: absolute;
+    inset: 0 0 auto;
+    height: 4px;
+    background: linear-gradient(90deg, #006b35, #f6c400 48%, #ed8500 70%, #006b35);
+    content: "";
+}
+
+.entryexit-footer__developers {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: .4rem 1rem;
+}
+
+.entryexit-footer a {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    color: var(--salaberga-ink);
+    font-weight: 600;
+    text-decoration: none;
+    transition: color .2s ease, transform .2s ease;
+}
+
+.entryexit-footer a:hover,
+.entryexit-footer a:focus-visible {
+    transform: translateY(-3px);
+}
+
+.entryexit-footer a:hover,
+.entryexit-footer a:focus-visible,
+.entryexit-footer a i {
+    color: var(--salaberga-green);
+}
+
+.reception-interface .entryexit-footer {
+    left: 0;
+}
+
+.main-content {
+    padding-bottom: 5rem;
+}
+
+.floating-theme-toggle {
+    bottom: 4.25rem;
+}
+
+html[data-theme="dark"] .entryexit-footer {
+    background: #171717;
+    color: #d1d5db;
+    box-shadow: 0 -4px 18px rgba(0, 0, 0, .35);
+}
+
+html[data-theme="dark"] .entryexit-footer a {
+    color: #f3f4f6;
+}
+
+html[data-theme="dark"] .entryexit-footer a:hover,
+html[data-theme="dark"] .entryexit-footer a:focus-visible,
+html[data-theme="dark"] .entryexit-footer a i {
+    color: #76d89e;
+}
+
+html[data-theme="lula"] .entryexit-footer {
+    background: #fffafa;
+    color: #672630;
+}
+
+html[data-theme="lula"] .entryexit-footer a,
+html[data-theme="lula"] .entryexit-footer a:hover,
+html[data-theme="lula"] .entryexit-footer a:focus-visible,
+html[data-theme="lula"] .entryexit-footer a i {
+    color: #c8102e;
+}
+
+@media (max-width: 600px) {
+    .entryexit-footer {
+        min-height: 4.25rem;
+        flex-direction: column;
+        gap: .2rem;
+        padding: .55rem .75rem;
+        font-size: .68rem;
+    }
+
+    .entryexit-footer__developers {
+        gap: .25rem .85rem;
+    }
+
+    .floating-theme-toggle {
+        bottom: 5rem;
+    }
+}
 </style>
+<footer class="entryexit-footer" aria-label="Desenvolvedores do sistema">
+    <span>Desenvolvido por</span>
+    <div class="entryexit-footer__developers">
+        <a href="https://www.instagram.com/_kauanlmx/" target="_blank" rel="noopener noreferrer" aria-label="Instagram de Kauan Cristian">
+            <i class="fab fa-instagram" aria-hidden="true"></i>
+            <span>Kauan Cristian</span>
+        </a>
+        <a href="https://www.instagram.com/cassioholanda_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram de Cassio Holanda">
+            <i class="fab fa-instagram" aria-hidden="true"></i>
+            <span>Cassio Holanda</span>
+        </a>
+        <a href="https://www.instagram.com/abraaolyncoln_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram de Abraão Lyncoln">
+            <i class="fab fa-instagram" aria-hidden="true"></i>
+            <span>Abraão Lyncoln</span>
+        </a>
+        <a href="https://www.instagram.com/arma_ndofilho/" target="_blank" rel="noopener noreferrer" aria-label="Instagram de Armando Filho">
+            <i class="fab fa-instagram" aria-hidden="true"></i>
+            <span>Armando Filho</span>
+        </a>
+    </div>
+</footer>
 </body>
 </html>
