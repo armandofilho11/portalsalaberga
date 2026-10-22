@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edital do Processo Seletivo Salaberga</title>
+    <link rel="stylesheet" href="css/acessibility.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="main.js"></script>
+    <script src="js/modal-function.js"></script>
+    <script src="js/acessibilidades.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="img/Design sem nome.svg" type="image/x-icon">
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'ceara-green': '#008C45',
+                        'ceara-orange': '#FFA500',
+                        'ceara-white': '#FFFFFF',
+                    },
+                    fontFamily: {
+                        'sans': ['Poppins', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        .section-transition {
+            transition: all 0.3s ease-in-out;
+        }
+        .section-transition:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body class="font-sans bg-gray-100 text-base" x-data="{ mobileMenuOpen: false }">
+    <header class="bg-ceara-green text-ceara-white sticky top-0 z-50 shadow-md">
+        <div class="container mx-auto px-4">
+            <nav class="flex items-center justify-between flex-wrap py-4">
+                <!-- Accessibility Controls -->
+                <div class="flex items-center space-x-2">
+                    <span class="text-sm"><b>Acessibilidade</b></span>
+                    <button class="text-sm hover:text-ceara-orange transition duration-300 px-1"
+                        aria-label="Diminuir tamanho do texto"><i class="fa-solid fa-a"></i><b>-</b></button>
+                    <button class="text-sm hover:text-ceara-orange transition duration-300 px-1"
+                        aria-label="Tamanho padrão do texto"><i class="fa-solid fa-a"></i></button>
+                    <button class="text-sm hover:text-ceara-orange transition duration-300 px-1"
+                        aria-label="Aumentar tamanho do texto"><i class="fa-solid fa-a"></i><b>+</b></button>
+                    <button id="screenReaderBtn"
+                        class="text-sm hover:text-ceara-orange transition duration-300 px-1 flex items-center"
+                        aria-label="Ativar narração de tela">
+                    <i class="fa-solid fa-ear-listen mr-1"></i>
+                </button>
+
+                <script>
+                // Variáveis globais
+                let isReading = false;
+                let currentSection = 0;
+                const synth = window.speechSynthesis;
+                let utterance = null;
+
+                // Função para iniciar ou parar a narração
+                function toggleScreenReader() {
+                    if (isReading) {
+                        stopReading();
+                    } else {
+                        startReading();
+                    }
+                }
+
+                // Função para iniciar a narração
+                function startReading() {
+                    isReading = true;
+                    currentSection = 0;
+                    readNextSection();
+                    updateButtonState();
+                    window.addEventListener('scroll', handleScroll);
+                    document.addEventListener('click', handleElementClick);
+                    document.addEventListener('focus', handleElementFocus, true);
+                    announceStatus('Narração ativada');
+                }
+
+                // Função para parar a narração
+                function stopReading() {
+                    if (synth.speaking) {
+                        synth.cancel();
+                    }
+                    isReading = false;
+                    updateButtonState();
+                    window.removeEventListener('scroll', handleScroll);
+                    document.removeEventListener('click', handleElementClick);
+                    document.removeEventListener('focus', handleElementFocus, true);
+                    announceStatus('Narração desativada');
+                }
+
+                // Função para ler a próxima seção
+                function readNextSection() {
+                    const sections = document.querySelectorAll('section, article, div.section');
+                    if (currentSection < sections.length) {
+                        const textToRead = sections[currentSection].innerText;
+                        speakText(textToRead);
+                    } else {
+                        stopReading();
+                    }
+                }
+
+                // Função para lidar com o evento de rolagem
+                function handleScroll() {
+                    if (!isReading) return;
+
+                    const sections = document.querySelectorAll('section, article, div.section');
+                    const scrollPosition = window.scrollY + window.innerHeight / 2;
+
+                    for (let i = 0; i < sections.length; i++) {
+                        const section = sections[i];
+                        const sectionTop = section.offsetTop;
+                        const sectionBottom = sectionTop + section.offsetHeight;
+
+                        if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+                            if (i !== currentSection) {
+                                currentSection = i;
+                                if (synth.speaking) {
+                                    synth.cancel();
+                                }
+                                readNextSection();
+                            }
+                            break;
+                        }
+                    }
+                }
+
+                // Função para rolar até a seção atual
+                function scrollToSection(sectionIndex) {
+                    const sections = document.querySelectorAll('section, article, div.section');
+                    if (sections[sectionIndex]) {
+                        sections[sectionIndex].scrollIntoView({ behavior: 'smooth' });
+                    }
+                }
+
+                // Função para atualizar o estado visual do botão
+                function updateButtonState() {
+                    const btn = document.getElementById('screenReaderBtn');
+                    if (isReading) {
+                        btn.classList.add('text-ceara-orange');
+                        btn.setAttribute('aria-label', 'Desativar narração de tela');
+                    } else {
+                        btn.classList.remove('text-ceara-orange');
+                        btn.setAttribute('aria-label', 'Ativar narração de tela');
+                    }
+                }
+
+                // Função para anunciar o status da narração
+                function announceStatus(message) {
+                    speakText(message);
+                }
+
+                // Função para fornecer instruções iniciais
+                function provideInitialInstructions() {
+                    const instructions = "Bem-vindo. Para ativar a narração de tela, pressione a tecla N ou use a tecla Tab para navegar até o botão de ativação e pressione Enter.";
+                    speakText(instructions);
+                }
+
+                // Função para lidar com cliques em elementos
+                function handleElementClick(event) {
+                    if (!isReading) return;
+                    
+                    const element = event.target;
+                    const textToSpeak = getElementDescription(element);
+                    
+                    if (textToSpeak) {
+                        speakText(textToSpeak);
+                    }
+                }
+
+                // Função para lidar com foco em elementos
+                function handleElementFocus(event) {
+                    if (!isReading) return;
+                    
+                    const element = event.target;
+                    const textToSpeak = getElementDescription(element);
+                    
+                    if (textToSpeak) {
+                        speakText(textToSpeak);
+                    }
+                }
+
+                // Função para obter a descrição de um elemento
+                function getElementDescription(element) {
+                    if (element.tagName === 'IMG') {
+                        return element.alt || 'Imagem sem descrição';
+                    } else if (element.tagName === 'A') {
+                        return `Link: ${element.textContent || element.href}`;
+                    } else if (element.tagName === 'BUTTON') {
+                        return `Botão: ${element.textContent || element.value || 'Sem texto'}`;
+                    } else if (element.tagName === 'INPUT') {
+                        return `Campo de entrada: ${element.placeholder || element.name || 'Sem descrição'}`;
+                    } else {
+                        return element.textContent || 'Elemento sem texto';
+                    }
+                }
+
+                // Função para falar texto
+                function speakText(text) {
+                    if (synth.speaking) {
+                        synth.cancel();
+                    }
+                    utterance = new SpeechSynthesisUtterance(text);
+                    
+                    // Configurar a voz (opcional)
+                    const voices = synth.getVoices();
+                    const portugueseVoice = voices.find(voice => voice.lang === 'pt-BR');
+                    if (portugueseVoice) {
+                        utterance.voice = portugueseVoice;
+                    }
+
+                    synth.speak(utterance);
+                }
+
+                // Adicionar evento de clique ao botão
+                const screenReaderBtn = document.getElementById('screenReaderBtn');
+                screenReaderBtn.addEventListener('click', toggleScreenReader);
+
+                // Adicionar atalho de teclado (tecla 'N')
+                document.addEventListener('keydown', function(event) {
+                    if (event.key === 'n' || event.key === 'N') {
+                        toggleScreenReader();
+                    }
+                });
+
+                // Focar o botão automaticamente e fornecer instruções quando a página carregar
+                window.addEventListener('load', function() {
+                    screenReaderBtn.focus();
+                    provideInitialInstructions();
+                });
+
+                // Garantir que as vozes estejam carregadas
+                if (speechSynthesis.onvoiceschanged !== undefined) {
+                    speechSynthesis.onvoiceschanged = function() {
+                        const voices = synth.getVoices();
+                        console.log('Vozes disponíveis:', voices);
+                    };
+                }
+                </script>
+                    <div class="theme-toggle-container">
+                        <button class="theme-toggle-btn hover:text-ceara-orange transition duration-300 px-1"
+                            aria-label="Opções de visualização" aria-expanded="false">
+                            <i class="fa-solid fa-circle-half-stroke"></i>
+                        </button>
+                        <div class="theme-options" style="color: #000000;">
+                            <!-- <button class="theme-option">Preto,Branco,Amarelo</button> -->
+                            <button class="theme-option" aria-label="Ativar monocromático">Monocromático</button>  
+                            <button class="theme-option" aria-label="Ativar escala de cinza invertida">Escala de cinza invertida</button>  
+                            <button class="theme-option" aria-label="Ativar cor invertida">Cor invertida</button>  
+                            <button class="theme-option" aria-label="Restaurar cores originais">Cores originais</button>
+                        </div>
+                    </div>
+                    <!-- <button class="hover:text-ceara-orange transition duration-300 px-1" aria-label="Opções de acessibilidade">
+        <i class="fas fa-universal-access"></i>
+    </button> -->
+                    <button id="vlibrasButton" class="hover:text-ceara-orange transition duration-300 px-1"
+                        aria-label="VLibras">
+                        <img src="img\libras-logo-liguagem-de-sinais-logo-2.png" alt="VLibras"
+                            style="border-radius: 14%; width: 24px; height: auto;" class="zoom">
+                    </button>
+                </div>
+    </header>
+
+    <section class="bg-gray-100 py-6 shadow-md">
+        <div class="container mx-auto px-4">
+            <h2 class="text-2xl font-bold text-center mb-4">Sumário</h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                <a href="#introducao" class="flex items-center justify-center bg-white hover:bg-ceara-green text-gray-800 hover:text-white transition duration-300 rounded-lg shadow p-3">
+                    <i class="fas fa-info-circle mr-2"></i> Introdução
+                </a>
+                <a href="#vagas" class="flex items-center justify-center bg-white hover:bg-ceara-green text-gray-800 hover:text-white transition duration-300 rounded-lg shadow p-3">
+                    <i class="fas fa-briefcase mr-2"></i> Vagas
+                </a>
+                <a href="#inscricoes" class="flex items-center justify-center bg-white hover:bg-ceara-green text-gray-800 hover:text-white transition duration-300 rounded-lg shadow p-3">
+                    <i class="fas fa-edit mr-2"></i> Inscrições
+                </a>
+                <a href="#processo" class="flex items-center justify-center bg-white hover:bg-ceara-green text-gray-800 hover:text-white transition duration-300 rounded-lg shadow p-3">
+                    <i class="fas fa-tasks mr-2"></i> Processo
+                </a>
+                <a href="#resultados" class="flex items-center justify-center bg-white hover:bg-ceara-green text-gray-800 hover:text-white transition duration-300 rounded-lg shadow p-3">
+                    <i class="fas fa-chart-bar mr-2"></i> Resultados
+                </a>
+                <a href="#matricula" class="flex items-center justify-center bg-white hover:bg-ceara-green text-gray-800 hover:text-white transition duration-300 rounded-lg shadow p-3">
+                    <i class="fas fa-user-graduate mr-2"></i> Matrícula
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <main class="container mx-auto px-4 py-12">
+        <h1 class="text-5xl font-bold text-ceara-green mb-12 text-center">Edital do Processo Seletivo 2025</h1>
+        
+        <section id="introducao" class="mb-12 bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+            <div class="bg-gradient-to-r from-ceara-green to-ceara-orange text-white py-6 px-8">
+                <h2 class="text-3xl font-semibold flex items-center">
+                    <i class="fas fa-info-circle text-4xl mr-4"></i>
+                    Introdução
+                </h2>
+            </div>
+            <div class="p-8">
+                <p class="text-gray-700 leading-relaxed">
+                    Bem-vindo ao Processo Seletivo 2025! Este edital contém todas as informações necessárias para sua participação. Leia atentamente cada seção e não hesite em entrar em contato caso tenha dúvidas.
+                </p>
+                <div class="mt-6 bg-gray-100 p-4 rounded-lg">
+                    <h3 class="font-semibold text-lg mb-2">Destaques:</h3>
+                    <ul class="list-disc list-inside space-y-2">
+                        <li>Inscrições abertas de 01/01/2025 a 31/01/2025</li>
+                        <li>Vagas para diversos cursos de graduação</li>
+                        <li>Processo totalmente online</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="vagas" class="mb-12 bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+            <div class="bg-gradient-to-r from-ceara-orange to-ceara-green text-white py-6 px-8">
+                <h2 class="text-3xl font-semibold flex items-center">
+                    <i class="fas fa-briefcase text-4xl mr-4"></i>
+                    Vagas Oferecidas
+                </h2>
+            </div>
+            <div class="p-8">
+                <p class="text-gray-700 leading-relaxed mb-6">
+                    Confira abaixo as vagas disponíveis para o Processo Seletivo 2025:
+                </p>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="py-3 px-6 text-left">Curso</th>
+                                <th class="py-3 px-6 text-left">Vagas</th>
+                                <th class="py-3 px-6 text-left">Turno</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr>
+                                <td class="py-4 px-6">Enfermagem</td>
+                                <td class="py-4 px-6">50</td>
+                                <td class="py-4 px-6">Integral</td>
+                            </tr>
+                            <tr>
+                                <td class="py-4 px-6">Informatica</td>
+                                <td class="py-4 px-6">60</td>
+                                <td class="py-4 px-6">Integral</td>
+                            </tr>
+                            <tr>
+                                <td class="py-4 px-6">Meio Ambiente</td>
+                                <td class="py-4 px-6">40</td>
+                                <td class="py-4 px-6">Integral</td>
+                            </tr>
+                            <tr>
+                                <td class="py-4 px-6">Administração</td>
+                                <td class="py-4 px-6">40</td>
+                                <td class="py-4 px-6">Integral</td>
+                            </tr>
+                            <tr>
+                                <td class="py-4 px-6">Edficações</td>
+                                <td class="py-4 px-6">40</td>
+                                <td class="py-4 px-6">Integral</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="inscricoes" class="mb-12 bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+            <div class="bg-gradient-to-r from-ceara-green to-ceara-orange text-white py-6 px-8">
+                <h2 class="text-3xl font-semibold flex items-center">
+                    <i class="fas fa-edit text-4xl mr-4"></i>
+                    Inscrições
+                </h2>
+            </div>
+            <div class="p-8">
+                <p class="text-gray-700 leading-relaxed mb-6">
+                    As inscrições para o Processo Seletivo 2025 seguem as seguintes etapas:
+                </p>
+                <ol class="list-decimal list-inside space-y-4">
+                    <li class="bg-gray-100 p-4 rounded-lg">
+                        <span class="font-semibold">Preenchimento do formulário online:</span> Acesse o site oficial e preencha todos os campos obrigatórios.
+                    </li>
+                    <li class="bg-gray-100 p-4 rounded-lg">
+                        <span class="font-semibold">Pagamento da taxa de inscrição:</span> Efetue o pagamento da taxa no valor de R$ 100,00 através dos métodos disponíveis.
+                    </li>
+                    <li class="bg-gray-100 p-4 rounded-lg">
+                        <span class="font-semibold">Confirmação da inscrição:</span> Após o pagamento, aguarde o e-mail de confirmação em até 48 horas.
+                    </li>
+                </ol>
+                <div class="mt-6 bg-yellow-100 border-l-4 border-yellow-500 p-4">
+                    <p class="font-semibold">Atenção:</p>
+                    <p>Certifique-se de que todas as informações fornecidas estão corretas antes de finalizar sua inscrição.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="processo" class="mb-12 bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+            <div class="bg-gradient-to-r from-ceara-orange to-ceara-green text-white py-6 px-8">
+                <h2 class="text-3xl font-semibold flex items-center">
+                    <i class="fas fa-tasks text-4xl mr-4"></i>
+                    Processo Seletivo
+                </h2>
+            </div>
+            <div class="p-8">
+                <p class="text-gray-700 leading-relaxed mb-6">
+                    O Processo Seletivo 2025 será realizado em duas etapas:
+                </p>
+                <div class="space-y-6">
+                    <div class="bg-gray-100 p-6 rounded-lg">
+                        <h3 class="font-semibold text-xl mb-3">1. Prova Online</h3>
+                        <ul class="list-disc list-inside space-y-2">
+                            <li>Data: 15/02/2025</li>
+                            <li>Duração: 4 horas</li>
+                            <li>Conteúdo: Conhecimentos Gerais, Matemática e Redação</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-100 p-6 rounded-lg">
+                        <h3 class="font-semibold text-xl mb-3">2. Entrevista (para cursos específicos)</h3>
+                        <ul class="list-disc list-inside space-y-2">
+                            <li>Período: 01/03/2025 a 10/03/2025</li>
+                            <li>Formato: Videoconferência</li>
+                            <li>Duração: 30 minutos por candidato</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+                <section id="resultados" class="mb-12 bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+            <div class="bg-gradient-to-r from-ceara-green to-ceara-orange text-white py-6 px-8">
+                <h2 class="text-3xl font-semibold flex items-center">
+                    <i class="fas fa-chart-bar text-4xl mr-4"></i>
+                    Resultados
+                </h2>
+            </div>
+            <div class="p-8">
+                <p class="text-gray-700 leading-relaxed mb-6">
+                    Os resultados do Processo Seletivo 2025 serão divulgados conforme o seguinte cronograma:
+                </p>
+                <div class="space-y-4">
+                    <div class="bg-gray-100 p-4 rounded-lg flex items-center">
+                        <i class="fas fa-calendar-check text-2xl text-ceara-green mr-4"></i>
+                        <div>
+                            <h3 class="font-semibold">Resultado Preliminar</h3>
+                            <p>20/03/2025 - Disponível no site oficial</p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-100 p-4 rounded-lg flex items-center">
+                        <i class="fas fa-exclamation-circle text-2xl text-ceara-orange mr-4"></i>
+                        <div>
+                            <h3 class="font-semibold">Período de Recursos</h3>
+                            <p>21/03/2025 a 23/03/2025 - Via formulário online</p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-100 p-4 rounded-lg flex items-center">
+                        <i class="fas fa-flag-checkered text-2xl text-ceara-green mr-4"></i>
+                        <div>
+                            <h3 class="font-semibold">Resultado Final</h3>
+                            <p>30/03/2025 - Publicação no site e Diário Oficial</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="matricula" class="mb-12 bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+            <div class="bg-gradient-to-r from-ceara-orange to-ceara-green text-white py-6 px-8">
+                <h2 class="text-3xl font-semibold flex items-center">
+                    <i class="fas fa-user-graduate text-4xl mr-4"></i>
+                    Matrícula
+                </h2>
+            </div>
+            <div class="p-8">
+                <p class="text-gray-700 leading-relaxed mb-6">
+                    Os candidatos aprovados deverão realizar a matrícula seguindo estas orientações:
+                </p>
+                <div class="space-y-4">
+                    <div class="bg-gray-100 p-4 rounded-lg">
+                        <h3 class="font-semibold text-lg mb-2">Período de Matrícula</h3>
+                        <p>05/04/2025 a 10/04/2025</p>
+                    </div>
+                    <div class="bg-gray-100 p-4 rounded-lg">
+                        <h3 class="font-semibold text-lg mb-2">Documentos Necessários</h3>
+                        <ul class="list-disc list-inside space-y-1">
+                            <li>RG e CPF (original e cópia)</li>
+                            <li>Certificado de Conclusão do Ensino Médio</li>
+                            <li>Histórico Escolar</li>
+                            <li>Comprovante de Residência</li>
+                            <li>2 fotos 3x4 recentes</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-100 p-4 rounded-lg">
+                        <h3 class="font-semibold text-lg mb-2">Local</h3>
+                        <p>Secretaria Acadêmica - Campus Principal</p>
+                        <p>Horário: 8h às 17h</p>
+                    </div>
+                </div>
+                <div class="mt-6 bg-yellow-100 border-l-4 border-yellow-500 p-4">
+                    <p class="font-semibold">Importante:</p>
+                    <p>O não comparecimento no período estipulado implicará na perda da vaga.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+     <footer class="bg-gradient-to-b from-black via-[#000] to-black text-white py-20">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="space-y-6">
+                    <img src="https://i.postimg.cc/yx26GhLv/lavosier-nas-3.png" alt="stgm Logo" class="h-12 transition-all duration-300 hover:grayscale-0" style="background-color: #000000;">
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="bg-[#000] hover:bg-[#4CAF50] text-white p-2 rounded-full transition-colors duration-300">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="bg-[#000] hover:bg-[#4CAF50] text-white p-2 rounded-full transition-colors duration-300">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold text-[#FFF]">Links Rápidos</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-[#FFA500] transition-colors duration-300">//stgm</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-[#FFA500] transition-colors duration-300">//stgm</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-[#FFA500] transition-colors duration-300">//stgm</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-[#FFA500] transition-colors duration-300">//stgm</a></li>
+                    </ul>
+                </div>
+                <div class="flex flex-col items-center justify-center space-y-4">
+                    <img src="https://i.postimg.cc/SsTx6bC0/Dev-2.jpg" alt="DevStgm Logo" class="h-16 w-16 transition-all duration-300 filter grayscale hover:grayscale-0">
+                    <p class="text-xs text-gray-400 text-center">Desenvolvido por Dev.Stgm</p>
+                </div>
+            </div>
+            <div class="mt-12 pt-8 border-t border-gray-800 text-center">
+                <p class="text-gray-400 text-sm">&copy; 2024 DevStgm. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <button id="back-to-top" class="fixed bottom-8 right-8 bg-ceara-green text-white p-4 rounded-full shadow-lg hidden hover:bg-ceara-orange transition-colors duration-300">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+    <script>
+        document.getElementById('vlibrasButton').addEventListener('click', function () {
+            window.open('https://www.gov.br/governodigital/pt-br/acessibilidade-e-usuario/vlibras', '_blank');
+        });
+
+    </script>
+    <script>
+        // JavaScript for smooth scrolling and back-to-top functionality
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Back to top button functionality
+        var backToTopButton = document.getElementById('back-to-top');
+        window.onscroll = function() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                backToTopButton.classList.remove('hidden');
+            } else {
+                backToTopButton.classList.add('hidden');
+            }
+        };
+        backToTopButton.addEventListener('click', function() {
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        });
+    </script>
+</body>
+</html>

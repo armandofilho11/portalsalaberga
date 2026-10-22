@@ -1,0 +1,13 @@
+{  
+  "@context": "http://schema.org",  
+  "@type": "EducationalOrganization",  
+  "name": "EEEP Salaberga Torquato Gomes de Matos",  
+  "alternateName": "Salaberga",  
+  "url": "https://salaberga.com/",  
+  "logo": "https://www.seusite.com.br/logo.png",  
+  "sameAs": [  
+    "https://www.facebook.com/groups/salaberga",  
+    "https://www.instagram.com/eeepsalabergampe/",  
+    "https://www.youtube.com/@eeepsalabergamatos4826"
+  ]  
+}

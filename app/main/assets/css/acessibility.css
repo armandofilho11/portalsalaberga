@@ -1,0 +1,235 @@
+/* Variáveis CSS para temas */
+:root {
+    --background-color: #ffffff;
+    --text-color: #000000;
+    --link-color: #FFA500;
+    --button-bg: #f0f0f0;
+    --button-color: #000000;
+    --border-color: #ddd;
+    --hover-bg: #f0f0f0;
+}
+
+/* Estilos gerais de acessibilidade */
+.accessibility-controls {
+    font-size: 16px;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: var(--background-color);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Container de controles de acessibilidade */
+.accessibility-panel {
+    position: fixed;
+    right: 20px;
+    bottom: 80px;
+    background-color: var(--background-color);
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 1000;
+    display: none;
+}
+
+.accessibility-panel.active {
+    display: block;
+}
+
+/* Estilos para o toggle de tema */
+.theme-toggle-container {
+    position: relative;
+    display: inline-block;
+    margin: 5px;
+}
+
+.theme-toggle-btn {
+    padding: 8px 16px;
+    background-color: transparent;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    /* transition: background-color 0.3s ease; */
+}
+
+
+.theme-options {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: var(--background-color);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-radius: 4px;
+    padding: 8px 0;
+    z-index: 10;
+    min-width: 200px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.theme-option {
+    display: block;
+    width: 100%;
+    padding: 8px 16px;
+    text-align: left;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--text-color);
+}
+
+.theme-option:hover,
+.theme-option:focus {
+    background-color: var(--hover-bg);
+    outline: none;
+}
+
+/* Controles de tamanho de fonte */
+.font-size-controls {
+    display: flex;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.font-size-btn {
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: var(--button-bg);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.font-size-btn:hover {
+    background-color: var(--hover-bg);
+}
+
+/* Tamanhos de fonte */
+.font-size-small { font-size: 14px; }
+.font-size-normal { font-size: 16px; }
+.font-size-large { font-size: 18px; }
+.font-size-xl { font-size: 20px; }
+.font-size-xxl { font-size: 24px; }
+
+/* Outros temas */
+.theme-high-contrast {
+    --background-color: #000000;
+    --text-color: #ffffff;
+    --link-color: #ffff00;
+    --button-bg: #ffffff;
+    --button-color: #000000;
+    --border-color: #ffffff;
+    --hover-bg: #333;
+}
+
+.theme-monochrome {
+    filter: grayscale(100%);
+}
+
+.theme-inverted-grayscale {
+    filter: grayscale(100%) invert(100%);
+}
+
+.theme-inverted-color {
+    filter: invert(100%);
+}
+
+.theme-original {
+    filter: none;
+    --background-color: initial;
+    --text-color: initial;
+    --link-color: initial;
+    --button-bg: initial;
+    --button-color: initial;
+    --border-color: initial;
+    --hover-bg: initial;
+}
+
+/* Botão arrastável */
+.draggable-button {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 9999;
+    cursor: move;
+    touch-action: none;
+    user-select: none;
+    background-color: var(--button-bg);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease;
+}
+
+.draggable-button:hover {
+    transform: scale(1.1);
+}
+
+.draggable-button button {
+    background: none;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    color: var(--button-color);
+}
+
+.draggable-button img {
+    width: 30px;
+    height: 30px;
+    pointer-events: none;
+}
+
+/* Animações */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    .accessibility-panel {
+        right: 10px;
+        bottom: 70px;
+        max-width: 90vw;
+    }
+
+    .theme-options {
+        max-width: 250px;
+    }
+
+    .font-size-controls {
+        flex-wrap: wrap;
+    }
+}
+
+/* Foco acessível */
+:focus {
+    outline: 2px solid var(--link-color);
+    outline-offset: 2px;
+}
+
+/* Transições */
+* {
+    transition: font-size 0.3s ease,
+                background-color 0.3s ease,
+                color 0.3s ease,
+                border-color 0.3s ease,
+                box-shadow 0.3s ease;
+}
+
+/* Suporte para modo de alto contraste do sistema */
+@media (forced-colors: active) {
+    * {
+        forced-color-adjust: none;
+    }
+}

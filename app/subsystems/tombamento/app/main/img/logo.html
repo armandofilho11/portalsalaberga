@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Logo Gestão Patrimonial</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link 
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" 
+    rel="stylesheet">
+  <style>
+    body {
+      background:   #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+    }
+
+    .symbol {
+      width: 60px;
+      height: 60px;
+      position: relative;
+    }
+
+    .diamond {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(45deg, #000000, #000000, #000000);
+      border-radius: 15px;
+      transform: rotate(45deg);
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .diamond::after {
+      content: '';
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      background: #ffffff;
+      border-radius: 10px;
+      top: 10px;
+      left: 10px;
+    }
+
+    /* Aplicando corretamente o S via SVG */
+    .symbol svg {
+      width: 55px;
+      height: 80px;
+      position: absolute;
+      top: 0;
+      left: 3px;
+    }
+
+    .text {
+      font-size: 28px;
+      font-weight: 700;
+      background: linear-gradient(45deg, #000000, #000000);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      
+    }
+  </style>
+</head>
+<body>
+  <div class="logo">
+    <div class="symbol">
+      <div class="diamond"></div>
+      <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+        <text x="50%" y="55%" text-anchor="middle" 
+              font-family="Poppins" font-size="70" font-weight="700" 
+              fill="url(#grad1)">
+          S
+        </text>
+        <defs>
+          <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#000000;" />
+            <stop offset="50%" style="stop-color:#000000;" />
+            <stop offset="100%" style="stop-color:#000000;" />
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+    <div class="text">Gestão <br>Patrimonial</div>
+  </div>
+</body>
+</html> 

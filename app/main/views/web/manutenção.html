@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salaberga STGM - Em Desenvolvimento</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="shortcut icon" href="img\Design sem nome.svg" type="image/x-icon">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
+
+        .bg-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23008c45' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .float {
+            animation: float 3s ease-in-out infinite;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'ceara-green': '#008C45',
+                        'ceara-orange': '#FFA500',
+                    },
+                    fontFamily: {
+                        'sans': ['Montserrat', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gray-50 min-h-screen flex items-center justify-center p-5 font-sans bg-pattern">
+    <div class="relative w-full max-w-4xl">
+        <div
+            class="absolute inset-0 bg-gradient-to-br from-ceara-green to-ceara-orange rounded-3xl transform rotate-1 shadow-lg">
+        </div>
+        <div class="relative bg-white rounded-3xl shadow-xl overflow-hidden">
+            <div class="flex flex-col md:flex-row">
+                <div class="md:w-1/2 p-12 flex flex-col justify-center">
+                    <h1 class="text-5xl font-extrabold mb-6 text-ceara-green leading-tight">Salaberga STGM</h1>
+                    <h2 class="text-3xl font-bold mb-4 text-ceara-orange">Em Desenvolvimento</h2>
+                    <p class="text-gray-600 mb-8 text-lg leading-relaxed">Estamos trabalhando arduamente para trazer uma
+                        experiência incrível. Prepare-se para algo extraordinário!</p>
+                    <div class="flex items-center space-x-2 mb-8">
+                        <div class="w-16 h-1 bg-ceara-green rounded-full animate-pulse"></div>
+                        <div class="w-4 h-4 bg-ceara-orange rounded-full animate-bounce"></div>
+                        <div class="w-16 h-1 bg-ceara-green rounded-full animate-pulse"></div>
+                    </div>
+                    <button
+                        class="bg-ceara-orange text-white font-bold py-2 px-4 rounded-full hover:bg-ceara-green transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-ceara-orange focus:ring-opacity-50"
+                        onclick="window.location.href='about:blank'">
+                        OK!!!
+                    </button>
+                </div>
+                <div
+                    class="md:w-1/2 bg-gradient-to-br from-ceara-green to-ceara-orange p-12 flex items-center justify-center">
+                    <img src="img\Design sem nome.svg" alt="Em desenvolvimento"
+                        class="w-64 h-64 object-contain filter drop-shadow-lg float">
+                </div>
+            </div>
+            <div class="bg-gray-100 py-4 px-12 text-center">
+                <p class="text-sm text-gray-600">Desenvolvido com dedicação pela equipe <span
+                        class="font-bold text-ceara-orange">Devs STGM</span></p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

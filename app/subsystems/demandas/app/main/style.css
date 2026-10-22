@@ -1,0 +1,370 @@
+*{
+    margin: 0;
+}
+/* histórico de demandas */
+.titulo-salaberga{
+    margin: 2%;
+    font-size:16px;
+    color: rgb(0, 122, 51);
+}
+.linha-1{
+    width: 99%;
+    margin-bottom: 2%;
+    color: black;
+    height: 2px;
+    border: 1px solid rgb(175, 175, 175);
+}
+
+ .demandas{
+    border: 2px solid rgb(0, 122, 51);
+    border-radius: 20px;
+    width: 95%;
+    max-height: 78vh;
+    min-height: 200px;
+    margin-top:1%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    display: flex;
+    overflow-y: auto;
+   
+    margin-left: 2%;
+    flex-direction: column;
+    padding: 25px;
+    gap: 20px;
+} 
+
+
+.filtro{
+   margin-top: 3%;
+   margin-left: 3%;
+   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+   border-radius: 3px;
+}
+.alta{
+    width: 98%;
+    /* height: 50%; */
+    background-color: white;
+    border-radius: 20px;
+    margin-top:4%;
+    border-left: 15px solid #e53935;
+     display: flex;
+      flex-wrap: wrap;
+} 
+.media{
+     width: 98%;
+    /* height: 50%; */
+    background-color: white;
+    border-radius: 20px;
+    margin-top:4%;
+    border-left: 15px solid rgb(255,165,0);;
+     display: flex;
+      flex-wrap: wrap;
+}
+.finalizada{
+      width: 98%;
+    /* height: 50%; */
+    background-color: white;
+    border-radius: 20px;
+    margin-top:4%;
+    border-left: 15px solid rgb(0,122,51);
+     display: flex;
+      flex-wrap: wrap;
+}
+.titulo-demanda{
+    font-weight: 700;
+    font-size: 26px;
+    margin-left: 3%;
+    margin-top: 1%;
+}
+
+.linha-2{
+    width: 95%;
+    margin-left: 2%;
+    margin-right: 1%;
+    color: black;
+    border: 1px solid rgb(175, 175, 175);
+    margin-top: 0px;
+}
+.nivel-alta{
+    opacity: 1;
+    background: rgb(248, 81, 81);
+    border-radius: 20px;
+    width: 13%;
+    font-weight: 500;
+    margin-left: 3%;
+    margin-top: 1%;
+}
+
+.nivel-media{
+    opacity: 1;
+    background: rgb(255,165,0);
+    border-radius: 20px;
+    width: 13%;
+    font-weight: 500;
+    margin-left: 3%;
+    margin-top: 1%;
+}
+.ja-finalizada{
+     opacity: 1;
+    background: rgb(0,122,51);
+    border-radius: 20px;
+    width: 17%;
+    font-weight: 500;
+    margin-left: 3%;
+    margin-top: 1%;
+}
+
+.area{
+ width: 40%;
+ padding: 8px;
+ height: 35%;
+}
+
+.area-descricao{
+ width: 60%;
+ height: 35%;
+ display: flex;
+ align-items: center;
+}
+
+ .caixa-descricao {
+    width: 95%;
+    height: 80%;
+    margin-top: 1%;
+    background-color: #f5f5f5;
+    border: 2px solid #555;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    font-family: Arial, sans-serif;
+    overflow-y: auto;
+}
+
+.caixa-descricao h3 {
+    margin-top: 0;
+    color: #333;
+}
+
+.caixa-descricao p {
+    color: #555;
+    font-size: 14px;
+} 
+
+.tabela-demandas{
+    width: 95%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+.tabela-demandas th{
+    background: rgb(0,122,51);
+    color: white;
+    padding: 14px;  
+    font-size: 15px;
+    text-align: left;
+}
+
+.tabela-demandas td{
+    padding: 14px;
+    border-bottom: 1px solid #e5e5e5;
+    vertical-align: top;
+}
+
+.tabela-demandas td p{
+    margin: 5px 0;
+}
+
+.tabela-demandas tbody tr:hover{
+    background: #f6f6f6;
+}
+
+
+/* registro de ponta */
+
+.titulo-salaberga{
+    margin: 2%;
+    font-size:20px;
+    color: rgb(0, 122, 51);
+}
+
+.linha-1{
+    width: 99%;
+    margin-bottom: 2%;
+    color: black;
+    height: 2px;
+    border: 1px solid rgb(175, 175, 175);
+}
+.saida{
+  width: 95%;
+  height: 60vh;
+  border: 2px solid;
+  border-image: linear-gradient(45deg, #007A33, #ffa500) 1;
+  margin-left: 2%;
+  margin-top: 3%;
+   padding: 2px;
+}
+
+h2{
+    font-weight: 900; 
+}
+
+
+/* modal */
+
+
+/* FUNDO */
+#modal{
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100vh;
+
+    background: rgba(0,0,0,0.5);
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    z-index: 999;
+}
+
+/* CAIXA */
+.modal-content{
+    background: white;
+
+    width: 90%;
+    max-width: 500px;
+
+    padding: 30px;
+
+    border-radius: 15px;
+
+    position: relative;
+
+    animation: aparecer 0.3s ease;
+}
+
+/* TÍTULO */
+.modal-content h2{
+    margin-bottom: 20px;
+
+    color: #14532d;
+}
+
+/* FECHAR */
+#fecharModal{
+    position: absolute;
+
+    top: 10px;
+    right: 15px;
+
+    border: none;
+    background: none;
+
+    font-size: 30px;
+
+    cursor: pointer;
+
+    color: gray;
+}
+
+/* CAMPOS */
+.campo{
+    display: flex;
+    flex-direction: column;
+
+    margin-bottom: 15px;
+}
+
+.campo label{
+    margin-bottom: 5px;
+
+    font-weight: bold;
+}
+
+.campo input,
+.campo select,
+.campo textarea{
+    padding: 12px;
+
+    border: 1px solid #ccc;
+
+    border-radius: 8px;
+
+    outline: none;
+
+    font-size: 15px;
+}
+
+/* TEXTAREA */
+.campo textarea{
+    resize: none;
+
+    height: 100px;
+}
+
+/* BOTÃO */
+.btn-enviar{
+    width: 100%;
+
+    padding: 14px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: #14532d;
+
+    color: white;
+
+    font-size: 16px;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+}
+
+.btn-enviar:hover{
+    background: #166534;
+}
+
+/* ANIMAÇÃO */
+@keyframes aparecer{
+
+    from{
+        opacity: 0;
+        transform: scale(0.8);
+    }
+
+    to{
+        opacity: 1;
+        transform: scale(1);
+    }
+
+}
+
+#modaladm{
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100vh;
+
+    background: rgba(0,0,0,0.5);
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    z-index: 999;
+}

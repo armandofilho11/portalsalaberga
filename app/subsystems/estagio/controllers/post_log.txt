@@ -1,0 +1,131 @@
+Array
+(
+    [id_editar_vaga] => 49
+    [empresa_editar_vaga] => 43
+    [perfil_editar_vaga] => 3
+    [quantidade_editar_vaga] => 7
+    [quant_candidatos_editar_vaga] => 7
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2222-02-22
+    [hora_editar_vaga] => 22:02
+)
+Array
+(
+    [id_editar_vaga] => 53
+    [empresa_editar_vaga] => 52
+    [perfil_editar_vaga] => 2
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 2
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2025-06-04
+    [hora_editar_vaga] => 13:00
+)
+Array
+(
+    [id_editar_empresa] => 57
+    [nome_editar_empresa] => Pref. MM - FITEC
+    [nome_contato_editar_empresa] => Nilsinho
+    [endereco_editar_empresa] => R. Mundica Paula, 418 - Outra Banda, Maranguape - CE, 61940-145 (Casa Chá)
+    [contato_editar_empresa] => 85992511565
+)
+Array
+(
+    [id_editar_vaga] => 55
+    [empresa_editar_vaga] => 57
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 2
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 
+    [hora_editar_vaga] => 
+)
+Array
+(
+    [id_editar_vaga] => 36
+    [empresa_editar_vaga] => 45
+    [perfil_editar_vaga] => 1
+    [quantidade_editar_vaga] => 3
+    [quant_candidatos_editar_vaga] => 3
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 
+    [hora_editar_vaga] => 
+)
+Array
+(
+    [id_editar_vaga] => 56
+    [empresa_editar_vaga] => 58
+    [perfil_editar_vaga] => 1
+    [quantidade_editar_vaga] => 2
+    [quant_candidatos_editar_vaga] => 5
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2025-06-06
+    [hora_editar_vaga] => 08:30
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+    [id_editar_vaga] => 61
+    [empresa_editar_vaga] => 59
+    [perfil_editar_vaga] => 1
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 2
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2025-07-07
+    [hora_editar_vaga] => 12:54
+)
+Array
+(
+    [id_excluir_vaga] => 60
+)
+Array
+(
+    [id_editar_empresa] => 57
+    [nome_editar_empresa] => PMM - FITEC
+    [nome_contato_editar_empresa] => Nilsinho
+    [endereco_editar_empresa] => R. Mundica Paula, 418 - Outra Banda, Maranguape - CE, 61940-145 (Casa Chá)
+    [contato_editar_empresa] => 85992511565
+)
+Array
+(
+    [id_editar_empresa] => 45
+    [nome_editar_empresa] => PMM - Sec Edu
+    [nome_contato_editar_empresa] => Edson
+    [endereco_editar_empresa] => Rua Dr. Argeu Braga Herbster, 960 - CEP: 61942-005 
+    [contato_editar_empresa] => 85987372709
+)
+Array
+(
+    [id_editar_empresa] => 58
+    [nome_editar_empresa] => PMM - SECULT
+    [nome_contato_editar_empresa] => Wandemberg
+    [endereco_editar_empresa] => R. Maj. Agostinho, 29 - Preguiça, Maranguape - CE, 61941-100
+    [contato_editar_empresa] => 85986058823
+)
+Array
+(
+    [id_editar_empresa] => 45
+    [nome_editar_empresa] => PMM - EDUCAÇÃO
+    [nome_contato_editar_empresa] => Edson
+    [endereco_editar_empresa] => Rua Dr. Argeu Braga Herbster, 960 - CEP: 61942-005 
+    [contato_editar_empresa] => 85987372709
+)
+Array
+(
+    [acao] => editar
+    [id_aluno] => 132
+    [nome] => KAUANNA TIBURCIO DA CRUZ
+    [contato] => 85986659636
+    [medias] => 0
+    [email] => kauanna.cruz@aluno.ce.gov.br
+    [projetos] => 
+    [perfil_opc1] => design
+    [perfil_opc2] => design
+    [ocorrencia] => 0
+    [custeio] => 0
+    [entregas_individuais] => 0
+    [entregas_grupo] => 0
+)

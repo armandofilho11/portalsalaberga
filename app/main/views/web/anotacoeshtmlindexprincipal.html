@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EEEP Salaberga Torquato Gomes de Matos - Hub Educacional</title>
+    <meta name="description" content="EEEP Salaberga Torquato Gomes de Matos - Educação de qualidade para um futuro brilhante">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/timeline.js"></script>
+    <script src="js/parallax.js"></script>
+    <script src="js/movelbtn.js"></script>
+    <script src="js/timeline-function.js"></script>
+    <script src="main.js"></script>
+    <link rel="stylesheet" href="../main/assets/css/timeline.css">
+    <link rel="stylesheet" href="../main/assets/css/acessibility.css">
+    <link rel="stylesheet" href="../main/assets/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <link rel="shortcut icon" href="img\Design sem nome.svg" type="image/x-icon">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'ceara-green': '#008C45',
+                        'ceara-orange': '#FFA500',
+                        'ceara-white': '#FFFFFF',
+                        primary: '#4CAF50',
+                        secondary: '#FFB74D',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gallery-img {
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-img:hover {
+            transform: scale(1.05);
+        }
+
+        #imageModal {
+            transition: opacity 0.3s ease;
+        }
+
+        #modalImage {
+            transition: opacity 0.3s ease;
+        }
+
+        #prevButton,
+        #nextButton {
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 50%;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        section {
+            opacity: 0;
+        }
+
+        .hover-scale {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .hover-scale:hover {
+            transform: scale(1.05);
+        }
+
+
+        .section.lb.page-section {
+            background-color: #f8f9fa;
+            color: #333;
+            padding: 80px 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title h3 {
+            color: #007a33;
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title h3::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50%;
+            height: 3px;
+            background-color: #ffa500;
+        }
+
+        .section-title p.lead {
+            color: #555;
+            font-size: 20px;
+            line-height: 1.8;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .img-bg-01,
+        .img-bg-02,
+        .img-bg-03,
+        .img-bg-04 {
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+            filter: brightness(0.6);
+        }
+
+        .img-bg-01 {
+            background-image: url(data:image/jpeg;base64,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);
+        }
+
+        .img-bg-02 {
+            background-image: url(https://eeepsalabergampe.netlify.app/img/salas.jpg);
+        }
+
+        .img-bg-03 {
+            background-image: url(https://eeepsalabergampe.netlify.app/img/kml2.jpges/img-03.jpg);
+        }
+
+        .img-bg-04 {
+            background-image: url(https://eeepsalabergampe.netlify.app/img/klm3.jpg);
+        }
+
+        .fade-in {
+            opacity: 0;
+            transition: opacity 0.5s ease-in;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 1200px) {
+            .container {
+                max-width: 960px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .container {
+                max-width: 720px;
+            }
+
+            .section-title h3 {
+                font-size: 36px;
+            }
+
+            .section-title p.lead {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                max-width: 540px;
+            }
+
+            .section-title h3 {
+                font-size: 32px;
+            }
+
+            .section-title p.lead {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .container {
+                max-width: 100%;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fadeIn {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        body {
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .content-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            will-change: transform;
+        }
+    </style>
+</head>
+
+<body class="font-sans bg-gray-50" x-data="{ mobileMenuOpen: false }">
+    <header class="bg-ceara-green text-ceara-white sticky top-0 z-50 shadow-md">
+        <div class="container mx-auto px-4">
+            <nav class="flex items-center justify-between flex-wrap py-4">
+                <!-- Accessibility Controls -->
+                <div class="flex items-center space-x-2">
+                    <span class="text-sm"><b>Acessibilidade</b></span>
+                    <button class="text-sm hover:text-ceara-orange transition duration-300 px-1"
+                        aria-label="Diminuir tamanho do texto"><i class="fa-solid fa-a"></i><b>-</b></button>
+                    <button class="text-sm hover:text-ceara-orange transition duration-300 px-1"
+                        aria-label="Tamanho padrão do texto"><i class="fa-solid fa-a"></i></button>
+                    <button class="text-sm hover:text-ceara-orange transition duration-300 px-1"
+                        aria-label="Aumentar tamanho do texto"><i class="fa-solid fa-a"></i><b>+</b></button>
+                  <button id="screenReaderBtn"
+        class="text-sm hover:text-ceara-orange transition duration-300 px-1 flex items-center"
+        aria-label="Ativar narração de tela">
+    <i class="fa-solid fa-ear-listen mr-1"></i>
+</button>
+
+<script>
+// Variáveis globais
+let isReading = false;
+let currentSection = 0;
+const synth = window.speechSynthesis;
+let utterance = null;
+
+// Função para iniciar ou parar a narração
+function toggleScreenReader() {
+    if (isReading) {
+        stopReading();
+    } else {
+        startReading();
+    }
+}
+
+// Função para iniciar a narração
+function startReading() {
+    isReading = true;
+    currentSection = 0;
+    readNextSection();
+    updateButtonState();
+    window.addEventListener('scroll', handleScroll);
+    document.addEventListener('click', handleElementClick);
+    document.addEventListener('focus', handleElementFocus, true);
+    announceStatus('Narração ativada');
+}
+
+// Função para parar a narração
+function stopReading() {
+    if (synth.speaking) {
+        synth.cancel();
+    }
+    isReading = false;
+    updateButtonState();
+    window.removeEventListener('scroll', handleScroll);
+    document.removeEventListener('click', handleElementClick);
+    document.removeEventListener('focus', handleElementFocus, true);
+    announceStatus('Narração desativada');
+}
+
+// Função para ler a próxima seção
+function readNextSection() {
+    const sections = document.querySelectorAll('section, article, div.section');
+    if (currentSection < sections.length) {
+        const textToRead = sections[currentSection].innerText;
+        speakText(textToRead);
+    } else {
+        stopReading();
+    }
+}
+
+// Função para lidar com o evento de rolagem
+function handleScroll() {
+    if (!isReading) return;
+
+    const sections = document.querySelectorAll('section, article, div.section');
+    const scrollPosition = window.scrollY + window.innerHeight / 2;
+
+    for (let i = 0; i < sections.length; i++) {
+        const section = sections[i];
+        const sectionTop = section.offsetTop;
+        const sectionBottom = sectionTop + section.offsetHeight;
+
+        if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+            if (i !== currentSection) {
+                currentSection = i;
+                if (synth.speaking) {
+                    synth.cancel();
+                }
+                readNextSection();
+            }
+            break;
+        }
+    }
+}
+
+// Função para rolar até a seção atual
+function scrollToSection(sectionIndex) {
+    const sections = document.querySelectorAll('section, article, div.section');
+    if (sections[sectionIndex]) {
+        sections[sectionIndex].scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+// Função para atualizar o estado visual do botão
+function updateButtonState() {
+    const btn = document.getElementById('screenReaderBtn');
+    if (isReading) {
+        btn.classList.add('text-ceara-orange');
+        btn.setAttribute('aria-label', 'Desativar narração de tela');
+    } else {
+        btn.classList.remove('text-ceara-orange');
+        btn.setAttribute('aria-label', 'Ativar narração de tela');
+    }
+}
+
+// Função para anunciar o status da narração
+function announceStatus(message) {
+    speakText(message);
+}
+
+// Função para fornecer instruções iniciais
+function provideInitialInstructions() {
+    const instructions = "Bem-vindo. Para ativar a narração de tela, pressione a tecla N ou use a tecla Tab para navegar até o botão de ativação e pressione Enter.";
+    speakText(instructions);
+}
+
+// Função para lidar com cliques em elementos
+function handleElementClick(event) {
+    if (!isReading) return;
+    
+    const element = event.target;
+    const textToSpeak = getElementDescription(element);
+    
+    if (textToSpeak) {
+        speakText(textToSpeak);
+    }
+}
+
+// Função para lidar com foco em elementos
+function handleElementFocus(event) {
+    if (!isReading) return;
+    
+    const element = event.target;
+    const textToSpeak = getElementDescription(element);
+    
+    if (textToSpeak) {
+        speakText(textToSpeak);
+    }
+}
+
+// Função para obter a descrição de um elemento
+function getElementDescription(element) {
+    if (element.tagName === 'IMG') {
+        return element.alt || 'Imagem sem descrição';
+    } else if (element.tagName === 'A') {
+        return `Link: ${element.textContent || element.href}`;
+    } else if (element.tagName === 'BUTTON') {
+        return `Botão: ${element.textContent || element.value || 'Sem texto'}`;
+    } else if (element.tagName === 'INPUT') {
+        return `Campo de entrada: ${element.placeholder || element.name || 'Sem descrição'}`;
+    } else {
+        return element.textContent || 'Elemento sem texto';
+    }
+}
+
+// Função para falar texto
+function speakText(text) {
+    if (synth.speaking) {
+        synth.cancel();
+    }
+    utterance = new SpeechSynthesisUtterance(text);
+    
+    // Configurar a voz (opcional)
+    const voices = synth.getVoices();
+    const portugueseVoice = voices.find(voice => voice.lang === 'pt-BR');
+    if (portugueseVoice) {
+        utterance.voice = portugueseVoice;
+    }
+
+    synth.speak(utterance);
+}
+
+// Adicionar evento de clique ao botão
+const screenReaderBtn = document.getElementById('screenReaderBtn');
+screenReaderBtn.addEventListener('click', toggleScreenReader);
+
+// Adicionar atalho de teclado (tecla 'N')
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'n' || event.key === 'N') {
+        toggleScreenReader();
+    }
+});
+
+// Focar o botão automaticamente e fornecer instruções quando a página carregar
+window.addEventListener('load', function() {
+    screenReaderBtn.focus();
+    provideInitialInstructions();
+});
+
+// Garantir que as vozes estejam carregadas
+if (speechSynthesis.onvoiceschanged !== undefined) {
+    speechSynthesis.onvoiceschanged = function() {
+        const voices = synth.getVoices();
+        console.log('Vozes disponíveis:', voices);
+    };
+}
+</script>
+                    <div class="theme-toggle-container">
+                        <button class="theme-toggle-btn hover:text-ceara-orange transition duration-300 px-1"
+                            aria-label="Opções de visualização" aria-expanded="false">
+                            <i class="fa-solid fa-circle-half-stroke"></i>
+                        </button>
+                        <div class="theme-options" style="color: #000000;">
+                            <!-- <button class="theme-option">Preto,Branco,Amarelo</button> -->
+                            <button class="theme-option">Contraste aumentado</button>
+                            <button class="theme-option">Monocromático</button>
+                            <button class="theme-option">Escala de cinza invertida</button>
+                            <button class="theme-option">Cor invertida</button>
+                            <button class="theme-option">Cores originais</button>
+                        </div>
+                    </div>
+                    <!-- <button class="hover:text-ceara-orange transition duration-300 px-1" aria-label="Opções de acessibilidade">
+        <i class="fas fa-universal-access"></i>
+    </button> -->
+                    <button id="vlibrasButton" class="hover:text-ceara-orange transition duration-300 px-1"
+                        aria-label="VLibras">
+                        <img src="img\libras-logo-liguagem-de-sinais-logo-2.png" alt="VLibras"
+                            style="border-radius: 14%; width: 24px; height: auto;" class="zoom">
+                    </button>
+                </div>
+
+                <!-- Main Navigation -->
+                <div class="flex items-center">
+                    <div class="hidden lg:flex space-x-4">
+                        <a href="#home" class="text-ceara-white hover:text-ceara-orange transition duration-300">
+                            <i class="fas fa-home mr-1"></i> Início
+                        </a>
+                        <a href="#adm" class="text-ceara-white hover:text-ceara-orange transition duration-300">
+                            <i class="fas fa-info-circle mr-1"></i> Sobre
+                        </a>
+                        <a href="#cursos" class="text-ceara-white hover:text-ceara-orange transition duration-300">
+                            <i class="fas fa-book mr-1"></i> Cursos
+                        </a>
+                        <a href="#eventos" class="text-ceara-white hover:text-ceara-orange transition duration-300">
+                            <i class="fas fa-calendar-alt mr-1"></i> Eventos
+                        </a>
+                        <a href="#noticias" class="text-ceara-white hover:text-ceara-orange transition duration-300">
+                            <i class="fas fa-newspaper mr-1"></i> Notícias
+                        </a>
+                        <a href="#galeria" class="text-ceara-white hover:text-ceara-orange transition duration-300">
+                            <i class="fas fa-images mr-1"></i> Galeria
+                            <a href="./cadastro.html"
+                                class="text-ceara-white hover:text-ceara-orange transition duration-300 flex items-center space-x-2">
+                                <i class="fa-regular fa-circle-user"></i>
+                                <span class="font-semibold">Cadastro</span>
+                            </a>
+                    </div>
+                    <div class="block lg:hidden">
+                        <button @click="mobileMenuOpen = !mobileMenuOpen"
+                            class="flex items-center px-3 py-2 border rounded text-ceara-orange border-ceara-orange hover:text-ceara-white hover:border-ceara-white transition duration-300">
+                            <svg class="fill-current h-3 w-3" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <title>Menu</title>
+                                <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Menu -->
+            <div :class="{'block': mobileMenuOpen, 'hidden': !mobileMenuOpen}" class="lg:hidden">
+                <div class="py-2 space-y-2">
+                    <a href="#home" class="block text-ceara-white hover:text-ceara-orange transition duration-300">
+                        <i class="fas fa-home mr-1"></i> Início
+                    </a>
+                    <a href="/adm" class="block text-ceara-white hover:text-ceara-orange transition duration-300">
+                        <i class="fas fa-info-circle mr-1"></i> Sobre
+                    </a>
+                    <a href="#cursos" class="block text-ceara-white hover:text-ceara-orange transition duration-300">
+                        <i class="fas fa-book mr-1"></i> Cursos
+                    </a>
+                    <a href="#eventos" class="block text-ceara-white hover:text-ceara-orange transition duration-300">
+                        <i class="fas fa-calendar-alt mr-1"></i> Eventos
+                    </a>
+                    <a href="#noticias" class="block text-ceara-white hover:text-ceara-orange transition duration-300">
+                        <i class="fas fa-newspaper mr-1"></i> Notícias
+                    </a>
+                    <a href="#galeria" class="block text-ceara-white hover:text-ceara-orange transition duration-300">
+                        <i class="fas fa-images mr-1"></i> Galeria
+                    </a>
+                    <a href="./cadastro.html"
+                        class="text-ceara-white hover:text-ceara-orange transition duration-300 flex items-center space-x-2">
+                        <i class="fa-regular fa-circle-user"></i>
+                        <span class="font-semibold">Cadastro</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="home"
+            class="relative bg-cover bg-center bg-no-repeat min-h-screen flex flex-col items-center justify-center fade-in overflow-hidden">
+            <video class="absolute top-0 left-0 w-full h-full object-cover z-0" autoplay loop muted playsinline>
+                <source src="img\Design sem nome.mp4" type="video/mp4">
+                Seu navegador não suporta o elemento de vídeo.
+            </video>
+            <div class="absolute inset-0 bg-black opacity-50"></div>
+
+            <!-- Logo -->
+            <div
+                class="absolute top-4 left-4 md:top-8 md:left-8 z-20 w-full md:w-auto flex justify-center md:justify-start">
+                <!-- <img src="img\Design sem nome.svg" alt="Logo da EEEP Salaberga Torquato Gomes de Matos" class="h-16 md:h-14"> -->
+            </div>
+
+            <div class="container mx-auto px-4 text-center relative z-10 mt-20 md:mt-0">
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-white leading-tight">EEEP Salaberga
+                    Torquato<br>Gomes de Matos</h1>
+                <p class="text-xl md:text-2xl mb-12 text-white">Educação de qualidade para um futuro brilhante</p>
+                <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                    <a href="#cursos"
+                        class="bg-ceara-white text-ceara-green hover:bg-ceara-orange hover:text-ceara-white font-bold py-3 px-6 rounded-full transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-110 shadow-lg flex items-center justify-center">
+                        <i class="fas fa-graduation-cap mr-2"></i> Conheça nossos cursos
+                    </a>
+                    <a href="./login.html"
+                        class="bg-transparent border-2 border-white text-white hover:bg-white hover:text-ceara-green font-bold py-3 px-6 rounded-full transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-110 shadow-lg flex items-center justify-center">
+                        <i class="fas fa-user mr-2"></i> Login
+                    </a>
+                </div>
+            </div>
+            <div class="absolute bottom-0 left-0 right-0 text-center pb-8">
+                <a href="#sobre" class="text-white hover:text-ceara-orange transition duration-300">
+                    <i class="fas fa-chevron-down text-3xl animate-bounce"></i>
+                </a>
+            </div>
+        </section>
+
+        <section class="section lb page-section">
+            <div class="container">
+                <div class="section-title row text-center">
+                    <div class="col-md-8 offset-md-2">
+                        <h3>Nossa Historia</h3>
+                        <p class="lead">Lorem Ipsum dolroin gravida nibh vel velit auctor aliquet. Aenean sollicitudin,
+                            lorem quis bibendum auctor, nisi elit consequat ipsum, nec sagittis sem!</p>
+                    </div>
+                </div><!-- end title -->
+                <div class="timeline timeline--loaded timeline--horizontal" style="opacity: 1;">
+                    <div class="timeline__wrap">
+                        <div class="timeline__items"
+                            style="width: 1658px; height: 682px; transform: translate3d(0px, 0px, 0px);">
+                            <div class="timeline__item timeline__item--top fadeIn"
+                                style="width: 207.25px; height: 341px;">
+                                <div class="timeline__item__inner">
+                                    <div class="timeline__content__wrap">
+                                        <div class="timeline__content img-bg-01">
+                                            <h2>2018</h2>
+                                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer
+                                                dignissim neque condimentum lacus dapibus. Lorem
+                                                ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="timeline__item timeline__item--bottom fadeIn"
+                                style="width: 207.25px; height: 341px; transform: translateY(341px);">
+                                <div class="timeline__item__inner">
+                                    <div class="timeline__content__wrap">
+                                        <div class="timeline__content img-bg-02">
+                                            <h2>2015</h2>
+                                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer
+                                                dignissim neque condimentum lacus dapibus. Lorem
+                                                ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="timeline__item timeline__item--top fadeIn"
+                                style="width: 207.25px; height: 341px;">
+                                <div class="timeline__item__inner">
+                                    <div class="timeline__content__wrap">
+                                        <div class="timeline__content img-bg-03">
+                                            <h2>2014</h2>
+                                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer
+                                                dignissim neque condimentum lacus dapibus. Lorem
+                                                ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="timeline__item timeline__item--bottom fadeIn"
+                                style="width: 207.25px; height: 341px; transform: translateY(341px);">
+                                <div class="timeline__item__inner">
+                                    <div class="timeline__content__wrap">
+                                        <div class="timeline__content img-bg-04">
+                                            <h2>2012</h2>
+                                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer
+                                                dignissim neque condimentum lacus dapibus. Lorem
+                                                ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="timeline__item timeline__item--top fadeIn"
+                                style="width: 207.25px; height: 341px;">
+                                <div class="timeline__item__inner">
+                                    <div class="timeline__content__wrap">
+                                        <div class="timeline__content img-bg-01">
+                                            <h2>2010</h2>
+                                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer
+                                                dignissim neque condimentum lacus dapibus. Lorem
+                                                ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="timeline__item timeline__item--bottom"
+                                style="width: 207.25px; height: 341px; transform: translateY(341px);">
+                                <div class="timeline__item__inner">
+                                    <div class="timeline__content__wrap">
+                                        <div class="timeline__content img-bg-02">
+                                            <h2>2007</h2>
+                                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer
+                                                dignissim neque condimentum lacus dapibus. Lorem
+                                                ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="timeline__item timeline__item--top" style="width: 207.25px; height: 341px;">
+                                <div class="timeline__item__inner">
+                                    <div class="timeline__content__wrap">
+                                        <div class="timeline__content img-bg-03">
+                                            <h2>2004</h2>
+                                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer
+                                                dignissim neque condimentum lacus dapibus. Lorem
+                                                ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="timeline__item timeline__item--bottom"
+                                style="width: 207.25px; height: 341px; transform: translateY(341px);">
+                                <div class="timeline__item__inner">
+                                    <div class="timeline__content__wrap">
+                                        <div class="timeline__content img-bg-04">
+                                            <h2>2002</h2>
+                                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer
+                                                dignissim neque condimentum lacus dapibus. Lorem
+                                                ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="timeline-nav-button timeline-nav-button--prev" disabled=""
+                        style="top: 341px;">Previous</button><button
+                        class="timeline-nav-button timeline-nav-button--next" style="top: 341px;">Next</button><span
+                        class="timeline-divider" style="top: 341px;"></span>
+                </div>
+            </div>
+        </section>
+
+        <section id="cursos" class="bg-gray-100 py-24 fade-in" x-data="{ activeTab: 'todos' }">
+            <div class="container mx-auto px-4">
+                <h2 class="text-4xl font-bold text-center mb-12 text-ceara-green">Nossos Cursos</h2>
+                <div class="flex justify-center mb-8">
+                    <button @click="activeTab = 'todos'"
+                        :class="{ 'bg-ceara-green text-ceara-white': activeTab === 'todos', 'bg-ceara-white text-ceara-green': activeTab !== 'todos' }"
+                        class="px-6 py-2 rounded-l-full focus:outline-none transition duration-300 ease-in-out">Todos</button>
+                    <button @click="activeTab = 'tecnicos'"
+                        :class="{ 'bg-ceara-green text-ceara-white': activeTab === 'tecnicos', 'bg-ceara-white text-ceara-green': activeTab !== 'tecnicos' }"
+                        class="px-6 py-2 focus:outline-none transition duration-300 ease-in-out">Técnicos</button>
+                    <button @click="activeTab = 'regulares'"
+                        :class="{ 'bg-ceara-green text-ceara-white': activeTab === 'regulares', 'bg-ceara-white text-ceara-green': activeTab !== 'regulares' }"
+                        class="px-6 py-2 rounded-r-full focus:outline-none transition duration-300 ease-in-out">Regulares</button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div x-show="activeTab === 'todos' || activeTab === 'tecnicos'"
+                        class="bg-white rounded-lg shadow-lg overflow-hidden hover-scale">
+                        <img src="https://via.placeholder.com/400x250" alt="Curso de Enfermagem"
+                            class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <h3 class="font-bold text-xl mb-2 text-ceara-green">Enfermagem</h3>
+                            <p class="text-gray-700 mb-4">Forme-se em um dos campos mais nobres e essenciais da saúde.
+                            </p>
+                            <a href="#"
+                                class="text-ceara-orange hover:text-ceara-green transition duration-300 ease-in-out">
+                                <i class="fas fa-arrow-right mr-1"></i> Saiba mais
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Adicione mais cursos aqui seguindo o mesmo padrão -->
+                </div>
+            </div>
+        </section>
+
+        <section id="eventos" class="py-24 fade-in">
+            <div class="container mx-auto px-4">
+                <h2 class="text-4xl font-bold text-center mb-12 text-ceara-green">Próximos Eventos</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="bg-white rounded-lg shadow-lg p-6 hover-scale">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-calendar-alt text-3xl text-ceara-orange mr-4"></i>
+                            <div>
+                                <h3 class="font-bold text-xl mb-1 text-ceara-green">Feira de Ciências</h3>
+                                <p class="text-gray-600">15 de Outubro, 2023</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-700 mb-4">Venha conhecer os projetos inovadores dos nossos alunos!</p>
+                        <a href="#"
+                            class="inline-block bg-ceara-white text-ceara-green border border-ceara-green hover:bg-ceara-green hover:text-ceara-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out">
+                            <i class="fas fa-info-circle mr-1"></i> Saiba mais
+                        </a>
+                    </div>
+                    <!-- Adicione mais eventos aqui seguindo o mesmo padrão -->
+                </div>
+            </div>
+        </section>
+
+        <section id="noticias" class="bg-gray-100 py-24 fade-in">
+            <div class="container mx-auto px-4">
+                <h2 class="text-4xl font-bold text-center mb-12 text-ceara-green">Últimas Notícias</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="bg-white rounded-lg shadow-lg overflow-hidden hover-scale">
+                        <img src="https://via.placeholder.com/400x250" alt="Notícia 1" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <h3 class="font-bold text-xl mb-2 text-ceara-green">Alunos vencem competição estadual</h3>
+                            <p class="text-gray-700 mb-4">Nossos estudantes conquistaram o primeiro lugar na Olimpíada
+                                Estadual de Matemática.</p>
+                            <a href="#"
+                                class="inline-block bg-ceara-white text-ceara-green border border-ceara-green hover:bg-ceara-green hover:text-ceara-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out">
+                                <i class="fas fa-newspaper mr-1"></i> Leia mais
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Adicione mais notícias aqui seguindo o mesmo padrão -->
+                </div>
+            </div>
+        </section>
+
+        <section id="galeria" class="py-24 fade-in">
+            <div class="container mx-auto px-4">
+                <h2 class="text-4xl font-bold text-center mb-12 text-ceara-green">Galeria de Fotos</h2>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    <img src="https://eeepsalabergampe.netlify.app/img/salaberga0101.jpg" alt="Imagem 1"
+                        class="gallery-img w-full h-64 object-cover rounded-lg shadow-lg hover-scale">
+                    <img src="https://eeepsalabergampe.netlify.app/img/salas.jpg" alt="Imagem 2"
+                        class="gallery-img w-full h-64 object-cover rounded-lg shadow-lg hover-scale">
+                    <img src="https://eeepsalabergampe.netlify.app/img/salasberg.jpg" alt="Imagem 3"
+                        class="gallery-img w-full h-64 object-cover rounded-lg shadow-lg hover-scale">
+                    <img src="https://eeepsalabergampe.netlify.app/img/klm.jpg" alt="Imagem 4"
+                        class="gallery-img w-full h-64 object-cover rounded-lg shadow-lg hover-scale">
+                    <img src="https://eeepsalabergampe.netlify.app/img/kml2.jpg" alt="Imagem 5"
+                        class="gallery-img w-full h-64 object-cover rounded-lg shadow-lg hover-scale">
+                    <img src="https://eeepsalabergampe.netlify.app/img/klm3.jpg" alt="Imagem 6"
+                        class="gallery-img w-full h-64 object-cover rounded-lg shadow-lg hover-scale">
+                </div>
+            </div>
+        </section>
+
+        <!-- Modal -->
+        <div id="imageModal"
+            class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center hidden z-50 transition-opacity duration-300 ease-in-out">
+            <div
+                class="relative max-w-4xl w-full bg-white rounded-lg shadow-2xl overflow-hidden transform transition-transform duration-300 ease-in-out">
+                <button id="closeModal"
+                    class="absolute top-4 right-4 text-gray-600 hover:text-gray-800 transition-colors duration-200 text-3xl focus:outline-none">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+                <div id="carousel" class="relative">
+                    <img id="modalImage" src="" alt="Modal Image" class="w-full h-auto max-h-[80vh] object-contain">
+                    <div class="absolute inset-0 flex items-center justify-between">
+                        <button id="prevButton"
+                            class="bg-black bg-opacity-50 hover:bg-opacity-75 text-white p-2 rounded-full transition-all duration-200 focus:outline-none">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 19l-7-7 7-7"></path>
+                            </svg>
+                        </button>
+                        <button id="nextButton"
+                            class="bg-black bg-opacity-50 hover:bg-opacity-75 text-white p-2 rounded-full transition-all duration-200 focus:outline-none">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                                </path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section id="location">
+            <div class="container">
+                <h2 class="localfont"><b>Localização</b></h2>
+                <div class="map-container">
+                    <div class="map-frame">
+                        <iframe
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4727.003608944703!2d-38.67658031627441!3d-3.888242185992357!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x7c0aca1962c7027%3A0xe5da63c87e731b04!2sEscola%20Estadual%20de%20Educa%C3%A7%C3%A3o%20Profissional%20Salaberga%20Torquato%20Gomes%20de%20Matos!5e1!3m2!1spt-BR!2sbr!4v1728757517751!5m2!1spt-BR!2sbr"
+                            width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+                    <div class="contact-info">
+                        <h3 class="informefont">Informações de Contato</h3>
+                        <ul>
+                            <li><i class="fas fa-map-marker-alt"></i>Av. Marta Maria Carvalho Nojoza, sn - Outra Banda,
+                                Maranguape - CE</li>
+                            <li><i class="fas fa-phone"></i> (85) 3101-2100</li>
+                            <li><i class="fas fa-envelope"></i> eeepsalaberga@escola.ce.gov.br</li>
+                        </ul>
+                        <a href="https://www.google.com/maps/place/Escola+Estadual+de+Educa%C3%A7%C3%A3o+Profissional+Salaberga+Torquato+Gomes+de+Matos/@-3.888242,-38.6765803,17z/"
+                            target="_blank" class="directions-button">
+                            <i class="fas fa-directions"></i> Como Chegar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gradient-to-b from-black via-[#000] to-black text-white py-20">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+
+                <!-- Logo e descrição da empresa -->
+                <div class="md:col-span-4 space-y-6">
+                    <img src="https://i.postimg.cc/yx26GhLv/lavosier-nas-3.png" alt="stgm Logo"
+                        class="h-12 transition-all duration-300 hover:grayscale-0" style="background-color: #000000;">
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut
+                        labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                        laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
+                        voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+                    </p>
+                </div>
+
+                <div class="md:col-span-4 md:col-start-5 space-y-4">
+                    <h3 class="text-lg font-semibold text-[#FFF]">Links Rápidos</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#"
+                                class="text-gray-400 hover:text-[#FFA500] transition-colors duration-300">//stgm</a>
+                        </li>
+                        <li><a href="#"
+                                class="text-gray-400 hover:text-[#FFA500] transition-colors duration-300">//stgm</a>
+                        </li>
+                        <li><a href="#"
+                                class="text-gray-400 hover:text-[#FFA500] transition-colors duration-300">//stgm</a>
+                        </li>
+                        <li><a href="#"
+                                class="text-gray-400 hover:text-[#FFA500] transition-colors duration-300">//stgm</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Logo do desenvolvedor -->
+                <div class="md:col-span-4 flex flex-col items-center justify-center space-y-4 md:col-start-10">
+                    <img src="https://i.postimg.cc/SsTx6bC0/Dev-2.jpg" alt="DevStgm Logo"
+                        class="h-16 w-16 transition-all duration-300 filter grayscale hover:grayscale-0">
+                    <p class="text-xs text-gray-400 text-center">Desenvolvido por Dev.Stgm</p>
+                </div>
+            </div>
+
+            <!-- Copyright -->
+            <div class="mt-12 pt-8 border-t border-gray-800 text-center">
+                <p class="text-gray-400 text-sm">&copy; 2024 DevStgm. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+    <script>
+        document.getElementById('vlibrasButton').addEventListener('click', function () {
+            window.open('https://www.gov.br/governodigital/pt-br/acessibilidade-e-usuario/vlibras', '_blank');
+        });
+
+    </script>
+</body>
+
+</html>

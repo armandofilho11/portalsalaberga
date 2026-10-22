@@ -1,0 +1,14 @@
+RewriteEngine On
+RewriteBase /portalsalaberga/app/subsystems/espaco_equipamentos/
+
+# Redireciona a raiz para o app/main/index.php
+RewriteRule ^$ app/main/index.php [L]
+
+# Redireciona /index.php para app/main/index.php
+RewriteRule ^index\.php$ app/main/index.php [L]
+
+# Mantém o acesso direto aos arquivos em app/main/
+RewriteRule ^app/main/ - [L]
+
+# Redireciona todas as outras requisições para app/main/index.php
+RewriteRule ^(.*)$ app/main/index.php [L] 

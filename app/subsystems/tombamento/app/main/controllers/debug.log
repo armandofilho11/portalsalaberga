@@ -1,0 +1,100 @@
+Email: exemplo@dominio.com, Senha: 123456
+SQL Query: SELECT * FROM Usuario WHERE login = :login, Login: exemplo@dominio.com, Result: 
+Usuário retornado: 
+Erro: Email ou senha inválidos
+Email: exemplo@dominio.com, Senha: 123456
+SQL Query: SELECT * FROM Usuario WHERE login = :login, Login: exemplo@dominio.com, Result: 
+Usuário retornado: 
+Erro: Email ou senha inválidos
+Email: exemplo@dominio.com, Senha: 123456
+SQL Query: SELECT * FROM Usuario WHERE login = :login, Login: exemplo@dominio.com, Result: 
+Usuário retornado: 
+Erro: Email ou senha inválidos
+Email: exemplo@dominio.com, Senha: 123456
+SQL Query: SELECT * FROM Usuario WHERE login = :login, Login: exemplo@dominio.com, Result: 
+Usuário retornado: 
+Erro: Email ou senha inválidos
+Email: Big112@dominio.com, Senha: 123456
+SQL Query: SELECT * FROM Usuario WHERE login = :login, Login: Big112@dominio.com, Result: Array
+(
+    [id_usuario] => 4
+    [nome] => letycia santos
+    [login] => Big112@dominio.com
+    [senha] => $2y$10$QieRNmBbCzWhnJZy2Meqp.kOBAqRJK5XY6yaTbOCCyO
+)
+
+Usuário retornado: Array
+(
+    [id_usuario] => 4
+    [nome] => letycia santos
+    [login] => Big112@dominio.com
+    [senha] => $2y$10$QieRNmBbCzWhnJZy2Meqp.kOBAqRJK5XY6yaTbOCCyO
+)
+
+Erro: Email ou senha inválidos
+Email: exemplo@dominio.com, Senha: 123456
+SQL Query: SELECT * FROM Usuario WHERE login = :login, Login: exemplo@dominio.com, Result: 
+Usuário retornado: 
+Erro: Email ou senha inválidos
+Email: exemplo@dominio.com, Senha: 123456
+SQL Query: SELECT * FROM Usuario WHERE login = :login, Login: exemplo@dominio.com, Result: 
+Usuário retornado: 
+Erro: Email ou senha inválidos
+Email: exemplo@dominio.com, Senha: 123456
+SQL Query: SELECT * FROM Usuario WHERE login = :login, Login: exemplo@dominio.com, Result: 
+Usuário retornado: 
+Erro: Email ou senha inválidos
+Email: exemplo@dominio.com, Senha: 123456
+SQL Query: SELECT * FROM Usuario WHERE login = :login, Login: exemplo@dominio.com, Result: 
+Usuário retornado: 
+Erro: Email ou senha inválidos
+Email: exemplo@dominio.com, Senha: 123456
+SQL Query: SELECT * FROM Usuario WHERE login = :login, Login: exemplo@dominio.com, Result: 
+Usuário retornado: 
+Erro: Email ou senha inválidos
+Email: exemplo@dominio.com, Senha: 123456
+SQL Query: SELECT * FROM Usuario WHERE login = :login, Login: exemplo@dominio.com, Result: 
+Usuário retornado: 
+Erro: Email ou senha inválidos
+Email: exemplo@dominio.com, Senha: 123456
+SQL Query: SELECT * FROM Usuario WHERE login = :login, Login: exemplo@dominio.com, Result: 
+Usuário retornado: 
+Erro: Email ou senha inválidos
+Email: exemplo@dominio.com, Senha: 123456
+SQL Query: SELECT * FROM Usuario WHERE login = :login, Login: exemplo@dominio.com, Result: 
+Usuário retornado: 
+Erro: Email ou senha inválidos
+Email: exemplo@dominio.com, Senha: 123456
+SQL Query: SELECT * FROM Usuario WHERE login = :login, Login: exemplo@dominio.com, Result: 
+Usuário retornado: 
+Erro: Email ou senha inválidos
+Email: exemplo@dominio.com, Senha: 123456
+SQL Query: SELECT * FROM Usuario WHERE login = :login, Login: exemplo@dominio.com, Result: 
+Usuário retornado: 
+Erro: Email ou senha inválidos
+Email: exemplo@dominio.com, Senha: 123456
+SQL Query: SELECT * FROM Usuario WHERE login = :login, Login: exemplo@dominio.com, Result: 
+Usuário retornado: 
+Erro: Email ou senha inválidos
+Senha inválida para exemplo@dominio.com. Senha fornecida: 123456, Hash armazenado: $2y$10$UFDMpHr8OvpPpW5YoE3n1ePyU.TCSU9q3qxq9mUa1tW
+Senha inválida para exemplo@dominio.com. Senha fornecida: 123456, Hash armazenado: $2y$10$UFDMpHr8OvpPpW5YoE3n1ePyU.TCSU9q3qxq9mUa1tW
+Senha inválida para exemplo@dominio.com. Senha fornecida: 123456, Hash armazenado: $2y$10$UFDMpHr8OvpPpW5YoE3n1ePyU.TCSU9q3qxq9mUa1tW
+Senha inválida para exemplo123@dominio.com. Senha fornecida: 123456, Hash armazenado: $2y$10$KQzeSfoJaw.SsWr.LbCg0OmW7K7gCiQOqNsb114409o
+Senha inválida para exemplo123@dominio.com. Senha fornecida: $2y$10$KQzeSfoJaw.SsWr.LbCg0OmW7K7gCiQOqNsb114409o, Hash armazenado: $2y$10$KQzeSfoJaw.SsWr.LbCg0OmW7K7gCiQOqNsb114409o
+Senha inválida para exemplo@dominio.com. Senha fornecida: 123456, Hash armazenado: $2y$10$UFDMpHr8OvpPpW5YoE3n1ePyU.TCSU9q3qxq9mUa1tW
+Senha inválida para exemplo@dominio.com. Senha fornecida: 123456, Hash armazenado: $2y$10$UFDMpHr8OvpPpW5YoE3n1ePyU.TCSU9q3qxq9mUa1tW
+Senha inválida para exemplo@dominio.com. Senha fornecida: 123456, Hash armazenado: $2y$10$UFDMpHr8OvpPpW5YoE3n1ePyU.TCSU9q3qxq9mUa1tW
+Senha inválida para exemplo@dominio.com. Senha fornecida: 123456, Hash armazenado: $2y$10$UFDMpHr8OvpPpW5YoE3n1ePyU.TCSU9q3qxq9mUa1tW
+Senha inválida para exemploteste@dominio.com. Senha fornecida: $2y$10$AvYsy1J0B82LfgeW5QGO.eBnSOW5xcH7SfMbCpPiCUgyTtsczULJu, Hash armazenado: $2y$10$AvYsy1J0B82LfgeW5QGO.eBnSOW5xcH7SfMbCpPiCUgyTtsczULJu
+Senha inválida para exemplo@dominio.com. Senha fornecida: 123456, Hash armazenado: $2y$10$UFDMpHr8OvpPpW5YoE3n1ePyU.TCSU9q3qxq9mUa1tW
+Senha inválida para exemplo@dominio.com. Senha fornecida: 123456, Hash armazenado: $2y$10$UFDMpHr8OvpPpW5YoE3n1ePyU.TCSU9q3qxq9mUa1tW
+Senha inválida para exemplo@dominio.com. Senha fornecida: 123456, Hash armazenado: $2y$10$UFDMpHr8OvpPpW5YoE3n1ePyU.TCSU9q3qxq9mUa1tW
+Senha inválida para exemplo@dominio.com. Senha fornecida: 123456, Hash armazenado: $2y$10$UFDMpHr8OvpPpW5YoE3n1ePyU.TCSU9q3qxq9mUa1tW
+Senha inválida para exemplo@dominio.com. Senha fornecida: 123456, Hash armazenado: $2y$10$UFDMpHr8OvpPpW5YoE3n1ePyU.TCSU9q3qxq9mUa1tW
+Senha inválida para exemplo@dominio.com. Senha fornecida: 123456, Hash armazenado: $2y$10$UFDMpHr8OvpPpW5YoE3n1ePyU.TCSU9q3qxq9mUa1tW
+Senha inválida para exemplo@dominio.com. Senha fornecida: 123456, Hash armazenado: $2y$10$UFDMpHr8OvpPpW5YoE3n1ePyU.TCSU9q3qxq9mUa1tW
+Senha inválida para paulo@gmail.com. Senha fornecida: 	 85678, Hash armazenado: 85678
+Senha inválida para exemplo@dominio.com. Senha fornecida: 123456, Hash armazenado: $2y$10$UFDMpHr8OvpPpW5YoE3n1ePyU.TCSU9q3qxq9mUa1tW
+Senha inválida para exemplo@dominio.com. Senha fornecida: 123456, Hash armazenado: $2y$10$UFDMpHr8OvpPpW5YoE3n1ePyU.TCSU9q3qxq9mUa1tW
+Senha inválida para exemplo@dominio.com. Senha fornecida: 123456, Hash armazenado: $2y$10$UFDMpHr8OvpPpW5YoE3n1ePyU.TCSU9q3qxq9mUa1tW
+Senha inválida para exemplo@dominio.com. Senha fornecida: 123456, Hash armazenado: $2y$10$UFDMpHr8OvpPpW5YoE3n1ePyU.TCSU9q3qxq9mUa1tW

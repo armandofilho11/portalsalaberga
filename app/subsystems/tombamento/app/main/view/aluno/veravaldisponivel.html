@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Banco de Questões - Avaliação</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f0f4f8;
+      color: #333;
+      padding: 0;
+      margin: 0;
+    }
+
+    header {
+      background-color: #007c2e;
+      padding: 1rem 2rem;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .header-buttons span {
+      margin-left: 20px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+
+    .header-buttons span:hover {
+      color: #ffcc00;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    }
+
+    .welcome-box {
+      background-color: #e6f4ea;
+      padding: 20px;
+      border-left: 6px solid #007c2e;
+      border-radius: 8px;
+      margin-bottom: 30px;
+    }
+
+    .welcome-box strong {
+      font-size: 1.2rem;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .buttons-box {
+      margin-bottom: 30px;
+    }
+
+    .buttons-box button {
+      background-color: #f8a836;
+      border: none;
+      padding: 12px 20px;
+      margin-right: 12px;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .buttons-box button:hover {
+      background-color: #d9821e;
+    }
+
+    .form-box h2 {
+      color: #007c2e;
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    .evaluation-info {
+      background-color: #f9fafb;
+      padding: 20px;
+      border-radius: 8px;
+      border-left: 5px solid #007c2e;
+      margin-top: 30px;
+    }
+
+    .evaluation-info p {
+      margin-bottom: 10px;
+    }
+
+    .evaluation-info span {
+      color: #007c2e;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .instructions {
+      color: #d93025;
+      margin-top: 15px;
+      font-weight: 500;
+    }
+
+    .actions {
+      text-align: right;
+      margin-top: 30px;
+    }
+
+    .actions button {
+      background-color: #007c2e;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .actions button:hover {
+      background-color: #005a21;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="d-flex align-items-center">
+      <img src="https://img.icons8.com/ios-filled/50/ffffff/book.png" alt="Logo" style="width: 30px; margin-right: 10px;">
+      <h5 class="mb-0">Banco de Questões</h5>
+    </div>
+    <nav class="text-white">
+      <a href="inicioaluno.php" class="text-white mx-2 text-decoration-none">Início</a>
+      <a href="acessar_banco.php" class="text-white mx-2 text-decoration-none">Questões</a>
+      <a href="relatorios.php" class="text-white mx-2 text-decoration-none">Relatórios</a>
+      <a href="../../index.php" class="text-white mx-2 text-decoration-none">Sair</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="welcome-box">
+      <strong>Seja Bem-Vindo, Aluno!</strong>
+      Aqui ajudamos você a gerenciar suas questões com o uso da forma inteligente. Crie, organize e compartilhe com facilidade!
+    </div>
+
+    <!-- <div class="buttons-box">
+      <h4>Clique para ver o relatorio pessoal</h4> <br> 
+
+      <a href="acessarrelatorioaluno.php"><button name="relatorio_pessoal">Relatório Pessoal</button></a>
+    </div> -->
+    <form action="../../control/controleveravaldisponivel.php" method="POST">
+      <div class="form-box">
+        <h2>Realizar avaliação</h2>
+        <div class="form-group">
+          <label for="nome">Nome completo:</label>
+          <input type="text" id="nome" placeholder="Digite seu nome completo..." name="nome" required>
+        </div>
+        <div class="form-group">
+          <label for="matricula">Matrícula:</label>
+          <input type="text" id="matricula" placeholder="Digite sua matrícula..." name="matricula" required>
+        </div>
+
+        <div class="evaluation-info">
+          <!-- <p><strong>Aluno(a), você irá realizar:</strong></p>
+          <p><span>EBETEC - Laboratório de Hardware</span></p>
+          <p>
+            • Professor: Marcelo<br>
+            • Questões: 20 disponíveis<br>
+            • Classificação: Bimestral<br>
+            • Dificuldade: Médio
+          </p> -->
+          <p class="instructions">
+            <strong>Instruções:</strong><br>
+            • Leia cada questão com atenção.<br>
+            • Marque <strong>apenas uma alternativa correta</strong> em cada questão.<br>
+            • Você terá 50:00 para a avaliação.<br>
+            • Enviar uma alternativa <strong>zerará</strong> as outras alternativas.
+          </p>
+        </div>
+    </form>
+      <div class="actions">
+        <button>Realizar Avaliação</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
