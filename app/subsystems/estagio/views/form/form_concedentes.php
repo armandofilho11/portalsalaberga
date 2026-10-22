@@ -166,6 +166,7 @@
             font-weight: 600;
             color: #ffffff;
             background: linear-gradient(90deg, #ffffff, #e0e0e0);
+            background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             transition: all 0.3s ease;
@@ -173,6 +174,7 @@
 
         .vaga-card:hover .vaga-card-title {
             background: linear-gradient(90deg, #ffffff, #00FF6B);
+            background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -608,7 +610,7 @@
             <main class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-6 sm:py-8 w-full">
                 <!-- Breadcrumbs -->
                 <div class="text-sm text-gray-400 mb-6 flex items-center">
-                    <a href="./dashboard.php" class="hover:text-primary-400 transition-colors">Dashboard</a>
+                    <a href="../dashboard.php#dashboard" class="hover:text-primary-400 transition-colors">Dashboard</a>
                     <span class="mx-2 text-gray-600">/</span>
                     <span class="text-white">Vagas</span>
                 </div>

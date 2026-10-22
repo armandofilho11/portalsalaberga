@@ -23,6 +23,26 @@ function formatar_telefone($telefone) {
     return $telefone;
 }
 
+
+function gerar_link_whatsapp($telefone) {
+    $numero = preg_replace('/[^0-9]/', '', $telefone);
+
+    // precisa ter 11 dígitos (DDD + 9 dígitos)
+    if (strlen($numero) == 11) {
+        $primeiroNumero = substr($numero, 2, 1);
+
+        // celular no Brasil começa com 9
+        if ($primeiroNumero == '9') {
+            return 'https://wa.me/55' . $numero;
+        }
+    }
+
+    return false; // não é WhatsApp válido
+}
+
+
+
+
 class ModernEmpresasPDF extends FPDF {
     private $cores = [
         'primaria' => [0, 122, 51],
@@ -191,8 +211,38 @@ function tabelaEmpresas($empresas) {
         $this->SetXY($x+$w_nome, $y_contato);
         $this->MultiCell($w_contato, $lineHeight, $contato, 0, 'L');
 
-        $this->SetXY($x+$w_nome+$w_contato, $y_tel);
-        $this->MultiCell($w_tel, $lineHeight, $telefone, 0, 'L');
+
+
+
+
+$link = gerar_link_whatsapp($empresa['contato']);
+
+$this->SetXY($x+$w_nome+$w_contato, $y_tel);
+
+if ($link) {
+    // telefone com link
+    $this->SetTextColor(0, 102, 0);
+    $this->SetFont('', 'U');
+    $this->Write($lineHeight, $telefone, $link);
+
+    // reset
+    $this->SetFont('', '');
+    $this->SetTextColor(40,40,40);
+} else {
+    // telefone comum (fixo)
+    $this->MultiCell($w_tel, $lineHeight, $telefone, 0, 'L');
+}
+
+
+
+
+
+
+
+
+
+
+
 
         $this->SetXY($x+$w_nome+$w_contato+$w_tel, $y_end);
         $this->MultiCell($w_end, $lineHeight, $endereco, 0, 'L');

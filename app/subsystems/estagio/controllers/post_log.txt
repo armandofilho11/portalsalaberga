@@ -129,3 +129,1394 @@ Array
     [entregas_individuais] => 0
     [entregas_grupo] => 0
 )
+Array
+(
+    [id_editar_vaga] => 61
+    [empresa_editar_vaga] => 59
+    [perfil_editar_vaga] => 1
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 3
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 
+    [hora_editar_vaga] => 
+)
+Array
+(
+    [id_editar_vaga] => 61
+    [empresa_editar_vaga] => 59
+    [perfil_editar_vaga] => 1
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 1
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 
+    [hora_editar_vaga] => 
+)
+Array
+(
+    [id_excluir_vaga] => 47
+)
+Array
+(
+    [id_excluir_empresa] => 56
+)
+Array
+(
+    [id_excluir_vaga] => 61
+)
+Array
+(
+    [id_excluir_vaga] => 59
+)
+Array
+(
+    [id_excluir_vaga] => 53
+)
+Array
+(
+    [id_excluir_vaga] => 58
+)
+Array
+(
+    [id_excluir_vaga] => 50
+)
+Array
+(
+    [id_excluir_vaga] => 51
+)
+Array
+(
+    [id_excluir_vaga] => 27
+)
+Array
+(
+    [id_excluir_vaga] => 39
+)
+Array
+(
+    [id_excluir_vaga] => 42
+)
+Array
+(
+    [id_excluir_vaga] => 35
+)
+Array
+(
+    [id_excluir_vaga] => 26
+)
+Array
+(
+    [id_excluir_vaga] => 25
+)
+Array
+(
+    [id_excluir_vaga] => 32
+)
+Array
+(
+    [id_excluir_vaga] => 33
+)
+Array
+(
+    [id_excluir_vaga] => 30
+)
+Array
+(
+    [id_excluir_vaga] => 31
+)
+Array
+(
+    [id_excluir_vaga] => 29
+)
+Array
+(
+    [id_excluir_vaga] => 36
+)
+Array
+(
+    [id_excluir_vaga] => 37
+)
+Array
+(
+    [id_excluir_vaga] => 38
+)
+Array
+(
+    [id_excluir_vaga] => 45
+)
+Array
+(
+    [id_excluir_vaga] => 46
+)
+Array
+(
+    [id_excluir_vaga] => 48
+)
+Array
+(
+    [id_excluir_vaga] => 54
+)
+Array
+(
+    [id_excluir_vaga] => 55
+)
+Array
+(
+    [acao] => editar
+    [id_aluno] => 147
+    [nome] => YASMIM CHRISTINE BARBOSA MOREIRA
+    [contato] => 
+    [medias] => 3.4
+    [email] => yasmin@gmail.com
+    [projetos] => 
+    [perfil_opc1] => design
+    [perfil_opc2] => tutoria
+    [ocorrencia] => 0
+    [custeio] => 0
+    [entregas_individuais] => 0
+    [entregas_grupo] => 0
+)
+Array
+(
+    [id_excluir_vaga] => 71
+)
+Array
+(
+    [id_excluir_vaga] => 70
+)
+Array
+(
+    [id_excluir_vaga] => 63
+)
+Array
+(
+    [id_excluir_vaga] => 64
+)
+Array
+(
+    [id_editar_vaga] => 65
+    [empresa_editar_vaga] => 43
+    [perfil_editar_vaga] => 1
+    [quantidade_editar_vaga] => 2
+    [quant_candidatos_editar_vaga] => 3
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 
+    [hora_editar_vaga] => 
+)
+Array
+(
+    [id_excluir_vaga] => 73
+)
+Array
+(
+    [id_selecao_vaga] => 65
+    [quant_candidatos_cadastrar_selecao] => 3
+    [data_cadastrar_selecao] => 2026-05-19
+    [hora_cadastrar_selecao] => 18:00
+)
+Array
+(
+    [id_editar_vaga] => 65
+    [empresa_editar_vaga] => 43
+    [perfil_editar_vaga] => 1
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 3
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-06-21
+    [hora_editar_vaga] => 14:00
+)
+Array
+(
+    [id_editar_vaga] => 65
+    [empresa_editar_vaga] => 43
+    [perfil_editar_vaga] => 1
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 3
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-06-21
+    [hora_editar_vaga] => 19:00
+)
+Array
+(
+    [id_selecao_vaga] => 65
+    [empresa_selecao_vaga] => 43
+    [quant_candidatos_selecao] => 5
+    [data_selecao] => 2026-06-21
+    [hora_selecao] => 19:00
+)
+Array
+(
+    [id_selecao_vaga] => 65
+    [empresa_selecao_vaga] => 43
+    [quant_candidatos_selecao] => 8
+    [data_selecao] => 2026-06-21
+    [hora_selecao] => 22:00
+)
+Array
+(
+    [id_selecao_vaga] => 65
+    [empresa_selecao_vaga] => 43
+    [quant_candidatos_selecao] => 12
+    [data_selecao] => 2026-06-21
+    [hora_selecao] => 19:00
+)
+Array
+(
+    [id_selecao_vaga] => 65
+    [empresa_selecao_vaga] => 43
+    [quant_candidatos_selecao] => 5
+    [data_selecao] => 2026-06-21
+    [hora_selecao] => 19:00
+)
+Array
+(
+    [id_selecao_vaga] => 65
+    [empresa_selecao_vaga] => 43
+    [quant_candidatos_selecao] => 5
+    [data_selecao] => 2026-06-21
+    [hora_selecao] => 19:00
+)
+Array
+(
+    [id_selecao_vaga] => 65
+    [empresa_selecao_vaga] => 43
+    [quant_candidatos_selecao] => 7
+    [data_selecao] => 2026-06-21
+    [hora_selecao] => 19:00
+)
+Array
+(
+    [id_selecao_vaga] => 65
+    [empresa_selecao_vaga] => 43
+    [quant_candidatos_selecao] => 5
+    [data_selecao] => 2026-06-23
+    [hora_selecao] => 22:00
+)
+Array
+(
+    [id_selecao_vaga] => 65
+    [empresa_selecao_vaga] => 43
+    [quant_candidatos_selecao] => 5
+    [data_selecao] => 2026-06-21
+    [hora_selecao] => 19:00
+)
+Array
+(
+    [id_selecao_vaga] => 65
+    [empresa_selecao_vaga] => 43
+    [quant_candidatos_selecao] => 5
+    [data_selecao] => 2026-06-21
+    [hora_selecao] => 19:00
+)
+Array
+(
+    [id_selecao_vaga] => 65
+    [empresa_selecao_vaga] => 43
+    [quant_candidatos_selecao] => 9
+    [data_selecao] => 2026-06-21
+    [hora_selecao] => 19:00
+)
+Array
+(
+    [id_selecao_vaga] => 65
+    [empresa_selecao_vaga] => 43
+    [quant_candidatos_selecao] => 20
+    [data_selecao] => 2026-06-21
+    [hora_selecao] => 19:00
+)
+Array
+(
+    [id_selecao_vaga] => 66
+    [empresa_selecao_vaga] => 43
+    [quant_candidatos_selecao] => 20
+    [data_selecao] => 2026-06-25
+    [hora_selecao] => 00:00
+)
+Array
+(
+    [id_selecao_vaga] => 65
+    [empresa_selecao_vaga] => 43
+    [quant_candidatos_selecao] => 3
+    [data_selecao] => 2026-06-21
+    [hora_selecao] => 19:00
+)
+Array
+(
+    [id_selecao_vaga] => 65
+    [empresa_selecao_vaga] => 43
+    [quant_candidatos_selecao] => 3
+    [data_selecao] => 2026-06-21
+    [hora_selecao] => 19:00
+)
+Array
+(
+    [id_selecao_vaga] => 65
+    [empresa_selecao_vaga] => 43
+    [quant_candidatos_selecao] => 30
+    [data_selecao] => 2026-06-21
+    [hora_selecao] => 19:00
+)
+Array
+(
+    [id_selecao_vaga] => 65
+    [empresa_selecao_vaga] => 43
+    [quant_candidatos_selecao] => 3
+    [data_selecao] => 2026-06-21
+    [hora_selecao] => 19:00
+)
+Array
+(
+    [id_editar_vaga] => 65
+    [empresa_editar_vaga] => 43
+    [perfil_editar_vaga] => 1
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 10
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-06-21
+    [hora_editar_vaga] => 19:00
+)
+Array
+(
+    [id_editar_vaga] => 65
+    [empresa_editar_vaga] => 43
+    [perfil_editar_vaga] => 1
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 10
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-06-21
+    [hora_editar_vaga] => 19:00
+)
+Array
+(
+    [id_editar_vaga] => 65
+    [empresa_editar_vaga] => 43
+    [perfil_editar_vaga] => 1
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 20
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-06-21
+    [hora_editar_vaga] => 19:00
+)
+Array
+(
+    [id_editar_vaga] => 65
+    [empresa_editar_vaga] => 43
+    [perfil_editar_vaga] => 1
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 30
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-06-23
+    [hora_editar_vaga] => 19:00
+)
+Array
+(
+    [id_selecao_vaga] => 65
+    [empresa_selecao_vaga] => 43
+    [quant_candidatos_selecao] => 100
+    [data_selecao] => 2026-06-23
+    [hora_selecao] => 19:00
+)
+Array
+(
+    [id_editar_vaga] => 65
+    [empresa_editar_vaga] => 43
+    [perfil_editar_vaga] => 3
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 5
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-06-30
+    [hora_editar_vaga] => 22:00
+)
+Array
+(
+    [id_editar_vaga] => 65
+    [empresa_editar_vaga] => 43
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 100
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-06-30
+    [hora_editar_vaga] => 22:00
+)
+Array
+(
+    [id_editar_vaga] => 65
+    [empresa_editar_vaga] => 43
+    [perfil_editar_vaga] => 3
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 100
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-06-30
+    [hora_editar_vaga] => 22:00
+)
+Array
+(
+    [id_editar_vaga] => 65
+    [empresa_editar_vaga] => 43
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 300
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-06-30
+    [hora_editar_vaga] => 22:00
+)
+Array
+(
+    [id_editar_vaga] => 65
+    [empresa_editar_vaga] => 43
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 30
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-06-30
+    [hora_editar_vaga] => 12:00
+)
+Array
+(
+    [id_editar_vaga] => 65
+    [empresa_editar_vaga] => 43
+    [perfil_editar_vaga] => 3
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 30
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-06-30
+    [hora_editar_vaga] => 22:00
+)
+Array
+(
+    [id_editar_vaga] => 68
+    [empresa_editar_vaga] => 45
+    [perfil_editar_vaga] => 1
+    [quantidade_editar_vaga] => 5
+    [quant_candidatos_editar_vaga] => 10
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-05-15
+    [hora_editar_vaga] => 14:00
+)
+Array
+(
+    [id_editar_vaga] => 65
+    [empresa_editar_vaga] => 43
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 30
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-06-30
+    [hora_editar_vaga] => 22:00
+)
+Array
+(
+    [id_editar_vaga] => 65
+    [empresa_editar_vaga] => 43
+    [perfil_editar_vaga] => 3
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 300
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-06-30
+    [hora_editar_vaga] => 22:00
+)
+Array
+(
+    [id_editar_vaga] => 65
+    [empresa_editar_vaga] => 43
+    [perfil_editar_vaga] => 1
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 500
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-06-30
+    [hora_editar_vaga] => 22:00
+)
+Array
+(
+    [id_excluir_vaga] => 65
+)
+Array
+(
+    [id_excluir_vaga] => 72
+)
+Array
+(
+    [id_excluir_vaga] => 68
+)
+Array
+(
+    [id_excluir_vaga] => 66
+)
+Array
+(
+    [id_excluir_vaga] => 67
+)
+Array
+(
+    [id_excluir_vaga] => 69
+)
+Array
+(
+    [id_editar_vaga] => 74
+    [empresa_editar_vaga] => 53
+    [perfil_editar_vaga] => 4
+    [quantidade_editar_vaga] => 2
+    [quant_candidatos_editar_vaga] => 2
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-05-15
+    [hora_editar_vaga] => 14:00
+)
+Array
+(
+    [id_editar_vaga] => 75
+    [empresa_editar_vaga] => 54
+    [perfil_editar_vaga] => 4
+    [quantidade_editar_vaga] => 2
+    [quant_candidatos_editar_vaga] => 6
+    [tipo_editar_vaga] => HomeOffice
+    [data_editar_vaga] => 2026-06-20
+    [hora_editar_vaga] => 18:00
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+    [id_editar_vaga] => 76
+    [empresa_editar_vaga] => 50
+    [perfil_editar_vaga] => 3
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 2
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-05-18
+    [hora_editar_vaga] => 
+)
+Array
+(
+    [id_editar_vaga] => 76
+    [empresa_editar_vaga] => 50
+    [perfil_editar_vaga] => 3
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 2
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 
+    [hora_editar_vaga] => 
+)
+Array
+(
+    [id_editar_vaga] => 76
+    [empresa_editar_vaga] => 50
+    [perfil_editar_vaga] => 3
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 2
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-05-18
+    [hora_editar_vaga] => 08:00
+)
+Array
+(
+    [id_editar_vaga] => 77
+    [empresa_editar_vaga] => 50
+    [perfil_editar_vaga] => 2
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 2
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-05-18
+    [hora_editar_vaga] => 08:00
+)
+Array
+(
+    [id_excluir_vaga] => 75
+)
+Array
+(
+    [id_excluir_vaga] => 74
+)
+Array
+(
+    [id_editar_vaga] => 78
+    [empresa_editar_vaga] => 43
+    [perfil_editar_vaga] => 1
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 3
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-05-19
+    [hora_editar_vaga] => 14:00
+)
+Array
+(
+    [id_editar_vaga] => 79
+    [empresa_editar_vaga] => 43
+    [perfil_editar_vaga] => 2
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 3
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-05-22
+    [hora_editar_vaga] => 14:00
+)
+Array
+(
+    [id_editar_vaga] => 80
+    [empresa_editar_vaga] => 42
+    [perfil_editar_vaga] => 1
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 2
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-05-22
+    [hora_editar_vaga] => 14:00
+)
+Array
+(
+    [id_editar_vaga] => 81
+    [empresa_editar_vaga] => 42
+    [perfil_editar_vaga] => 2
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 2
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-05-22
+    [hora_editar_vaga] => 14:00
+)
+Array
+(
+    [id_editar_vaga] => 84
+    [empresa_editar_vaga] => 40
+    [perfil_editar_vaga] => 3
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 3
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-05-20
+    [hora_editar_vaga] => 14:30
+)
+Array
+(
+    [id_editar_empresa] => 61
+    [nome_editar_empresa] => APAE - Maranguape
+    [nome_contato_editar_empresa] => Laura Francelino
+    [endereco_editar_empresa] => Avenida Stênio Gomes, 888 - Parque Iracema, Maranguape - CE
+    [contato_editar_empresa] => 8533414191
+)
+Array
+(
+    [acao] => editar
+    [id_aluno] => 103
+    [nome] => ABNER STEFAN FERNANDES MOREIRA
+    [contato] => 
+    [medias] => 10
+    [email] => abner@gmail.com
+    [projetos] => 
+    [perfil_opc1] => desenvolvimento
+    [perfil_opc2] => suporte/redes
+    [ocorrencia] => 0
+    [custeio] => 0
+    [entregas_individuais] => 0
+    [entregas_grupo] => 0
+)
+Array
+(
+    [id_editar_empresa] => 43
+    [nome_editar_empresa] => Fênix Soluções - Maracanaú
+    [nome_contato_editar_empresa] => Wilson Júnior
+    [endereco_editar_empresa] => Rua João de Alencar, 46 - Centro, Maracanaú - CE, 61910-000
+    [contato_editar_empresa] => 85988021989
+)
+Array
+(
+    [id_editar_vaga] => 90
+    [empresa_editar_vaga] => 47
+    [perfil_editar_vaga] => 2
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 3
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-05-21
+    [hora_editar_vaga] => 14:00
+)
+Array
+(
+    [id_editar_vaga] => 77
+    [empresa_editar_vaga] => 50
+    [perfil_editar_vaga] => 2
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 2
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-05-21
+    [hora_editar_vaga] => 08:00
+)
+Array
+(
+    [id_editar_vaga] => 76
+    [empresa_editar_vaga] => 50
+    [perfil_editar_vaga] => 3
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 2
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-05-21
+    [hora_editar_vaga] => 08:00
+)
+Array
+(
+    [id_editar_vaga] => 90
+    [empresa_editar_vaga] => 47
+    [perfil_editar_vaga] => 2
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 3
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-05-21
+    [hora_editar_vaga] => 14:00
+)
+Array
+(
+    [id_editar_vaga] => 79
+    [empresa_editar_vaga] => 43
+    [perfil_editar_vaga] => 2
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 2
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-05-20
+    [hora_editar_vaga] => 08:30
+)
+Array
+(
+    [id_editar_vaga] => 79
+    [empresa_editar_vaga] => 43
+    [perfil_editar_vaga] => 2
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 2
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-05-20
+    [hora_editar_vaga] => 08:30
+)
+Array
+(
+    [id_editar_vaga] => 78
+    [empresa_editar_vaga] => 43
+    [perfil_editar_vaga] => 1
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 2
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-05-20
+    [hora_editar_vaga] => 14:00
+)
+Array
+(
+    [id_editar_vaga] => 76
+    [empresa_editar_vaga] => 50
+    [perfil_editar_vaga] => 3
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 2
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-05-21
+    [hora_editar_vaga] => 14:00
+)
+Array
+(
+    [id_editar_vaga] => 77
+    [empresa_editar_vaga] => 50
+    [perfil_editar_vaga] => 2
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 2
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-05-21
+    [hora_editar_vaga] => 14:00
+)
+Array
+(
+    [id_editar_vaga] => 81
+    [empresa_editar_vaga] => 42
+    [perfil_editar_vaga] => 2
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 2
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-05-25
+    [hora_editar_vaga] => 14:00
+)
+Array
+(
+    [id_editar_vaga] => 80
+    [empresa_editar_vaga] => 42
+    [perfil_editar_vaga] => 1
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 2
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-05-25
+    [hora_editar_vaga] => 14:00
+)
+Array
+(
+    [id_editar_vaga] => 81
+    [empresa_editar_vaga] => 42
+    [perfil_editar_vaga] => 2
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 2
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-05-26
+    [hora_editar_vaga] => 14:00
+)
+Array
+(
+    [id_editar_vaga] => 80
+    [empresa_editar_vaga] => 42
+    [perfil_editar_vaga] => 1
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 2
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-05-26
+    [hora_editar_vaga] => 14:00
+)
+Array
+(
+    [id_editar_vaga] => 91
+    [empresa_editar_vaga] => 38
+    [perfil_editar_vaga] => 3
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 4
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-05-27
+    [hora_editar_vaga] => 10:00
+)
+Array
+(
+    [id_editar_vaga] => 91
+    [empresa_editar_vaga] => 38
+    [perfil_editar_vaga] => 3
+    [quantidade_editar_vaga] => 2
+    [quant_candidatos_editar_vaga] => 4
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-05-27
+    [hora_editar_vaga] => 10:00
+)
+Array
+(
+    [id_editar_empresa] => 62
+    [nome_editar_empresa] => Fênix Soluções - MPE
+    [nome_contato_editar_empresa] => Wilson Júnior
+    [endereco_editar_empresa] => R. Mundica Paula, 172 - Centro, Maranguape - CE, 61940-145
+    [contato_editar_empresa] => 85988021989
+)
+Array
+(
+    [id_editar_empresa] => 43
+    [nome_editar_empresa] => Fênix Soluções - MAR
+    [nome_contato_editar_empresa] => Wilson Júnior
+    [endereco_editar_empresa] => Rua João de Alencar, 46 - Centro, Maracanaú - CE, 61910-000
+    [contato_editar_empresa] => 85988021989
+)
+Array
+(
+    [id_editar_vaga] => 79
+    [empresa_editar_vaga] => 43
+    [perfil_editar_vaga] => 2
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 6
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-05-20
+    [hora_editar_vaga] => 08:30
+)
+Array
+(
+    [id_editar_vaga] => 81
+    [empresa_editar_vaga] => 42
+    [perfil_editar_vaga] => 2
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 6
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-05-26
+    [hora_editar_vaga] => 14:00
+)
+Array
+(
+    [id_editar_vaga] => 81
+    [empresa_editar_vaga] => 42
+    [perfil_editar_vaga] => 2
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 2
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-05-26
+    [hora_editar_vaga] => 14:00
+)
+Array
+(
+    [id_editar_vaga] => 79
+    [empresa_editar_vaga] => 43
+    [perfil_editar_vaga] => 2
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 6
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-05-25
+    [hora_editar_vaga] => 08:30
+)
+Array
+(
+    [id_editar_vaga] => 78
+    [empresa_editar_vaga] => 43
+    [perfil_editar_vaga] => 1
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 2
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-05-28
+    [hora_editar_vaga] => 14:00
+)
+Array
+(
+    [id_editar_vaga] => 78
+    [empresa_editar_vaga] => 43
+    [perfil_editar_vaga] => 1
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 2
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 
+    [hora_editar_vaga] => 
+)
+Array
+(
+    [id_editar_vaga] => 78
+    [empresa_editar_vaga] => 43
+    [perfil_editar_vaga] => 1
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 2
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 
+    [hora_editar_vaga] => 14:00
+)
+Array
+(
+    [id_editar_vaga] => 78
+    [empresa_editar_vaga] => 43
+    [perfil_editar_vaga] => 1
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 2
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 0001-01-01
+    [hora_editar_vaga] => 00:00
+)
+Array
+(
+    [id_excluir_vaga] => 78
+)
+Array
+(
+    [id_editar_vaga] => 79
+    [empresa_editar_vaga] => 43
+    [perfil_editar_vaga] => 2
+    [quantidade_editar_vaga] => 2
+    [quant_candidatos_editar_vaga] => 6
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-05-25
+    [hora_editar_vaga] => 08:30
+)
+Array
+(
+    [id_editar_vaga] => 90
+    [empresa_editar_vaga] => 47
+    [perfil_editar_vaga] => 2
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 1
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 
+    [hora_editar_vaga] => 
+)
+Array
+(
+    [id_editar_vaga] => 92
+    [empresa_editar_vaga] => 41
+    [perfil_editar_vaga] => 3
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 2
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-06-03
+    [hora_editar_vaga] => 14:30
+)
+Array
+(
+    [id_editar_vaga] => 92
+    [empresa_editar_vaga] => 41
+    [perfil_editar_vaga] => 3
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 4
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-06-03
+    [hora_editar_vaga] => 14:30
+)
+Array
+(
+    [id_editar_vaga] => 96
+    [empresa_editar_vaga] => 63
+    [perfil_editar_vaga] => 2
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 2
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-05-22
+    [hora_editar_vaga] => 09:00
+)
+Array
+(
+    [id_editar_vaga] => 95
+    [empresa_editar_vaga] => 63
+    [perfil_editar_vaga] => 3
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 2
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-05-22
+    [hora_editar_vaga] => 09:00
+)
+Array
+(
+    [id_editar_vaga] => 87
+    [empresa_editar_vaga] => 45
+    [perfil_editar_vaga] => 1
+    [quantidade_editar_vaga] => 4
+    [quant_candidatos_editar_vaga] => 8
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 
+    [hora_editar_vaga] => 
+)
+Array
+(
+    [id_excluir_vaga] => 76
+)
+Array
+(
+    [id_editar_vaga] => 97
+    [empresa_editar_vaga] => 45
+    [perfil_editar_vaga] => 2
+    [quantidade_editar_vaga] => 2
+    [quant_candidatos_editar_vaga] => 2
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-01-01
+    [hora_editar_vaga] => 08:00
+)
+Array
+(
+    [id_editar_vaga] => 94
+    [empresa_editar_vaga] => 58
+    [perfil_editar_vaga] => 2
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 2
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2025-01-01
+    [hora_editar_vaga] => 08:00
+)
+Array
+(
+    [id_editar_vaga] => 94
+    [empresa_editar_vaga] => 58
+    [perfil_editar_vaga] => 2
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 2
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-01-01
+    [hora_editar_vaga] => 08:00
+)
+Array
+(
+    [id_editar_vaga] => 79
+    [empresa_editar_vaga] => 43
+    [perfil_editar_vaga] => 2
+    [quantidade_editar_vaga] => 2
+    [quant_candidatos_editar_vaga] => 6
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-06-01
+    [hora_editar_vaga] => 08:30
+)
+Array
+(
+    [id_excluir_vaga] => 98
+)
+Array
+(
+    [id_editar_empresa] => 61
+    [nome_editar_empresa] => APAE - Maranguape
+    [nome_contato_editar_empresa] => Laura Francelin
+    [endereco_editar_empresa] => Avenida Stênio Gomes, 888 - Parque Iracema, Maranguape - CE
+    [contato_editar_empresa] => 8533414191
+)
+Array
+(
+    [id_editar_empresa] => 61
+    [nome_editar_empresa] => APAE - Maranguape
+    [nome_contato_editar_empresa] => Laura Francelino
+    [endereco_editar_empresa] => Avenida Stênio Gomes, 888 - Parque Iracema, Maranguape - CE
+    [contato_editar_empresa] => 8533414191
+)
+Array
+(
+    [id_editar_vaga] => 92
+    [empresa_editar_vaga] => 41
+    [perfil_editar_vaga] => 3
+    [quantidade_editar_vaga] => 4
+    [quant_candidatos_editar_vaga] => 4
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-06-03
+    [hora_editar_vaga] => 14:30
+)
+Array
+(
+    [acao] => editar
+    [id_aluno] => 103
+    [nome] => ABNER STEFAN FERNANDES MOREIRA
+    [contato] => 
+    [medias] => 8
+    [email] => abner@gmail.com
+    [projetos] => 
+    [perfil_opc1] => desenvolvimento
+    [perfil_opc2] => desenvolvimento
+    [ocorrencia] => 1
+    [custeio] => 1
+    [entregas_individuais] => 0
+    [entregas_grupo] => 0
+)
+Array
+(
+    [acao] => editar
+    [id_aluno] => 107
+    [nome] => ANTONIO JONATHAN SAMPAIO PINHEIRO
+    [contato] => 
+    [medias] => 8.5
+    [email] => antonio@gmail.com
+    [projetos] => 
+    [perfil_opc1] => suporte/redes
+    [perfil_opc2] => suporte/redes
+    [ocorrencia] => 1
+    [custeio] => 0
+    [entregas_individuais] => 0
+    [entregas_grupo] => 0
+)
+Array
+(
+)
+Array
+(
+    [id_excluir_vaga] => 99
+)
+Array
+(
+    [id_editar_vaga] => 100
+    [empresa_editar_vaga] => 60
+    [perfil_editar_vaga] => 2
+    [quantidade_editar_vaga] => 10
+    [quant_candidatos_editar_vaga] => 3
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 
+    [hora_editar_vaga] => 
+)
+Array
+(
+    [id_excluir_vaga] => 100
+)
+Array
+(
+    [acao] => editar
+    [id_aluno] => 150
+    [nome] => testuto
+    [contato] => 
+    [medias] => 10
+    [email] => testudo@gamail.com
+    [projetos] => 10
+    [perfil_opc1] => desenvolvimento
+    [perfil_opc2] => desenvolvimento
+    [ocorrencia] => 19
+    [custeio] => 1
+    [entregas_individuais] => 19
+    [entregas_grupo] => 18
+)
+Array
+(
+    [id_editar_vaga] => 0
+    [empresa_editar_vaga] => 60
+    [perfil_editar_vaga] => 1
+    [quantidade_editar_vaga] => 2
+    [quant_candidatos_editar_vaga] => 2
+    [tipo_editar_vaga] => HomeOffice
+    [data_editar_vaga] => 2026-01-01
+    [hora_editar_vaga] => 08:00
+)
+Array
+(
+    [id_editar_vaga] => 0
+    [empresa_editar_vaga] => 60
+    [perfil_editar_vaga] => 1
+    [quantidade_editar_vaga] => 2
+    [quant_candidatos_editar_vaga] => 2
+    [tipo_editar_vaga] => HomeOffice
+    [data_editar_vaga] => 2026-01-01
+    [hora_editar_vaga] => 08:00
+)
+Array
+(
+    [id_editar_vaga] => 89
+    [empresa_editar_vaga] => 61
+    [perfil_editar_vaga] => 4
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 1
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-01-01
+    [hora_editar_vaga] => 08:00
+)
+Array
+(
+    [id_editar_empresa] => 61
+    [nome_editar_empresa] => APAE - Maranguape
+    [nome_contato_editar_empresa] => Laura Francelino
+    [endereco_editar_empresa] => Avenida Stênio Gomes, 888 - Parque Iracema, Maranguape - CE
+    [contato_editar_empresa] => 8533414191
+)
+Array
+(
+    [id_editar_empresa] => 61
+    [nome_editar_empresa] => APAE - Maranguape
+    [nome_contato_editar_empresa] => Laura Francelino
+    [endereco_editar_empresa] => Avenida Stênio Gomes, 888 - Parque Iracema, Maranguape - CE
+    [contato_editar_empresa] => (85) 3341-4191
+)
+Array
+(
+    [id_editar_vaga] => 89
+    [empresa_editar_vaga] => 61
+    [perfil_editar_vaga] => 4
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 1
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-01-01
+    [hora_editar_vaga] => 08:30
+)
+Array
+(
+    [id_editar_vaga] => 89
+    [empresa_editar_vaga] => 61
+    [perfil_editar_vaga] => 4
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 1
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-01-01
+    [hora_editar_vaga] => 08:00
+)
+Array
+(
+    [id_editar_vaga] => 0
+    [empresa_editar_vaga] => 60
+    [perfil_editar_vaga] => 2
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 1
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-01-01
+    [hora_editar_vaga] => 08:00
+)
+Array
+(
+    [id_excluir_vaga] => 0
+)
+Array
+(
+    [id_editar_vaga] => 100
+    [empresa_editar_vaga] => 59
+    [perfil_editar_vaga] => 2
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 1
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-01-01
+    [hora_editar_vaga] => 08:00
+)
+Array
+(
+    [id_editar_vaga] => 0
+    [empresa_editar_vaga] => 60
+    [perfil_editar_vaga] => 3
+    [quantidade_editar_vaga] => 2
+    [quant_candidatos_editar_vaga] => 2
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-01-01
+    [hora_editar_vaga] => 08:00
+)
+Array
+(
+    [id_editar_vaga] => 101
+    [empresa_editar_vaga] => 44
+    [perfil_editar_vaga] => 3
+    [quantidade_editar_vaga] => 2
+    [quant_candidatos_editar_vaga] => 2
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-01-01
+    [hora_editar_vaga] => 08:00
+)
+Array
+(
+    [id_excluir_vaga] => 0
+)
+Array
+(
+    [id_editar_vaga] => 102
+    [empresa_editar_vaga] => 65
+    [perfil_editar_vaga] => 2
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 1
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-01-01
+    [hora_editar_vaga] => 08:00
+)
+Array
+(
+    [id_excluir_vaga] => 0
+)
+Array
+(
+    [id_editar_vaga] => 0
+    [empresa_editar_vaga] => 60
+    [quantidade_editar_vaga] => 4
+    [quant_candidatos_editar_vaga] => 5
+    [tipo_editar_vaga] => Hibrido
+    [data_editar_vaga] => 2026-01-01
+    [hora_editar_vaga] => 08:00
+)
+Array
+(
+    [id_excluir_vaga] => 0
+)
+Array
+(
+    [id_editar_vaga] => 103
+    [empresa_editar_vaga] => 60
+    [perfil_editar_vaga] => 1
+    [quantidade_editar_vaga] => 4
+    [quant_candidatos_editar_vaga] => 1
+    [tipo_editar_vaga] => Hibrido
+    [data_editar_vaga] => 2026-01-01
+    [hora_editar_vaga] => 08:00
+)
+Array
+(
+    [id_editar_vaga] => 104
+    [empresa_editar_vaga] => 39
+    [perfil_editar_vaga] => 2
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 1
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-01-01
+    [hora_editar_vaga] => 08:00
+)
+Array
+(
+    [id_editar_vaga] => 105
+    [empresa_editar_vaga] => 64
+    [perfil_editar_vaga] => 3
+    [quantidade_editar_vaga] => 1
+    [quant_candidatos_editar_vaga] => 1
+    [tipo_editar_vaga] => Presencial
+    [data_editar_vaga] => 2026-01-01
+    [hora_editar_vaga] => 08:00
+)
+Array
+(
+    [id_editar_empresa] => 53
+    [nome_editar_empresa] => EEFM EUNICE WEAVER
+    [nome_contato_editar_empresa] => Juilton
+    [endereco_editar_empresa] => Rodovia Senador Almir Pinto, km 15 - Estrada de Maranguape, S/N, Pau Serrado
+    [contato_editar_empresa] => 8531012892
+)
+Array
+(
+    [id_editar_empresa] => 53
+    [nome_editar_empresa] => EEFM EUNICE WEAVER
+    [nome_contato_editar_empresa] => Juilton
+    [endereco_editar_empresa] => Rodovia Senador Almir Pinto, km 15 - Estrada de Maranguape, S/N, Pau Serrado
+    [contato_editar_empresa] => 8531012892
+)
+Array
+(
+    [id_editar_empresa] => 53
+    [nome_editar_empresa] => EEFM EUNICE WEAVER
+    [nome_contato_editar_empresa] => Juilton
+    [endereco_editar_empresa] => Rodovia Senador Almir Pinto, km 15 - Estrada de Maranguape, S/N, Pau Serrado
+    [contato_editar_empresa] => 8531012892
+)

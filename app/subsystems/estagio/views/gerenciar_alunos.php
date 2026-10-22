@@ -546,40 +546,80 @@ $dados_alunos_filtrados = $select_model->alunos_aptos_curso($perfil_filtro_php, 
         }
 
         .area-desenvolvimento {
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(29, 78, 216, 0.2) 100%);
-            color: #93c5fd;
-            border: 1px solid rgba(59, 130, 246, 0.3);
+            background: linear-gradient(135deg, rgba(96, 165, 250, 0.9) 0%, rgba(37, 99, 235, 0.95) 100%);
+            color: #eff6ff;
+            border: 1px solid rgba(59, 130, 246, 0.8);
             width: 170px;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.28);
         }
 
         .area-tutoria {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.2) 100%); /* Usando estilo de midia para tutoria */
-            color: #6ee7b7; /* Usando estilo de midia para tutoria */
-            /* Removendo a borda roxa */
-            /* Adicionando uma borda escura */
-            border: 1px solid rgba(5, 150, 105, 0.3);
+            background: linear-gradient(135deg, rgba(52, 211, 153, 0.9) 0%, rgba(5, 150, 105, 0.95) 100%);
+            color: #ecfdf5;
+            border: 1px solid rgba(16, 185, 129, 0.8);
             width: 170px;
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.28);
         }
 
         .area-design {
-            background: linear-gradient(135deg, rgba(168, 85, 247, 0.2) 0%, rgba(126, 34, 206, 0.2) 100%);
-            color: #c4b5fd;
-            border: 1px solid rgba(168, 85, 247, 0.3);
+            background: linear-gradient(135deg, rgba(216, 180, 254, 0.92) 0%, rgba(168, 85, 247, 0.95) 100%);
+            color: #f5f3ff;
+            border: 1px solid rgba(168, 85, 247, 0.8);
             width: 170px;
+            box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
         }
 
         .area-midia {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.2) 100%);
-            color: #6ee7b7;
-            border: 1px solid rgba(16, 185, 129, 0.3);
+            background: linear-gradient(135deg, rgba(52, 211, 153, 0.9) 0%, rgba(5, 150, 105, 0.95) 100%);
+            color: #ecfdf5;
+            border: 1px solid rgba(16, 185, 129, 0.8);
             width: 170px;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.28);
         }
 
         .area-redes {
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(217, 119, 6, 0.2) 100%);
-            color: #fcd34d;
-            border: 1px solid rgba(245, 158, 11, 0.3);
+            background: linear-gradient(135deg, rgba(252, 211, 77, 0.95) 0%, rgba(217, 119, 6, 0.96) 100%);
+            color: #fff7ed;
+            border: 1px solid rgba(245, 158, 11, 0.8);
             width: 170px;
+            box-shadow: 0 4px 12px rgba(217, 119, 6, 0.28);
+        }
+
+        .localidade-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.42rem 0.8rem;
+            border-radius: 9999px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            border: 1px solid transparent;
+            box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
+            white-space: nowrap;
+        }
+
+        .localidade-badge i {
+            font-size: 0.68rem;
+            opacity: 0.9;
+        }
+
+        .localidade-mp {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.22) 0%, rgba(5, 150, 105, 0.36) 100%);
+            color: #065f46;
+            border-color: rgba(5, 150, 105, 0.45);
+        }
+
+        .localidade-ma {
+            background: linear-gradient(135deg, rgba(34, 211, 238, 0.22) 0%, rgba(14, 116, 144, 0.35) 100%);
+            color: #0f766e;
+            border-color: rgba(14, 165, 233, 0.45);
+        }
+
+        .localidade-mp-ma {
+            background: linear-gradient(135deg, rgba(196, 181, 253, 0.28) 0%, rgba(139, 92, 246, 0.38) 100%);
+            color: #5b21b6;
+            border-color: rgba(139, 92, 246, 0.45);
         }
 
         input,
@@ -854,19 +894,25 @@ $dados_alunos_filtrados = $select_model->alunos_aptos_curso($perfil_filtro_php, 
         }
 
         .mobile-card-actions button.info-btn {
-            color: #93c5fd;
+            background: rgba(59, 130, 246, 0.15);
+            border-color: rgba(59, 130, 246, 0.35);
+            color: #1d4ed8;
         }
 
         .mobile-card-actions button.edit-btn {
-            color: #00FF6B;
+            background: rgba(34, 197, 94, 0.15);
+            border-color: rgba(34, 197, 94, 0.35);
+            color: #15803d;
         }
 
         .mobile-card-actions button.delete-btn {
-            color: #f87171;
+            background: rgba(239, 68, 68, 0.15);
+            border-color: rgba(239, 68, 68, 0.35);
+            color: #b91c1c;
         }
 
         .mobile-card-actions button:hover {
-            background: rgba(255, 255, 255, 0.15);
+            filter: brightness(1.02);
             transform: translateY(-2px);
         }
 
@@ -878,6 +924,45 @@ $dados_alunos_filtrados = $select_model->alunos_aptos_curso($perfil_filtro_php, 
 
         .table-container.desktop-table .action-icons i {
             font-size: 1.25rem;
+        }
+
+        .ver-detalhes-btn,
+        .editar-aluno-btn,
+        .deletar-aluno-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.2rem;
+            height: 2.2rem;
+            border-radius: 0.75rem;
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
+        }
+
+        .ver-detalhes-btn {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: rgba(59, 130, 246, 0.35);
+            color: #1d4ed8;
+        }
+
+        .editar-aluno-btn {
+            background: rgba(34, 197, 94, 0.15);
+            border-color: rgba(34, 197, 94, 0.35);
+            color: #15803d;
+        }
+
+        .deletar-aluno-btn {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: rgba(239, 68, 68, 0.35);
+            color: #b91c1c;
+        }
+
+        .ver-detalhes-btn:hover,
+        .editar-aluno-btn:hover,
+        .deletar-aluno-btn:hover {
+            transform: translateY(-1px) scale(1.02);
+            filter: brightness(1.04);
         }
 
         @keyframes fadeIn {
@@ -1416,13 +1501,30 @@ $dados_alunos_filtrados = $select_model->alunos_aptos_curso($perfil_filtro_php, 
                 </div>
 
                 <!-- Actions Bar -->
-                <div class="mb-8 action-bar p-4 sm:p-5 fade-in">
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                        <a href="?modal=adicionar" class="custom-btn custom-btn-primary" id="addAlunoBtn">
-                            <i class="fas fa-plus btn-icon"></i>
-                            <span>Adicionar Aluno</span>
-                        </a>
-                        <div class="search-input-container relative w-full sm:w-64">
+<div class="mb-8 action-bar p-4 sm:p-5 fade-in">
+    <div class="flex items-center gap-3">
+        
+        <a href="?modal=adicionar" class="custom-btn custom-btn-primary" id="addAlunoBtn">
+            <i class="fas fa-plus btn-icon"></i>
+            <span>Adicionar Aluno</span>
+        </a>
+
+        <a href="https://salaberga.com/salaberga/portalsalaberga/app/subsystems/estagio/views/relatorio/situacao_alunos.php"
+           class="custom-btn custom-btn-primary"
+           id="alunosEncaminhadosBtn">
+            <i class="fas fa-user-check btn-icon"></i>
+            <span>Alunos Encaminhados</span>
+        </a>
+        
+        <a href="https://salaberga.com/salaberga/portalsalaberga/app/subsystems/estagio/views/relatorio/situacao_tces.php"
+           class="custom-btn custom-btn-primary"
+           id="alunosEncaminhadosBtn">
+            <i class="fas fa-user-check btn-icon"></i>
+            <span>TCE's - Situação</span>
+        </a>
+        
+        
+        <div class="search-input-container relative w-full sm:w-64">
                             <i class="fas fa-search search-icon"></i>
                             <input type="text" id="searchAluno" placeholder="Buscar aluno..." class="custom-input pl-10 pr-4 py-2.5 w-full">
                         </div>
@@ -1688,9 +1790,9 @@ $dados_alunos_filtrados = $select_model->alunos_aptos_curso($perfil_filtro_php, 
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="editAlunoForm" action="../controllers/controller_editar_excluir.php" method="post" class="space-y-4">
+                    <form id="editAlunoForm" action="../controllers/controller.php" method="post" class="space-y-4">
                         <input type="hidden" name="acao" value="editar">
-                        <input type="hidden" id="editAlunoId" name="id_aluno" value="<?= $editAluno['id'] ?? '' ?>">
+                        <input type="hidden" id="editAlunoId" name="id" value="<?= $editAluno['id'] ?? '' ?>">
                         
                         <div class="form-grid">
                             <div class="form-field">

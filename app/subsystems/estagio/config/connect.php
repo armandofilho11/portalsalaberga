@@ -17,7 +17,7 @@ define('REMOTE_PASSWORD', 'paoComOvo123!@##');
 
 class connect
 {
-    protected $connect;
+    protected PDO $connect;
 
     function __construct()
     {
@@ -28,12 +28,18 @@ class connect
     {
         // Tenta conectar ao banco de dados local
         try {
-            $this->connect = new PDO('mysql:host=' . LOCAL_HOST . ';dbname=' . LOCAL_DATABASE, LOCAL_USER, LOCAL_PASSWORD);
+            $this->connect = new PDO('mysql:host=' . LOCAL_HOST . ';dbname=' . LOCAL_DATABASE . ';charset=utf8mb4', LOCAL_USER, LOCAL_PASSWORD, [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            ]);
             return $this->connect;
         } catch (PDOException $e) {
             // Se a conexão local falhar, tenta conectar ao banco de dados remoto
             try {
-                $this->connect = new PDO('mysql:host=' . REMOTE_HOST . ';dbname=' . REMOTE_DATABASE, REMOTE_USER, REMOTE_PASSWORD);
+                $this->connect = new PDO('mysql:host=' . REMOTE_HOST . ';dbname=' . REMOTE_DATABASE . ';charset=utf8mb4', REMOTE_USER, REMOTE_PASSWORD, [
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                ]);
                 return $this->connect;
             } catch (PDOException $e) {
                 die('Erro! O sistema não possui conexão com nenhum banco de dados.');
@@ -45,3 +51,4 @@ class connect
         return $this->connect;
     }
 }
+?>

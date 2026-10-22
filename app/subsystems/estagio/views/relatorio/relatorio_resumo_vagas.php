@@ -46,22 +46,29 @@ class RelatorioResumoVagas extends PDF {
             $this->SetFillColor(248,248,248);
             $this->Rect(0,0,$this->GetPageWidth(),40,'F');
 
-            $this->Image('https://i.postimg.cc/Dy40VtFL/Design-sem-nome-13-removebg-preview.png',15,10,25);
+
+            // Logo esquerda
+            $this->Image('../../assets/img/logo_S_de_salaberga.png',10,13,20);
+            
+            // Logo direita
+            $this->Image('../../assets/img/logo_png_areadev.png',166,12,30);
+
+
 
             $this->SetFont('Arial','B',18);
             $this->SetTextColor(...$this->cores['primaria']);
-            $this->SetXY(45,15);
+            $this->SetXY(30,13);
             $this->Cell(100,10,' Resumo de Vagas',0,0,'L');
 
             $this->SetFont('Arial','B',9);
             $this->SetTextColor(...$this->cores['subtitulo']);
-            $this->SetXY(45,25);
+            $this->SetXY(30,23);
             $this->Cell(100,5,'  Ensino Médio Técnico em Informática',0,0,'L');
 
             date_default_timezone_set('America/Fortaleza');
 
             $this->SetFont('Arial','I',9);
-            $this->SetXY(45,30);
+            $this->SetXY(30,28);
             $this->Cell(100,5,'  Gerado em: '.date('d/m/Y H:i'),0,0,'L');
 
             $this->SetDrawColor(...$this->cores['primaria']);
@@ -80,32 +87,34 @@ class RelatorioResumoVagas extends PDF {
 
     function Footer(){
 
-        $this->SetDrawColor(...$this->cores['primaria']);
-        $this->SetLineWidth(0.3);
+        $this->SetY(-18);
+
+        $this->SetDrawColor(0,122,51);
         $this->Line(15,$this->GetPageHeight()-20,$this->GetPageWidth()-15,$this->GetPageHeight()-20);
 
-        $this->SetY(-18);
         $this->SetFont('Arial','I',8);
-        $this->SetTextColor(...$this->cores['subtitulo']);
-
-        $this->Cell(0,5,'Página '.$this->PageNo().'/{nb}',0,1,'C');
-        $this->Cell(0,5,'Sistema de Gestão de Vagas - Todos os direitos reservados',0,0,'C');
-
+        $this->SetTextColor(100,100,100);
+        
+        $this->SetX(13.5);
+        $this->Cell(94,5,'Sistema de Gestão de Estágio',0,0,'L');
+        $this->Cell(92,5,'Página '.$this->PageNo().'/{nb}',0,0,'R');
     }
 
-    public function gerarRelatorio(){
+    
+    
 
+    public function gerarRelatorio(){
         $this->AliasNbPages();
         $this->AddPage();
 
         $this->SetFillColor(220,240,230);
-        $this->SetFont('Arial','B',10);
+        $this->SetFont('Arial','B',9);
 
-        $this->SetX(15+(180-170)/2);
+        $this->SetX(15+(180-180)/2);
 
-        $this->Cell(100,6,'Empresa',1,0,'L',true);
+        $this->Cell(110,6,'Empresa',1,0,'L',true);
         $this->Cell(40,6,'Perfil',1,0,'L',true);
-        $this->Cell(30,6,'Quantidade',1,1,'C',true);
+        $this->Cell(30,6,'Vagas',1,1,'C',true);
 
         $this->SetFont('Arial','',9);
         $this->SetTextColor(40,40,40);
@@ -158,27 +167,98 @@ elseif (strpos($perfil, 'tutoria') !== false) {
             return $cmp;
 
         });
+        
+        
+        
+        
 
         foreach($vagas_agrupadas as $vaga){
-
-            $bg=($contador_linhas%2==0)?$row_bg1:$row_bg2;
-
+        
+            $bg = ($contador_linhas % 2 == 0) ? $row_bg1 : $row_bg2;
+        
             $this->SetFillColor(...$bg);
-            $this->SetX(15+(180-170)/2);
-
-            $this->Cell(100,5.5,$this->ajustarTexto($this->formatarEmpresa($vaga['empresa']),55),1,0,'L',true);
-            $this->Cell(40,5.5,$this->ajustarTexto($vaga['perfil'],20),1,0,'L',true);
-            $this->Cell(30,5.5,$vaga['quant_vaga'],1,1,'C',true);
-
+            $this->SetX(15+(180-180)/2);
+        
+            // Empresa
+            $this->SetFont('Arial','',8.8);
+            $this->Cell(110,5,$this->ajustarTexto($this->formatarEmpresa($vaga['empresa']),55),1,0,'L',true);
+        
+            // Perfil - negrito apenas para "Entrar em contato..."
+            if (trim($vaga['perfil']) == 'Entrar em contato...') {
+                $this->SetFont('Arial','B',8.8);
+            } else {
+                $this->SetFont('Arial','',8.8);
+            }
+        
+            $this->Cell(40,5,$this->ajustarTexto($vaga['perfil'],20),1,0,'L',true);
+        
+            // Volta fonte normal
+            $this->SetFont('Arial','',8.8);
+        
+            // Quantidade
+            $this->Cell(30,5,$vaga['quant_vaga'],1,1,'C',true);
+        
             $contador_linhas++;
-
         }
 
-        $this->Ln(3);
 
-        $this->SetFont('Arial','B',10);
-        $this->SetX(15+(180-(140+30))/2);
-        $this->Cell(170,6,'Detalhamento das Vagas:',0,1,'L');
+
+
+
+
+
+// RESUMO
+            $this->Ln(3);
+            
+            // Cabeçalho
+            $this->SetX(15);
+            $this->SetFillColor(220,240,230);
+            $this->SetFont('Arial','B',9);
+            $this->Cell(180,6,'Resumo',1,1,'L',true);
+            // Volta ao padrão normal da tabela
+            $this->SetFont('Arial','',9);
+            
+            
+            // Conteúdo
+            $total_vagas = array_sum(array_column($vagas_agrupadas,'quant_vaga'));
+            $total_alunos = $this->select_model->total_alunos();
+            $deficit = max(0, $total_alunos - $total_vagas);
+            
+            $resumo = [
+                'Total de Alunos'  => $total_alunos,
+                'Vagas Confirmadas'   => $total_vagas,
+                'Déficit de Vagas' => $deficit,
+                'Concedentes'      => count(array_unique(array_column($vagas_agrupadas,'empresa')))
+            ];
+        
+            $i = 0;
+            foreach($resumo as $titulo => $valor){
+            
+                $this->SetX(15);
+                $this->SetFillColor(...(($i % 2 == 0) ? $row_bg1 : $row_bg2));
+                $this->SetFont('Arial','',8.8);
+                $this->Cell(150,5,$titulo,1,0,'L',true);
+                $this->Cell(30,5,$valor,1,1,'C',true);
+            
+                $i++;
+            }
+            
+
+
+
+
+
+
+//TOTAL DE VAGAS POR PERFIL
+            $this->Ln(3);
+            
+            // Título no padrão do cabeçalho
+            $this->SetX(15+(180-180)/2);
+            $this->SetFillColor(220,240,230);
+            $this->SetFont('Arial','B',9);
+            $this->Cell(180,6,'Vagas por Perfil',1,1,'L',true);
+            // Volta ao padrão normal da tabela
+            $this->SetFont('Arial','',9);
 
         $nomes_perfil=[
             1=>'Perfil Desenvolvimento',
@@ -187,33 +267,28 @@ elseif (strpos($perfil, 'tutoria') !== false) {
             4=>'Perfil Tutoria'
         ];
 
-        foreach($parciais_perfil as $id=>$q){
-
-            $this->SetX(15+(180-(140+30))/2);
-
-            $this->Cell(140,5.5,$nomes_perfil[$id].':',1,0,'L',true);
-            $this->Cell(30,5.5,$q,1,1,'C',true);
-
+        $contador_detalhe = 0;
+        foreach($parciais_perfil as $id => $q){
+        
+            $bg = ($contador_detalhe % 2 == 0) ? $row_bg1 : $row_bg2;
+            $this->SetFillColor(...$bg);
+            $this->SetFont('Arial','',8.8);
+            $this->SetX(15+(180-180)/2);
+            $this->Cell(150,5,$nomes_perfil[$id],1,0,'L',true);
+            $this->Cell(30,5,$q,1,1,'C',true);
+            $contador_detalhe++;
+            
         }
 
-        $this->Ln(3);
-        
-        $this->SetFont('Arial','B',10);
-        $this->SetX(15+(180-(140+30))/2);
-        $this->Cell(170,6,'Resumo:',0,1,'L');
-        
-        $this->SetX(15+(180-(140+30))/2);
-        $this->Cell(140,5.5,'Total de Vagas:',1,0,'L',true);
 
-        $this->Cell(30,5.5,array_sum(array_column($vagas_agrupadas,'quant_vaga')),1,1,'C',true);
 
-        $this->SetX(15+(180-(140+30))/2);
-        $this->Cell(140,5.5,'Déficit de Vagas:',1,0,'L',true);
-        $this->Cell(30,5.5,49-array_sum(array_column($vagas_agrupadas,'quant_vaga')),1,1,'C',true);
 
-        $this->SetX(15+(180-(140+30))/2);
-        $this->Cell(140,5.5,'Concedentes:',1,0,'L',true);
-        $this->Cell(30,5.5,count(array_unique(array_column($vagas_agrupadas,'empresa'))),1,1,'C',true);
+
+
+
+
+
+
 
     }
 

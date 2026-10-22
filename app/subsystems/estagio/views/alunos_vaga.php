@@ -624,30 +624,27 @@ if (isset($_POST['layout'])) {
                     </div>
                 </div>
                 <nav class="flex-1">
-                    <a href="dashboard.php" class="sidebar-link">
+                    <a href="dashboard.php#dashboard" class="sidebar-link">
                         <i class="fas fa-home w-5 mr-3"></i>
                         Dashboard
                     </a>
-                    <a href="gerenciar_empresas.php" class="sidebar-link">
+                    <a href="dashboard.php#empresas" class="sidebar-link">
                         <i class="fas fa-building w-5 mr-3"></i>
                         Gerenciar Empresas
                     </a>
-                    <a href="vagas.php" class="sidebar-link active">
+                    <a href="dashboard.php#vagas" class="sidebar-link active">
                         <i class="fas fa-briefcase w-5 mr-3"></i>
                         Vagas
                     </a>
-                    <a href="selecionados.php" class="sidebar-link">
+                    <a href="dashboard.php#selecionados" class="sidebar-link">
                         <i class="fas fa-check-circle w-5 mr-3"></i>
                         Selecionados
                     </a>
-                    <a href="gerenciar_alunos.php" class="sidebar-link">
+                    <a href="dashboard.php#alunos" class="sidebar-link">
                         <i class="fas fa-user-graduate w-5 mr-3"></i>
                         Gerenciar Alunos
                     </a>
-                    <a href="resultado_selecionados.php" class="sidebar-link">
-                        <i class="fa fa-user-circle w-5 mr-3"></i>
-                        Resultados
-                    </a>
+                    
                     
                 </nav>
                 <div class="mt-auto pt-4 border-t border-gray-700">
@@ -685,27 +682,27 @@ if (isset($_POST['layout'])) {
                     </button>
                 </div>
                 <nav class="flex-1">
-                    <a href="dashboard.php" class="sidebar-link">
+                    <a href="dashboard.php#dashboard" class="sidebar-link">
                         <i class="fas fa-home w-5 mr-3"></i>
                         Dashboard
                     </a>
-                    <a href="gerenciar_empresas.php" class="sidebar-link">
+                    <a href="dashboard.php#empresas" class="sidebar-link">
                         <i class="fas fa-building w-5 mr-3"></i>
                         Gerenciar Empresas
                     </a>
-                    <a href="vagas.php" class="sidebar-link active">
+                    <a href="dashboard.php#vagas" class="sidebar-link active">
                         <i class="fas fa-briefcase w-5 mr-3"></i>
                         Vagas
                     </a>
-                    <a href="selecionados.php" class="sidebar-link">
+                    <a href="dashboard.php#selecionados" class="sidebar-link">
                         <i class="fas fa-check-circle w-5 mr-3"></i>
                         Selecionados
                     </a>
-                    <a href="gerenciar_alunos.php" class="sidebar-link">
+                    <a href="dashboard.php#alunos" class="sidebar-link">
                         <i class="fas fa-user-graduate w-5 mr-3"></i>
                         Gerenciar Alunos
                     </a>
-                    <a href="resultado_selecionados.php" class="sidebar-link">
+                    <a href="dashboard.php#selecionados" class="sidebar-link">
                         <i class="fa fa-user-circle w-5 mr-3"></i>
                         Resultados
                     </a>
@@ -744,9 +741,9 @@ if (isset($_POST['layout'])) {
             <main class="max-w-7x2 mx-auto px-2 sm:px-6 lg:px-8 py-6 sm:py-8 w-full">
                 <!-- Breadcrumbs -->
                 <div class="text-sm text-gray-400 mb-6 flex items-center">
-                    <a href="dashboard.php" class="hover:text-primary-400 transition-colors">Dashboard</a>
+                    <a href="dashboard.php#dashboard" class="hover:text-primary-400 transition-colors">Dashboard</a>
                     <span class="mx-2 text-gray-600">/</span>
-                    <a href="vagas.php" class="hover:text-primary-400 transition-colors">Vagas</a>
+                    <a href="dashboard.php#vagas" class="hover:text-primary-400 transition-colors">Vagas</a>
                     <span class="mx-2 text-gray-600">/</span>
                     <span class="text-white">Selecionar Alunos</span>
                 </div>
@@ -895,9 +892,8 @@ if (isset($_POST['layout'])) {
                                                 $area2_class = strtolower($perfil2);
                                                 if ($area2_class === 'design/social mídia' || $area2_class === 'design/mídia' || $area2_class === 'design/mídias' || $area2_class === 'design') {
                                                     $area2_class = 'design';
-                                                } elseif ($perfil2 === 'Suporte/Redes') {
-                                                    $area2_class = 'redes';
-                                                } elseif ($perfil2 === 'Tutoria') {
+                                                } elseif (trim($perfil2) === 'Suporte/Redes' || trim($perfil2) === 'Suporte / Redes') { $area2_class = 'redes';
+                                                } elseif (trim(strtolower($perfil2)) === 'tutoria') {
                                                     $area2_class = 'tutoria';
                                                 } else {
                                                     $area2_class = 'desenvolvimento'; // Cor padrão
@@ -1177,7 +1173,7 @@ if (isset($_POST['layout'])) {
 
                     <!-- Botões de Ação -->
                     <div class="mt-6 flex justify-end space-x-4 fade-in">
-                        <a href="vagas.php" class="custom-btn custom-btn-secondary">
+                        <a href="dashboard.php#vagas" class="custom-btn custom-btn-secondary">
                             <i class="fas fa-times btn-icon"></i>
                             <span>Cancelar</span>
                         </a>

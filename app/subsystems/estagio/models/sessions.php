@@ -13,7 +13,7 @@ class sessions
         if (!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
             unset($_SESSION['login']);
             unset($_SESSION['status']);
-            header('location:../../../main/views/autenticacao/login.php');
+            header('location:../views/login.php');
             exit();
         } 
         
@@ -25,7 +25,7 @@ class sessions
             if (time() - $_SESSION['ultimo_acesso'] > $tempo) {
                 session_unset();
                 session_destroy();
-                header('location:../../../main/views/autenticacao/login.php');
+                header('location:../views/login.php');
                 exit();
             }
         }
@@ -35,7 +35,7 @@ class sessions
     {
         session_unset();
         session_destroy();
-        header('location:../../../main/views/autenticacao/login.php');
+        header('location:../index.php');
         exit();
     }
 }

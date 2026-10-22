@@ -3,8 +3,8 @@ require_once('../models/model.php');
 
 if (isset($_POST['alunos']) && !empty($_POST['alunos']) && isset($_POST['id_vaga']) && !empty($_POST['id_vaga'])) {
 
-    $id_vaga = $_POST['id_vaga'];
-    $alunos = $_POST['alunos'];
+    $id_vaga = (int) $_POST['id_vaga'];
+    $alunos = array_map('intval', (array) $_POST['alunos']);
 
     $model = new main_model;
     $result = $model->selecao($alunos, $id_vaga);
@@ -12,15 +12,46 @@ if (isset($_POST['alunos']) && !empty($_POST['alunos']) && isset($_POST['id_vaga
     switch ($result) {
 
         case 1:
-            header('location:https://www.google.com');
+            header('location:../views/dashboard.php#vagas');
             exit();
         case 2:
-            header('location:../views/vagas.php?erro');
+            header('location:../views/dashboard.php#vagas');
             exit();
         default:
-            header('location:../views/vagas.php?existe');
+            header('location:../views/dashboard.php#vagas');
             exit();
     }
+} else if (isset($_POST['acao']) && $_POST['acao'] === 'atualizar_selecao' && isset($_POST['id_vaga']) && !empty($_POST['id_vaga'])) {
+
+    $id_vaga = (int) $_POST['id_vaga'];
+    $adicionar = isset($_POST['adicionar']) ? array_map('intval', (array) $_POST['adicionar']) : [];
+    $remover = isset($_POST['remover']) ? array_map('intval', (array) $_POST['remover']) : [];
+
+    $model = new main_model;
+    $result = $model->atualizar_selecao_por_vaga($id_vaga, $adicionar, $remover);
+
+    header('location:../views/dashboard.php#vagas');
+    exit();
+} else if (isset($_POST['acao']) && $_POST['acao'] === 'finalizar_selecao' && isset($_POST['id_vaga']) && !empty($_POST['id_vaga'])) {
+
+    $id_vaga = (int) $_POST['id_vaga'];
+    $aprovados = isset($_POST['aprovados']) ? array_map('intval', (array) $_POST['aprovados']) : [];
+
+    $model = new main_model;
+    $model->finalizar_selecao_por_vaga($id_vaga, $aprovados);
+
+    header('location:../views/dashboard.php#vagas');
+    exit();
+} else if (isset($_POST['acao']) && $_POST['acao'] === 'remover_aluno_vaga' && isset($_POST['id_vaga']) && !empty($_POST['id_vaga']) && isset($_POST['id_aluno']) && !empty($_POST['id_aluno'])) {
+
+    $id_vaga = (int) $_POST['id_vaga'];
+    $id_aluno = (int) $_POST['id_aluno'];
+
+    $model = new main_model;
+    $model->remover_aluno_da_vaga($id_vaga, $id_aluno);
+
+    header('location:../views/dashboard.php#vagas');
+    exit();
 } else if (isset($_POST['email']) && !empty($_POST['email']) && isset($_POST['senha']) && !empty($_POST['senha'])) {
 
     $email = $_POST['email'];
@@ -41,6 +72,11 @@ if (isset($_POST['alunos']) && !empty($_POST['alunos']) && isset($_POST['id_vaga
             header('location:../index.php');
             exit();
     }
+    
+    
+    
+    
+//CADASTRAR NOVA EMPRESA / CONCEDENTE    
 } else if (isset($_POST['nome']) && !empty($_POST['nome']) && isset($_POST['endereco']) && !empty($_POST['endereco'])) {
 
     $nome = $_POST['nome'];
@@ -53,41 +89,92 @@ if (isset($_POST['alunos']) && !empty($_POST['alunos']) && isset($_POST['id_vaga
     switch ($result) {
 
         case 1:
-            header('location:../views/gerenciar_empresas.php?certo');
+            header('location:../views/dashboard.php#empresas');
             exit();
         case 2:
-            header('location:../views/gerenciar_empresas.php?erro');
+            header('location:../views/dashboard.php#empresas');
             exit();
         case 3:
-            header('location:../views/gerenciar_empresas.php?existe');
+            header('location:../views/dashboard.php#empresas');
             exit();
     }
-} else if (isset($_POST['empresa']) && !empty($_POST['empresa']) && isset($_POST['areas']) && !empty($_POST['areas']) && isset($_POST['quant_vagas']) && !empty($_POST['quant_vagas']) && isset($_POST['quant_candidatos']) && !empty($_POST['quant_candidatos']) && isset($_POST['tipo_vaga']) && !empty($_POST['tipo_vaga'])) {
+} 
+
+
+
+
+
+else if (
+    isset($_POST['empresa']) && !empty($_POST['empresa']) &&
+    isset($_POST['areas']) && !empty($_POST['areas']) &&
+    isset($_POST['quant_vagas']) && !empty($_POST['quant_vagas']) &&
+    isset($_POST['tipo_vaga']) && !empty($_POST['tipo_vaga'])
+) {
 
     $id_empresa = $_POST['empresa'];
     $id_area = $_POST['areas'];
     $quant_vagas = $_POST['quant_vagas'];
-    $quant_candidatos = $_POST['quant_candidatos'];
-    $data = $_POST['data'] ?? 0;
     $tipo_vaga = $_POST['tipo_vaga'];
-    $hora = $_POST['hora'] ?? 0;
 
     $model = new main_model;
-    $result = $model->cadastrar_vaga($id_empresa, $id_area, $quant_vagas, $quant_candidatos, $data, $tipo_vaga, $hora);
+
+    $result = $model->cadastrar_vaga(
+        $id_empresa,
+        $id_area,
+        $quant_vagas,
+        $tipo_vaga
+    );
 
     switch ($result) {
 
-        case 1:
-            header('location:../views/vagas.php?certo');
-            exit();
         case 2:
-            header('location:../views/vagas.php?erro');
+            header('location:../views/dashboard.php#vagas');
             exit();
+
         case 3:
-            header('location:../views/vagas.php?existe');
+            header('location:../views/dashboard.php#vagas');
+            exit();
+
+        default:
+
+            header('location:../views/dashboard.php#vagas');
             exit();
     }
-} else if (
+}
+
+
+
+
+
+
+
+else if (isset($_POST['quant_candidatos']) && !empty($_POST['quant_candidatos'])) {
+
+    $id_vaga = $_POST['id_vaga']; // ID do registro já existente
+    $quant_candidatos = $_POST['quant_candidatos'];
+    $data = $_POST['data'] ?? 0;
+    $hora = $_POST['hora'] ?? 0;
+
+    $model = new main_model;
+
+    $result = $model->cadastrar_entrevista($id_vaga,$quant_candidatos,$data,$hora);
+
+    switch ($result) {
+        case 1:
+            header('location:../views/dashboard.php#vagas');
+            exit();
+
+        case 2:
+            header('location:../views/dashboard.php#vagas');
+            exit();
+
+        case 3:
+            header('location:../views/dashboard.php#vagas');
+            exit();
+    }
+} 
+
+else if (
     isset($_POST['nome']) &&
     isset($_POST['contato']) &&
     isset($_POST['medias']) &&
@@ -95,6 +182,7 @@ if (isset($_POST['alunos']) && !empty($_POST['alunos']) && isset($_POST['id_vaga
     isset($_POST['projetos']) &&
     isset($_POST['perfil_opc1']) &&
     isset($_POST['perfil_opc2']) &&
+    isset($_POST['localidade']) &&
     isset($_POST['ocorrencia']) &&
     isset($_POST['custeio']) &&
     isset($_POST['entregas_individuais']) &&
@@ -109,21 +197,22 @@ if (isset($_POST['alunos']) && !empty($_POST['alunos']) && isset($_POST['id_vaga
     $projetos = $_POST['projetos'];
     $perfil_opc1 = $_POST['perfil_opc1'];
     $perfil_opc2 = $_POST['perfil_opc2'];
-    $ocorrencia = $_POST['ocorrencia'];
-    $custeio = $_POST['custeio'];
+    $localidade = $_POST['localidade'];
+    $ocorrencia = (int) ($_POST['ocorrencia'] ?? 0);
+    $custeio = (int) ($_POST['custeio'] ?? 0);
     $entregas_individuais = $_POST['entregas_individuais'];
     $entregas_grupo = $_POST['entregas_grupo'];
     $id = $_POST['id'];
 
 
     $model = new main_model;
-    $result = $model->editar_aluno($id, $nome, $contato, $medias, $email, $projetos, $perfil_opc1, $perfil_opc2, $ocorrencia, $custeio, $entregas_individuais, $entregas_grupo);
+    $result = $model->editar_aluno($id, $nome, $contato, $medias, $email, $projetos, $perfil_opc1, $perfil_opc2, $localidade, $ocorrencia, $custeio, $entregas_individuais, $entregas_grupo);
     switch ($result) {
         case 1:
-            header('location:../views/gerenciar_alunos.php?certo');
+            header('location:../views/dashboard.php#alunos');
             exit();
         case 2:
-            header('location:../views/gerenciar_alunos.php?erro');
+            header('location:../views/dashboard.php#alunos');
             exit();
     }
 } /*else {

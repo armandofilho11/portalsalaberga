@@ -1,6 +1,13 @@
 <?php
 require_once(__DIR__ . '/../config/connect.php');
 
+/**
+ * Camada de leitura do sistema.
+ *
+ * Reune consultas usadas por dashboards, telas de cadastro, filtros,
+ * selecoes e relatorios. Metodos desta classe devem priorizar consultas
+ * sem efeito colateral no banco.
+ */
 class select_model extends connect
 {
 
@@ -59,6 +66,20 @@ class select_model extends connect
         $result =  $stmt_ativas->fetch(PDO::FETCH_ASSOC);
         return $result;
     }
+
+    function total_nao_selecionados()
+    {
+        $stmt_nao_selecionados = $this->connect->query("
+            SELECT count(*)
+            FROM aluno a
+            LEFT JOIN selecionado s ON s.id_aluno = a.id
+            WHERE s.id_aluno IS NULL
+        ");
+        $result = $stmt_nao_selecionados->fetch(PDO::FETCH_ASSOC);
+
+        return $result;
+    }
+
     function concedentes($search = '', $area = '')
     {
         $sql = "SELECT DISTINCT c.*, 
@@ -95,6 +116,19 @@ class select_model extends connect
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    function fichas_concedentes()
+    {
+        $sql = "SELECT id, nome_fantasia, razao_social
+                FROM ficha_concedente
+                ORDER BY nome_fantasia ASC";
+
+        $stmt = $this->connect->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     private function removeAcentos($string)
     {
         $string = str_replace(
@@ -105,17 +139,37 @@ class select_model extends connect
         return $string;
     }
 
+    private function normalizar_perfil($perfil): string
+    {
+        $perfil = trim((string) $perfil);
+        if ($perfil === '') {
+            return '';
+        }
+
+        $lower = function_exists('mb_strtolower') ? mb_strtolower($perfil, 'UTF-8') : strtolower($perfil);
+
+        if (strpos($lower, 'desenvolv') !== false) {
+            return 'desenvolvimento';
+        }
+
+        if (strpos($lower, 'design') !== false || strpos($lower, 'midia') !== false || strpos($lower, 'mídia') !== false) {
+            return 'design';
+        }
+
+        if (strpos($lower, 'suporte') !== false || strpos($lower, 'rede') !== false) {
+            return 'suporte';
+        }
+
+        if (strpos($lower, 'tutoria') !== false) {
+            return 'tutoria';
+        }
+
+        return $lower;
+    }
+
     function alunos($nome_perfil = 0, $search = '', $filtro = '')
     {
-        // Normalizar o nome do perfil
-        if (
-            strtolower($nome_perfil) === 'design/mídias' ||
-            strtolower($nome_perfil) === 'design/mídia' ||
-            strtolower($nome_perfil) === 'design/social mídia' ||
-            strtolower($nome_perfil) === 'design'
-        ) {
-            $nome_perfil = 'Design/Mídia';
-        }
+        $targetArea = $this->normalizar_perfil((string) $nome_perfil);
 
         $sql = "SELECT 
                     a.id,
@@ -134,33 +188,184 @@ class select_model extends connect
                         (a.ocorrencia * 0.5) +
                         (a.entregas_individuais * 5) +
                         (a.entregas_grupo * 5)
-                    ) AS score,
-                    CASE 
-                        WHEN a.perfil_opc1 = :nome_perfil THEN 1
-                        WHEN a.perfil_opc2 = :nome_perfil THEN 2
-                        ELSE 3
-                    END AS priority_group
+                    ) AS score
                 FROM aluno a
                 WHERE NOT EXISTS (
                     SELECT 1 FROM selecao se
                     WHERE se.id_aluno = a.id AND (se.Status = '0' OR se.Status = '1')
-                )
-                ORDER BY 
-                    priority_group ASC,
-                    score DESC,
-                    a.medias DESC,
-                    COALESCE(a.ocorrencia, 0) ASC";
+                )";
+
         $stmt = $this->connect->prepare($sql);
-        $stmt->bindValue(':nome_perfil', $nome_perfil, PDO::PARAM_STR);
         $stmt->execute();
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        // Log para debug
-        error_log("Total de alunos retornados: " . count($result));
-        error_log("Query SQL: " . $sql);
-        error_log("Nome do perfil: " . $nome_perfil);
-        
-        return $result;
+        $alunos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (empty($targetArea)) {
+            return $alunos;
+        }
+
+        $filtrados = [];
+        foreach ($alunos as $aluno) {
+            $area1 = $this->normalizar_perfil((string) ($aluno['perfil_opc1'] ?? ''));
+            $area2 = $this->normalizar_perfil((string) ($aluno['perfil_opc2'] ?? ''));
+
+            if ($area1 === $targetArea || $area2 === $targetArea) {
+                $aluno['priority_group'] = ($area1 === $targetArea) ? 1 : 2;
+                $filtrados[] = $aluno;
+            }
+        }
+
+        usort($filtrados, function ($a, $b) {
+            $priorityA = (int) ($a['priority_group'] ?? 99);
+            $priorityB = (int) ($b['priority_group'] ?? 99);
+            if ($priorityA !== $priorityB) {
+                return $priorityA <=> $priorityB;
+            }
+
+            $scoreA = (float) ($a['score'] ?? 0);
+            $scoreB = (float) ($b['score'] ?? 0);
+            if ($scoreA !== $scoreB) {
+                return $scoreB <=> $scoreA;
+            }
+
+            $mediaA = (float) ($a['medias'] ?? 0);
+            $mediaB = (float) ($b['medias'] ?? 0);
+            if ($mediaA !== $mediaB) {
+                return $mediaB <=> $mediaA;
+            }
+
+            return strcmp((string) ($a['nome'] ?? ''), (string) ($b['nome'] ?? ''));
+        });
+
+        return $filtrados;
+    }
+
+    /**
+     * Ranking do dashboard por id do perfil (1–4): inclui alunos em seleção (pendente),
+     * trata variantes de nome para Design, e coloca aprovados nesta área ao final da lista.
+     */
+    function alunos_ranking_dashboard_por_perfil_id(int $id_perfil)
+    {
+        $id_perfil = (int) $id_perfil;
+        $stmtNome = $this->connect->prepare('SELECT nome_perfil FROM perfis WHERE id = ? LIMIT 1');
+        $stmtNome->execute([$id_perfil]);
+        $rowP = $stmtNome->fetch(PDO::FETCH_ASSOC);
+        if (!$rowP || empty($rowP['nome_perfil'])) {
+            return [];
+        }
+
+        $aliases = [trim((string) $rowP['nome_perfil'])];
+        if ($id_perfil === 2) {
+            foreach ([
+                'Design/Mídia',
+                'Design/Social mídia',
+                'Design/Mídias',
+                'Design',
+                'Design/Social mídia',
+            ] as $alt) {
+                $t = trim((string) $alt);
+                if ($t !== '' && !in_array($t, $aliases, true)) {
+                    $aliases[] = $t;
+                }
+            }
+        }
+
+        if ($id_perfil === 3) {
+            foreach ([
+                'Suporte/Redes',
+                'Suporte / Redes',
+                'Suporte',
+                'Redes',
+            ] as $alt) {
+                $t = trim((string) $alt);
+                if ($t !== '' && !in_array($t, $aliases, true)) {
+                    $aliases[] = $t;
+                }
+            }
+        }
+        if ($id_perfil === 4) {
+            foreach ([
+                'Tutoria',
+                'tutoria',
+            ] as $alt) {
+                $t = trim((string) $alt);
+                if ($t !== '' && !in_array($t, $aliases, true)) {
+                    $aliases[] = $t;
+                }
+            }
+        }
+
+        $n = count($aliases);
+        $marks = implode(',', array_fill(0, $n, '?'));
+        $inOpc1 = "a.perfil_opc1 IN ($marks)";
+        $inOpc2 = "a.perfil_opc2 IN ($marks)";
+        $whereMatch = "($inOpc1 OR $inOpc2)";
+
+        $scoreSql = "(a.medias + (CASE WHEN a.projetos != '' AND a.projetos IS NOT NULL THEN 5 ELSE 0 END) - (COALESCE(a.ocorrencia,0) * 0.5) + (COALESCE(a.entregas_individuais,0) * 5) + (COALESCE(a.entregas_grupo,0) * 5))";
+
+        $approvedExists = "EXISTS (SELECT 1 FROM selecionado s INNER JOIN vagas v ON v.id = s.id_vaga WHERE s.id_aluno = a.id AND v.id_perfil = $id_perfil)";
+        $waitingExists = "EXISTS (SELECT 1 FROM selecao se INNER JOIN vagas v ON v.id = se.id_vaga AND v.id_perfil = $id_perfil LEFT JOIN selecionado s ON s.id_aluno = se.id_aluno AND s.id_vaga = se.id_vaga WHERE se.id_aluno = a.id AND s.id_aluno IS NULL)";
+
+        $empresaAprov = "(SELECT c.nome FROM selecionado s INNER JOIN vagas v ON v.id = s.id_vaga AND v.id_perfil = ? INNER JOIN concedentes c ON c.id = v.id_concedente WHERE s.id_aluno = a.id LIMIT 1)";
+        $empresaAguar = "(SELECT c.nome FROM selecao se INNER JOIN vagas v ON v.id = se.id_vaga AND v.id_perfil = ? LEFT JOIN selecionado s ON s.id_aluno = se.id_aluno AND s.id_vaga = se.id_vaga INNER JOIN concedentes c ON c.id = v.id_concedente WHERE se.id_aluno = a.id AND s.id_aluno IS NULL LIMIT 1)";
+
+        $sql = "SELECT 
+            a.id,
+            a.nome,
+            a.medias,
+            a.projetos,
+            a.ocorrencia,
+            a.entregas_individuais,
+            a.entregas_grupo,
+            a.perfil_opc1,
+            a.perfil_opc2,
+            a.custeio,
+            $scoreSql AS score,
+            CASE
+                WHEN $inOpc1 THEN 1
+                WHEN $inOpc2 THEN 2
+                ELSE 3
+            END AS priority_group,
+            CASE
+                WHEN $approvedExists THEN 'approved'
+                WHEN $waitingExists THEN 'waiting'
+                ELSE 'no_interview'
+            END AS ranking_ui_status,
+            COALESCE($empresaAprov, $empresaAguar) AS empresa,
+            (SELECT nome_perfil FROM perfis WHERE id = ? LIMIT 1) AS perfil_empresa
+        FROM aluno a
+        WHERE $whereMatch
+        ORDER BY
+            CASE WHEN $approvedExists THEN 1 ELSE 0 END ASC,
+            CASE
+                WHEN $inOpc1 THEN 1
+                WHEN $inOpc2 THEN 2
+                ELSE 3
+            END ASC,
+            score DESC,
+            a.medias DESC,
+            COALESCE(a.ocorrencia, 0) ASC";
+
+        $params = [];
+        $params = array_merge($params, $aliases, $aliases);
+        $params[] = $id_perfil;
+        $params[] = $id_perfil;
+        $params[] = $id_perfil;
+        $params = array_merge($params, $aliases, $aliases);
+        $params = array_merge($params, $aliases, $aliases);
+
+        $stmt = $this->connect->prepare($sql);
+        $stmt->execute($params);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Perfis usados no dashboard (mesma ordem das vagas: id 1–4).
+     */
+    function perfis_dashboard_ranking()
+    {
+        $stmt = $this->connect->query("SELECT id, nome_perfil FROM perfis WHERE id IN (1,2,3,4) ORDER BY id ASC");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     function alunos_aptos_curso($nome_perfil = 0, $search = '', $filtro = '')
     {
@@ -173,6 +378,7 @@ class select_model extends connect
                     a.projetos,
                     a.perfil_opc1,
                     a.perfil_opc2,
+                    a.localidade,
                     a.ocorrencia,
                     a.custeio,
                     a.entregas_individuais,
@@ -208,6 +414,12 @@ class select_model extends connect
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    /**
+     * Lista alunos por status visual:
+     * - approved: ja esta em `selecionado`.
+     * - waiting: esta em `selecao`, mas ainda nao foi aprovado.
+     * - no_interview: ainda nao esta associado a processo seletivo.
+     */
     function alunos_aptos($nome_perfil = 0, $search = '', $filtro = '')
     {
         $sql = "SELECT 
@@ -259,76 +471,89 @@ class select_model extends connect
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    function vagas($search = '', $area = '', $empresa = '')
-    {
-        $sql = "SELECT 
-                v.id as id,
-                c.nome AS nome_empresa,
-                p.nome_perfil AS nome_perfil,
-                v.quant_vaga AS quant_vaga,
-                v.quant_cand AS quant_cand,
-                v.data as data,
-                v.hora as hora,
-                v.tipo_vaga as tipo_vaga,
-                v.id_concedente as id_empresa,
-                v.id_perfil as id_perfil
-            FROM 
-                vagas v
-            INNER JOIN concedentes c ON v.id_concedente = c.id
-            INNER JOIN perfis p ON v.id_perfil = p.id
-            WHERE 1=1";
 
-        $params = [];
 
-        if (!empty($search)) {
-            $sql .= " AND (c.nome LIKE ? OR p.nome_perfil LIKE ?)";
-            $searchTerm = "%{$search}%";
-            $params[] = $searchTerm;
-            $params[] = $searchTerm;
-        }
 
-        if (!empty($area)) {
-            $sql .= " AND v.id_perfil = ?";
-            $perfil_id = null;
-            switch (strtolower($area)) {
-                case '1':
-                    $perfil_id = 1;
-                    break;
-                case '2':
 
-                    $perfil_id = 2;
-                    break;
-                case '3':
-                    $perfil_id = 3;
-                    break;
-                case '4':
-                    $perfil_id = 4;
-                    break;
-            }
-            if ($perfil_id !== null) {
-                $params[] = $perfil_id;
-            } else {
-                $sql .= " AND 1=0";
-            }
-        }
 
-        if (!empty($empresa)) {
-            $sql .= " AND v.id_concedente = ?";
-            $params[] = $empresa;
-        }
 
-        $sql .= " ORDER BY v.data DESC, v.hora DESC";
+function vagas($search = '', $area = '', $empresa = '')
+{
+    $sql = "SELECT 
+            COALESCE(v.id,0) as id,
+            c.nome AS nome_empresa,
+            COALESCE(p.nome_perfil,'Entrar em contato...') AS nome_perfil,
+            COALESCE(v.quant_vaga,0) AS quant_vaga,
+            COALESCE(v.quant_cand,0) AS quant_cand,
+            v.data as data,
+            v.hora as hora,
+            v.tipo_vaga as tipo_vaga,
+            c.id as id_empresa,
+            v.id_perfil as id_perfil
+        FROM concedentes c
+        INNER JOIN vagas v 
+            ON v.id_concedente = c.id
+        LEFT JOIN perfis p 
+            ON v.id_perfil = p.id
+        WHERE 1=1";
 
-        $stmt = $this->connect->prepare($sql);
+    $params = [];
 
-        if (!empty($params)) {
-            $stmt->execute($params);
-        } else {
-            $stmt->execute();
-        }
-
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    if (!empty($search)) {
+        $sql .= " AND (c.nome LIKE ? OR p.nome_perfil LIKE ?)";
+        $searchTerm = "%{$search}%";
+        $params[] = $searchTerm;
+        $params[] = $searchTerm;
     }
+
+    if (!empty($area)) {
+
+        $perfil_id = null;
+
+        switch (strtolower($area)) {
+            case '1':
+                $perfil_id = 1;
+                break;
+            case '2':
+                $perfil_id = 2;
+                break;
+            case '3':
+                $perfil_id = 3;
+                break;
+            case '4':
+                $perfil_id = 4;
+                break;
+        }
+
+        if ($perfil_id !== null) {
+            $sql .= " AND (v.id_perfil = ? OR v.id_perfil IS NULL)";
+            $params[] = $perfil_id;
+        }
+    }
+
+    if (!empty($empresa)) {
+        $sql .= " AND c.id = ?";
+        $params[] = $empresa;
+    }
+
+    $sql .= " ORDER BY c.nome ASC, v.data DESC, v.hora DESC";
+
+    $stmt = $this->connect->prepare($sql);
+
+    if (!empty($params)) {
+        $stmt->execute($params);
+    } else {
+        $stmt->execute();
+    }
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+
+
+
+
+
     function alunos_selecionados_relatorio($id_vaga)
     {
         $stmt = $this->connect->prepare("
@@ -359,7 +584,7 @@ class select_model extends connect
     {
         $sql = "
             SELECT a.nome, a.contato, a.id, 'approved' as status
-            FROM aluno a
+        FROM aluno a
             INNER JOIN selecionado s ON a.id = s.id_aluno
             WHERE s.id_vaga = :id_vaga
 
@@ -392,6 +617,53 @@ class select_model extends connect
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function alunos_selecao_por_vaga(int $id_vaga): array
+    {
+        $stmt = $this->connect->prepare(
+            "SELECT a.id, a.nome, a.contato, se.Status
+             FROM aluno a
+             INNER JOIN selecao se ON a.id = se.id_aluno
+             WHERE se.id_vaga = :id_vaga
+             ORDER BY a.nome ASC"
+        );
+        $stmt->execute([':id_vaga' => $id_vaga]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function alunos_finalizados_por_vaga(int $id_vaga): array
+    {
+        $stmt = $this->connect->prepare(
+            "SELECT a.id, a.nome, a.contato
+             FROM aluno a
+             INNER JOIN selecionado s ON a.id = s.id_aluno
+             WHERE s.id_vaga = :id_vaga
+             ORDER BY a.nome ASC"
+        );
+        $stmt->execute([':id_vaga' => $id_vaga]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function status_vaga_por_id(int $id_vaga): string
+    {
+        $selecao = $this->connect->prepare("SELECT COUNT(*) as total FROM selecao WHERE id_vaga = :id_vaga");
+        $selecao->execute([':id_vaga' => $id_vaga]);
+        $emSelecao = (int) $selecao->fetch(PDO::FETCH_ASSOC)['total'];
+
+        $finalizados = $this->connect->prepare("SELECT COUNT(*) as total FROM selecionado WHERE id_vaga = :id_vaga");
+        $finalizados->execute([':id_vaga' => $id_vaga]);
+        $aprovados = (int) $finalizados->fetch(PDO::FETCH_ASSOC)['total'];
+
+        if ($aprovados > 0) {
+            return 'finalizada';
+        }
+
+        if ($emSelecao > 0) {
+            return 'em-selecao';
+        }
+
+        return 'sem-selecao';
+    }
+
     function nome_empresa_por_vaga($id_vaga)
     {
         $stmt = $this->connect->prepare("SELECT c.nome FROM vagas v INNER JOIN concedentes c ON v.id_concedente = c.id WHERE v.id = :id_vaga LIMIT 1");
@@ -401,6 +673,12 @@ class select_model extends connect
         return $result ? $result['nome'] : null;
     }
 
+    /**
+     * Aprova alunos selecionados para vagas.
+     *
+     * Atualiza o status em `selecao`, marca os demais candidatos da vaga como
+     * nao selecionados e insere o aprovado em `selecionado` se ainda nao existir.
+     */
     function aprovar_selecionados($selecionados)
     {
         $count = 0;
@@ -451,15 +729,21 @@ class select_model extends connect
         return $this->connect;
     }
 
-    public function total_alunos()
-    {
 
-        $stmt_alunos = $this->connect->query('SELECT count(*) FROM aluno');
-        $result = $stmt_alunos->fetch(PDO::FETCH_ASSOC);
-        foreach ($result as $dado) {
-            return $dado;
-        }
+
+
+public function total_alunos()
+{
+    $stmt_alunos = $this->connect->query('SELECT count(*) FROM aluno');
+    $result = $stmt_alunos->fetch(PDO::FETCH_ASSOC);
+
+    foreach ($result as $dado) {
+        return $dado;
     }
+}
+
+
+
 
     function vaga_por_id($id_vaga)
     {
