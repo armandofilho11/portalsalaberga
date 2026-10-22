@@ -194,7 +194,7 @@ $detalhesAtraso = static function ($registro) {
     const permiteTemaPt = <?= $permiteTemaPt ? 'true' : 'false' ?>;
     const themes = permiteTemaPt ? ['light', 'dark', 'lula'] : ['light', 'dark'];
     const labels = {light: 'Claro', dark: 'Escuro', lula: 'PT'};
-    const logoPt = '../assets/pt-removebg-preview.png';
+    const logoPt = '../assets/img/pt-removebg-preview.png';
     let theme = 'light';
     try {
         const storedTheme = localStorage.getItem(storageKey);
@@ -12670,7 +12670,7 @@ html[data-theme="lula"] body {
     --salaberga-ink: #351217;
     --salaberga-muted: #8a5960;
     background-color: #fff4f4;
-    background-image: linear-gradient(rgba(255, 247, 247, .32), rgba(255, 244, 244, .46)), url("../assets/lula%20background.png");
+    background-image: linear-gradient(rgba(255, 247, 247, .32), rgba(255, 244, 244, .46)), url("../assets/img/lula%20background.png");
     background-position: center;
     background-repeat: no-repeat;
     background-size: 100vw 100vh;
