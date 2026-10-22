@@ -5992,7 +5992,7 @@ input[type="radio"] {
     <div class="reception-header-actions">
         <button class="theme-toggle reception-theme-toggle" type="button" aria-label="Alterar tema" title="Alterar tema"><i class="theme-toggle__icon fas fa-moon" aria-hidden="true"></i></button>
         <a class="reception-header-link" href="#" data-section-target="inicio" data-reception-home<?= $sectionInicial === 'inicio' ? ' hidden' : '' ?>><i class="fas fa-arrow-left" aria-hidden="true"></i>Início</a>
-        <a class="reception-header-link" href="../model/sessions.php?sair"><i class="fas fa-right-from-bracket" aria-hidden="true"></i>Sair</a>
+        <a class="reception-header-link" href="../../../../../main/views/subsystems.php" aria-label="Sair"><i class="fas fa-right-from-bracket" aria-hidden="true"></i>Sair</a>
     </div>
 </header>
 <?php } ?>
@@ -6015,7 +6015,7 @@ input[type="radio"] {
         <details class="nav-group" data-sidebar-group="relatorios"><summary class="nav-label">Relatórios</summary><button class="nav-item report-nav" type="button" data-target="relatorio-dia"><i class="fas fa-clock-rotate-left"></i>Atrasos registrados</button><button class="nav-item report-nav" type="button" data-target="relatorio-saida"><i class="fas fa-arrow-right-from-bracket"></i>Saídas antecipadas</button><button class="nav-item report-nav" type="button" data-target="relatorio-estagio"><i class="fas fa-user-tie"></i>Saídas para estágio</button><a class="nav-item report-nav" href="relatorios/pre_estagio.php" target="_blank" rel="noopener"><i class="fas fa-graduation-cap"></i>Preparação para estágio</a><button class="nav-item report-nav" type="button" data-target="qrcode"><i class="fas fa-qrcode"></i>QR Code</button></details>
         <?php } ?>
   </nav>
-  <div class="sidebar-bottom"><a class="nav-item logout" href="../model/sessions.php?sair"><i class="fas fa-right-from-bracket"></i>Sair</a></div>
+  <div class="sidebar-bottom"><a class="nav-item logout" href="../../../../../main/views/subsystems.php" aria-label="Sair"><i class="fas fa-right-from-bracket" aria-hidden="true"></i>Sair</a></div>
 </aside>
 <button class="sidebar-collapse-toggle" type="button" aria-label="Ocultar menu lateral" aria-expanded="true" title="Ocultar menu lateral">
     <i class="fas fa-chevron-left" aria-hidden="true"></i>
