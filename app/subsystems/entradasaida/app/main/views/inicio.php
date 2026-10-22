@@ -194,7 +194,7 @@ $detalhesAtraso = static function ($registro) {
     const permiteTemaPt = <?= $permiteTemaPt ? 'true' : 'false' ?>;
     const themes = permiteTemaPt ? ['light', 'dark', 'lula'] : ['light', 'dark'];
     const labels = {light: 'Claro', dark: 'Escuro', lula: 'PT'};
-    const logoPt = '../assets/img/pt-removebg-preview.png';
+    const logoPt = '../assets/img/pt-logo.png';
     let theme = 'light';
     try {
         const storedTheme = localStorage.getItem(storageKey);
@@ -12432,6 +12432,30 @@ html[data-theme="dark"] #ultimas-saidas .student-card:nth-child(even) {
 html[data-theme="dark"] #ultimas-saidas .table-row:hover,
 html[data-theme="dark"] #ultimas-saidas .student-card:hover {
     background: #292929;
+}
+
+html[data-theme="dark"] #ultimas-saidas .student-card .rounded-full.bg-red-100 {
+    border: 1px solid rgba(248, 113, 113, .3);
+    background: #5f242a !important;
+    color: #fff !important;
+}
+
+html[data-theme="dark"] #ultimas-saidas .student-card .rounded-full.bg-blue-100 {
+    border: 1px solid rgba(96, 165, 250, .3);
+    background: #213d63 !important;
+    color: #fff !important;
+}
+
+html[data-theme="dark"] #ultimas-saidas .student-card .rounded-full.bg-cyan-100 {
+    border: 1px solid rgba(34, 211, 238, .3);
+    background: #155057 !important;
+    color: #fff !important;
+}
+
+html[data-theme="dark"] #ultimas-saidas .student-card .rounded-full.bg-gray-100 {
+    border: 1px solid rgba(156, 163, 175, .3);
+    background: #30343a !important;
+    color: #fff !important;
 }
 
 html[data-theme="dark"] #ultimas-saidas .text-gray-900,
