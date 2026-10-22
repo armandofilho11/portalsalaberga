@@ -435,6 +435,18 @@ class select_model extends connect
         return $this->buscarAtrasos('DATE(r.date_time) = :data', ['data' => $data]);
     }
 
+    public function obterDataHoraAtraso(int $idRegistro): ?string
+    {
+        $query = $this->connect->prepare(
+            'SELECT date_time FROM registro_entrada WHERE id_registro_entrada = :id_registro'
+        );
+        $query->bindValue(':id_registro', $idRegistro, PDO::PARAM_INT);
+        $query->execute();
+        $dateTime = $query->fetchColumn();
+
+        return is_string($dateTime) ? $dateTime : null;
+    }
+
     public function historicoAtrasos()
     {
         $condicaoHistorico = $this->suportaValidacaoAtrasos()
