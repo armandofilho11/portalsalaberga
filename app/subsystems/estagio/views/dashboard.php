@@ -6,11 +6,6 @@ $select_model = new select_model();
 $session = new sessions;
 
 $session->autenticar_session();
-
-
-if (isset($_POST['layout'])) {
-    $session->quebra_session();
-}
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -219,12 +214,10 @@ if (isset($_POST['layout'])) {
                         <i class="fas fa-cog w-5 mr-3"></i>
                         Configurações
                     </a>
-                    <form action="" method="post">
-                        <button type="submit" name="layout" class="sidebar-link text-red-400 hover:text-red-300">
-                            <i class="fas fa-sign-out-alt w-5 mr-3"></i>
-                            Sair
-                        </button>
-                    </form>
+                    <a href="../../../main/views/subsystems.php" class="sidebar-link text-red-400 hover:text-red-300" aria-label="Sair">
+                        <i class="fas fa-sign-out-alt w-5 mr-3"></i>
+                        Sair
+                    </a>
                 </div>
             </div>
         </aside>
@@ -277,12 +270,10 @@ if (isset($_POST['layout'])) {
                         <i class="fas fa-cog w-5 mr-3"></i>
                         Configurações
                     </a>
-                    <form action="" method="post">
-                        <button type="submit" name="layout" class="sidebar-link text-red-400 hover:text-red-300">
-                            <i class="fas fa-sign-out-alt w-5 mr-3"></i>
-                            Sair
-                        </button>
-                    </form>
+                    <a href="../../../main/views/subsystems.php" class="sidebar-link text-red-400 hover:text-red-300" aria-label="Sair">
+                        <i class="fas fa-sign-out-alt w-5 mr-3"></i>
+                        Sair
+                    </a>
                 </div>
             </div>
         </div>
