@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.2
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1:3306
--- Tempo de geração: 20/10/2026 às 18:30
--- Versão do servidor: 11.8.9-MariaDB-log
--- Versão do PHP: 7.2.34
+-- Host: 127.0.0.1
+-- Tempo de geração: 22/10/2026 às 14:40
+-- Versão do servidor: 10.4.32-MariaDB
+-- Versão do PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Banco de dados: `u750204740_users`
+-- Banco de dados: `salaberga_users`
 --
 
 -- --------------------------------------------------------
@@ -68,7 +68,12 @@ INSERT INTO `permissoes` (`id`, `id_tipos_usuarios`, `id_sistemas`, `id_usuarios
 (59, 22, 17, 61),
 (60, 21, 2, 63),
 (61, 12, 10, 58),
-(62, 16, 21, 64);
+(62, 16, 21, 64),
+(63, 16, 21, 61),
+(64, 19, 1, 66),
+(65, 19, 1, 67),
+(66, 25, 1, 68),
+(67, 25, 1, 32);
 
 -- --------------------------------------------------------
 
@@ -132,6 +137,30 @@ INSERT INTO `sistemas` (`id`, `nome`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Estrutura para tabela `solicitacoes_primeiro_acesso`
+--
+
+CREATE TABLE `solicitacoes_primeiro_acesso` (
+  `id` int(11) NOT NULL,
+  `id_usuario` int(11) NOT NULL,
+  `senha_hash` varchar(255) DEFAULT NULL,
+  `status` enum('pendente','aprovado','recusado') NOT NULL DEFAULT 'pendente',
+  `data_solicitacao` datetime NOT NULL DEFAULT current_timestamp(),
+  `id_aprovador` int(11) DEFAULT NULL,
+  `data_decisao` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `solicitacoes_primeiro_acesso`
+--
+
+INSERT INTO `solicitacoes_primeiro_acesso` (`id`, `id_usuario`, `senha_hash`, `status`, `data_solicitacao`, `id_aprovador`, `data_decisao`) VALUES
+(1, 31, NULL, 'aprovado', '2026-10-22 07:47:57', 61, '2026-10-22 07:48:31'),
+(2, 32, NULL, 'aprovado', '2026-10-22 08:52:08', 61, '2026-10-22 08:52:27');
+
+-- --------------------------------------------------------
+
+--
 -- Estrutura para tabela `tipos_usuarios`
 --
 
@@ -155,7 +184,8 @@ INSERT INTO `tipos_usuarios` (`id`, `tipo`, `id_sistema`) VALUES
 (18, 'Admin_biblioteca', 4),
 (19, 'Admin_entrada_saida', 1),
 (21, 'admin_estagio', 2),
-(22, 'admin_pdt', 17);
+(22, 'admin_pdt', 17),
+(25, 'usuario_recepcao', 1);
 
 -- --------------------------------------------------------
 
@@ -191,8 +221,8 @@ INSERT INTO `usuarios` (`id`, `nome`, `email`, `telefone`, `foto_perfil`, `cpf`,
 (28, 'Kananda Beatriz Pinto de Sena', 'kananda.sena@prof.ce.gov.br', NULL, NULL, '111.111.111-11', NULL, 15),
 (29, 'Fernando Cesar Madeira Bessa', 'bessafernando228@gmail.com', NULL, NULL, '111.111.111-11', NULL, 15),
 (30, 'jose Rodrigo Lima Brasil', 'rodrigobrasil12453@gmail.com', NULL, NULL, '111.111.111-11', NULL, 15),
-(31, 'Danytza façanha araripe', 'danytzaf@gmail.com', NULL, NULL, '111.111.111-11', NULL, 15),
-(32, 'Carlla Danielle Da Silva Laurentino', 'carllalaurentino@gmail.com', NULL, NULL, '111.111.111-11', NULL, 15),
+(31, 'Danytza façanha araripe', 'danytzaf@gmail.com', NULL, NULL, '111.111.111-11', '$2y$10$u2IPu9wXBH//1JtyaWXcWeHDa.iwdAxVIalKuFXCrfGtTC/mWpKOm', 15),
+(32, 'Carlla Danielle Da Silva Laurentino', 'carllalaurentino@gmail.com', NULL, NULL, '111.111.111-11', '$2y$10$idv4b9R8aq7tMcVH31JN8.JUcvAweUK.p3peNulUYwzHD3YA215cy', 15),
 (33, 'isabel freitas dos santos nóbrega', 'belfreitas14@gmail.com', NULL, NULL, '111.111.111-11', NULL, 15),
 (34, 'natalia queiroz lira', 'nataliaqlira@hotmail.com', NULL, NULL, '111.111.111-11', NULL, 15),
 (35, 'DEYSIANE VALE DA SILVA LIMA', 'deysianedasilva34@gmail.com', NULL, NULL, '111.111.111-11', NULL, 15),
@@ -223,9 +253,11 @@ INSERT INTO `usuarios` (`id`, `nome`, `email`, `telefone`, `foto_perfil`, `cpf`,
 (61, 'Cássio Holanda Gomes Severiano', 'holandaseveriano@gmail.com', NULL, NULL, '051.787.343-51', '$2y$10$l.tUVkYd4bDdoefLyzc6we6JfH/QmINthDdm8NtQXt05Qfp.ap3lS', 19),
 (62, 'Ester Andrade Almeida', 'ester101122@gmail.com', NULL, NULL, '101.122.343-05', NULL, 19),
 (63, 'Ester', 'ester@gmail.com', NULL, NULL, '555.222.333-66', '$2y$10$VaoxXYzkiJU6rrpjSRBLx.61ZrG/gQUfxUFTsluNkFq56cAG.8w/a', 19),
--- Contas descartáveis para testar o login administrativo e a solicitação de primeiro acesso.
 (64, 'Administrador de teste', 'admin.teste@local.test', NULL, NULL, '000.000.000-00', '$2y$10$18d4bHwXw8NW4pY9ULE8n.7dRqwK7B4djwMCjy7HfhsbxGqgqQfAS', 19),
-(65, 'Solicitante de teste', 'solicitante.teste@local.test', NULL, NULL, '000.000.000-01', NULL, 14);
+(65, 'Solicitante de teste', 'solicitante.teste@local.test', NULL, NULL, '000.000.000-01', NULL, 14),
+(66, 'Kauan Lima', 'kauan10@gmail.com', NULL, NULL, '125.657.644-69', '$2y$10$TCC/bcqavjHfzdkXkDQDeOe3ZYjeaN6Kqwv1/.t5eIG8uVpAUHfau', 14),
+(67, 'Otavio', 'otavio123@gmail.com', NULL, NULL, '130.130.130-13', '$2y$10$2wQbVFWgbbwjVqGpSVDex.BEqTGJwQlo5kJ2kUFe2969XUiEe9sUm', 15),
+(68, 'Cassinho', 'cassinho@gmail.com', NULL, NULL, '983.490.684-36', '$2y$10$pA/viluTCCOECynNzVzT6uX7B.kNgixx8LxRIKuIB8Fnkqzm8OQza', 23);
 
 --
 -- Índices para tabelas despejadas
@@ -253,6 +285,15 @@ ALTER TABLE `sistemas`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Índices de tabela `solicitacoes_primeiro_acesso`
+--
+ALTER TABLE `solicitacoes_primeiro_acesso`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_solicitacoes_primeiro_acesso_status_data` (`status`,`data_solicitacao`),
+  ADD KEY `idx_solicitacoes_primeiro_acesso_usuario_status` (`id_usuario`,`status`),
+  ADD KEY `fk_solicitacoes_primeiro_acesso_aprovador` (`id_aprovador`);
+
+--
 -- Índices de tabela `tipos_usuarios`
 --
 ALTER TABLE `tipos_usuarios`
@@ -267,26 +308,6 @@ ALTER TABLE `usuarios`
   ADD KEY `id_setor` (`id_setor`);
 
 --
--- Estrutura para tabela `solicitacoes_primeiro_acesso`
---
-CREATE TABLE `solicitacoes_primeiro_acesso` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `id_usuario` int(11) NOT NULL,
-  `senha_hash` varchar(255) DEFAULT NULL,
-  `status` enum('pendente', 'aprovado', 'recusado') NOT NULL DEFAULT 'pendente',
-  `data_solicitacao` datetime NOT NULL DEFAULT current_timestamp(),
-  `id_aprovador` int(11) DEFAULT NULL,
-  `data_decisao` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `idx_solicitacoes_primeiro_acesso_status_data` (`status`, `data_solicitacao`),
-  KEY `idx_solicitacoes_primeiro_acesso_usuario_status` (`id_usuario`, `status`),
-  CONSTRAINT `fk_solicitacoes_primeiro_acesso_usuario`
-    FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `fk_solicitacoes_primeiro_acesso_aprovador`
-    FOREIGN KEY (`id_aprovador`) REFERENCES `usuarios` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
 -- AUTO_INCREMENT para tabelas despejadas
 --
 
@@ -294,7 +315,7 @@ CREATE TABLE `solicitacoes_primeiro_acesso` (
 -- AUTO_INCREMENT de tabela `permissoes`
 --
 ALTER TABLE `permissoes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
 
 --
 -- AUTO_INCREMENT de tabela `setores`
@@ -309,16 +330,22 @@ ALTER TABLE `sistemas`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
+-- AUTO_INCREMENT de tabela `solicitacoes_primeiro_acesso`
+--
+ALTER TABLE `solicitacoes_primeiro_acesso`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT de tabela `tipos_usuarios`
 --
 ALTER TABLE `tipos_usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT de tabela `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=69;
 
 --
 -- Restrições para tabelas despejadas
@@ -331,6 +358,13 @@ ALTER TABLE `permissoes`
   ADD CONSTRAINT `permissoes_ibfk_1` FOREIGN KEY (`id_tipos_usuarios`) REFERENCES `tipos_usuarios` (`id`),
   ADD CONSTRAINT `permissoes_ibfk_2` FOREIGN KEY (`id_sistemas`) REFERENCES `sistemas` (`id`),
   ADD CONSTRAINT `permissoes_ibfk_3` FOREIGN KEY (`id_usuarios`) REFERENCES `usuarios` (`id`);
+
+--
+-- Restrições para tabelas `solicitacoes_primeiro_acesso`
+--
+ALTER TABLE `solicitacoes_primeiro_acesso`
+  ADD CONSTRAINT `fk_solicitacoes_primeiro_acesso_aprovador` FOREIGN KEY (`id_aprovador`) REFERENCES `usuarios` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_solicitacoes_primeiro_acesso_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE;
 
 --
 -- Restrições para tabelas `tipos_usuarios`
