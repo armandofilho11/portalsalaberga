@@ -1,0 +1,289 @@
+<?php
+date_default_timezone_set('America/Sao_Paulo');
+ini_set('display_errors', 0);
+ini_set('display_startup_errors', 0);
+ini_set('log_errors', 1);
+error_reporting(E_ALL);
+
+require_once(__DIR__ . '/../../../assets/lib/fpdf/fpdf.php');
+require_once(__DIR__ . '/../_layout_pdf.php');
+require_once(__DIR__ . '/../../../config/Database.php');
+
+class PDFRelatorioSaidaAluno extends FPDF
+{
+    public function Footer()
+    {
+        $this->SetY(-10);
+        $this->SetFont('Arial', 'I', 7);
+        $this->SetTextColor(120, 120, 120);
+        $this->Cell(0, 5, 'Pagina ' . $this->PageNo() . '/{nb} | Gerado em ' . date('d/m/Y H:i'), 0, 0, 'R');
+    }
+}
+
+class SaidaPDFAlunoIndividual
+{
+    private $connect;
+    private $aluno;
+    private $turma;
+    private $periodoNome;
+    private $corTurma;
+
+    public function __construct()
+    {
+        $database = new connect();
+        $this->connect = $database->getConnection();
+        $this->pdf();
+    }
+
+    private function textoPdf($texto)
+    {
+        return mb_convert_encoding((string) $texto, 'ISO-8859-1', 'UTF-8');
+    }
+
+    private function intervaloDatas($tipoRelatorio)
+    {
+        $agora = new DateTimeImmutable();
+        if ($tipoRelatorio === 'dia_atual') {
+            return [
+                $agora->setTime(0, 0, 0)->format('Y-m-d H:i:s'),
+                $agora->setTime(23, 59, 59)->format('Y-m-d H:i:s')
+            ];
+        }
+        if ($tipoRelatorio === 'ultimos_30_dias') {
+            return [
+                $agora->modify('-30 days')->setTime(0, 0, 0)->format('Y-m-d H:i:s'),
+                $agora->format('Y-m-d H:i:s')
+            ];
+        }
+        return [
+            $agora->modify('-12 months')->setTime(0, 0, 0)->format('Y-m-d H:i:s'),
+            $agora->format('Y-m-d H:i:s')
+        ];
+    }
+
+    private function imprimirCabecalho($pdf)
+    {
+        aplicarCabecalhoRelatorio($pdf, 'Relatório de saídas por aluno', $this->periodoNome);
+        $y = $pdf->GetY();
+        $pdf->SetFillColor($this->corTurma['r'], $this->corTurma['g'], $this->corTurma['b']);
+        $pdf->Rect(12, $y, $pdf->GetPageWidth() - 24, 9, 'F');
+        $pdf->SetXY(16, $y + 1);
+        $pdf->SetFont('Arial', 'B', 10);
+        $pdf->SetTextColor(255, 255, 255);
+        $pdf->Cell(0, 7, $this->textoPdf(strtoupper($this->turma['descricao'])), 0, 1, 'L');
+
+        $pdf->SetXY(12, $y + 12);
+        $pdf->SetFont('Arial', 'B', 10);
+        $pdf->SetTextColor(0, 122, 51);
+        $pdf->Cell(0, 7, $this->textoPdf('ALUNO: ' . $this->aluno['nome']), 0, 1, 'L');
+        $pdf->SetY($y + 21);
+    }
+
+    private function imprimirCabecalhoTabela($pdf, $colunas)
+    {
+        $pdf->SetFillColor(240, 249, 244);
+        $pdf->SetDrawColor(210, 218, 213);
+        $pdf->SetTextColor(55, 65, 81);
+        $pdf->SetFont('Arial', 'B', 8);
+        foreach ($colunas as $coluna) {
+            $pdf->Cell($coluna[1], 8, $this->textoPdf($coluna[0]), 1, 0, 'C', true);
+        }
+        $pdf->Ln();
+    }
+
+    private function linhasTexto($pdf, $texto, $largura)
+    {
+        $texto = $this->textoPdf($texto);
+        $limite = $largura - 4;
+        $linhas = [];
+        $linha = '';
+        foreach (explode(' ', $texto) as $palavra) {
+            $candidata = $linha === '' ? $palavra : $linha . ' ' . $palavra;
+            if ($pdf->GetStringWidth($candidata) <= $limite) {
+                $linha = $candidata;
+                continue;
+            }
+            if ($linha !== '') {
+                $linhas[] = $linha;
+            }
+            $linha = '';
+            while ($pdf->GetStringWidth($palavra) > $limite) {
+                $parte = '';
+                foreach (str_split($palavra) as $caractere) {
+                    if ($pdf->GetStringWidth($parte . $caractere) > $limite) {
+                        break;
+                    }
+                    $parte .= $caractere;
+                }
+                $linhas[] = $parte;
+                $palavra = substr($palavra, strlen($parte));
+            }
+            $linha = $palavra;
+        }
+        if ($linha !== '' || empty($linhas)) {
+            $linhas[] = $linha;
+        }
+        return $linhas;
+    }
+
+    private function imprimirLinhaTabela($pdf, $valores, $colunas, $indice)
+    {
+        $pdf->SetFont('Arial', '', 8);
+        $linhasPorColuna = [];
+        $quantidadeLinhas = 1;
+        foreach ($colunas as $indiceColuna => $coluna) {
+            $linhasPorColuna[$indiceColuna] = $this->linhasTexto($pdf, $valores[$indiceColuna], $coluna[1]);
+            $quantidadeLinhas = max($quantidadeLinhas, count($linhasPorColuna[$indiceColuna]));
+        }
+        $alturaLinha = 4.2;
+        $altura = $quantidadeLinhas * $alturaLinha + 2;
+
+        if ($pdf->GetY() + $altura > $pdf->GetPageHeight() - 16) {
+            $pdf->AddPage();
+            $this->imprimirCabecalho($pdf);
+            $this->imprimirCabecalhoTabela($pdf, $colunas);
+        }
+
+        $x = $pdf->GetX();
+        $inicioX = $x;
+        $y = $pdf->GetY();
+        foreach ($colunas as $indiceColuna => $coluna) {
+            $tom = $indice % 2 === 0 ? 255 : 245;
+            $pdf->SetFillColor($tom, $tom, $tom);
+            $pdf->Rect($x, $y, $coluna[1], $altura, 'DF');
+            $pdf->SetXY($x + 2, $y + 1);
+            $pdf->MultiCell($coluna[1] - 4, $alturaLinha, implode("\n", $linhasPorColuna[$indiceColuna]), 0, 'L');
+            $x += $coluna[1];
+        }
+        $pdf->SetXY($inicioX, $y + $altura);
+    }
+
+    private function coresTurma($idTurma)
+    {
+        $cores = [
+            1 => ['r' => 255, 'g' => 165, 'b' => 0],
+            2 => ['r' => 255, 'g' => 215, 'b' => 0],
+            3 => ['r' => 0, 'g' => 128, 'b' => 0],
+            4 => ['r' => 0, 'g' => 191, 'b' => 255],
+            5 => ['r' => 255, 'g' => 105, 'b' => 180],
+            6 => ['r' => 147, 'g' => 112, 'b' => 219],
+            7 => ['r' => 75, 'g' => 0, 'b' => 130],
+            8 => ['r' => 255, 'g' => 69, 'b' => 0],
+            9 => ['r' => 220, 'g' => 53, 'b' => 69],
+            10 => ['r' => 65, 'g' => 105, 'b' => 225],
+            11 => ['r' => 13, 'g' => 202, 'b' => 240],
+            12 => ['r' => 108, 'g' => 117, 'b' => 125]
+        ];
+        return $cores[$idTurma] ?? ['r' => 0, 'g' => 122, 'b' => 51];
+    }
+
+    public function pdf()
+    {
+        $periodos = [
+            'dia_atual' => 'Dia atual',
+            'ultimos_30_dias' => 'Últimos 30 dias',
+            'ultimos_12_meses' => 'Últimos 12 meses'
+        ];
+        $tipoRelatorio = $_GET['tipo_relatorio'] ?? '';
+        $idAluno = filter_var($_GET['id_aluno'] ?? null, FILTER_VALIDATE_INT);
+        if (!$idAluno || !isset($periodos[$tipoRelatorio])) {
+            header('Location: ../relatorioSaida.php?error=invalid_parameters');
+            exit();
+        }
+
+        $consultaAluno = $this->connect->prepare(
+            'SELECT a.id_aluno, a.nome, t.id_turma, t.ano, t.turma, c.curso
+             FROM aluno a
+             INNER JOIN turma t ON t.id_turma = a.id_turma
+             LEFT JOIN curso c ON c.id_curso = a.id_curso
+             WHERE a.id_aluno = :id_aluno'
+        );
+        $consultaAluno->execute(['id_aluno' => $idAluno]);
+        $this->aluno = $consultaAluno->fetch(PDO::FETCH_ASSOC);
+        if (!$this->aluno) {
+            header('Location: ../relatorioSaida.php?error=invalid_aluno');
+            exit();
+        }
+
+        $anoTurma = preg_replace('/^([1-3]) ano$/i', '$1º', $this->aluno['ano']);
+        $this->turma = [
+            'descricao' => trim($anoTurma . ' ' . strtoupper($this->aluno['turma']) . ' - ' . strtoupper($this->aluno['curso'] ?? ''))
+        ];
+        $this->periodoNome = $periodos[$tipoRelatorio];
+        $this->corTurma = $this->coresTurma((int) $this->aluno['id_turma']);
+        list($inicio, $fim) = $this->intervaloDatas($tipoRelatorio);
+
+        $colunasRegistroSaida = $this->connect->query('SHOW COLUMNS FROM registro_saida')
+            ->fetchAll(PDO::FETCH_COLUMN);
+        $campoFuncionario = in_array('usuario_nome', $colunasRegistroSaida, true)
+            ? 'r.usuario_nome'
+            : 'NULL';
+        $sql = "SELECT r.date_time,
+                       r.nome_responsavel,
+                       tr.tipo AS tipo_responsavel,
+                       r.nome_conducente,
+                       tc.tipo AS tipo_conducente,
+                       m.motivo,
+                       {$campoFuncionario} AS funcionario
+                FROM registro_saida r
+                LEFT JOIN tipo_responsavel tr ON tr.id_tipo_responsavel = r.id_tipo_responsavel
+                LEFT JOIN tipo_conducente tc ON tc.id_tipo_conducente = r.id_tipo_conducente
+                LEFT JOIN motivo m ON m.id_motivo = r.id_motivo
+                WHERE r.id_aluno = :id_aluno
+                  AND r.date_time BETWEEN :inicio AND :fim
+                ORDER BY r.date_time DESC";
+        $consulta = $this->connect->prepare($sql);
+        $consulta->execute(['id_aluno' => $idAluno, 'inicio' => $inicio, 'fim' => $fim]);
+        $dados = $consulta->fetchAll(PDO::FETCH_ASSOC);
+
+        $pdf = new PDFRelatorioSaidaAluno('L', 'mm', 'A4');
+        $pdf->SetMargins(12, 12, 12);
+        $pdf->SetAutoPageBreak(true, 14);
+        $pdf->AliasNbPages();
+        $pdf->AddPage();
+        $this->imprimirCabecalho($pdf);
+
+        $colunas = [
+            ['Data e hora', 25],
+            ['Responsável', 34],
+            ['Tipo resp.', 24],
+            ['Acompanhante', 31],
+            ['Tipo acomp.', 24],
+            ['Motivo', 32],
+            ['Registrado por', 34],
+            ['Aluno', 40],
+            ['Turma', 29]
+        ];
+        $this->imprimirCabecalhoTabela($pdf, $colunas);
+
+        if (empty($dados)) {
+            $pdf->SetFont('Arial', 'I', 10);
+            $pdf->SetTextColor(145, 145, 145);
+            $pdf->Cell(0, 12, $this->textoPdf('Nenhuma saída encontrada para este aluno e período.'), 0, 1, 'C');
+        } else {
+            foreach ($dados as $indice => $dado) {
+                $valores = [
+                    date('d/m/Y H:i', strtotime($dado['date_time'])),
+                    $dado['nome_responsavel'] ?: 'Não informado',
+                    $dado['tipo_responsavel'] ?: 'Não informado',
+                    $dado['nome_conducente'] ?: 'Não informado',
+                    $dado['tipo_conducente'] ?: 'Não informado',
+                    $dado['motivo'] ?: 'Não informado',
+                    $dado['funcionario'] ?: 'Não informado',
+                    $this->aluno['nome'],
+                    $this->turma['descricao']
+                ];
+                $this->imprimirLinhaTabela($pdf, $valores, $colunas, $indice);
+            }
+        }
+
+        $pdf->Output('I', 'relatorio_saida_aluno.pdf');
+    }
+}
+
+if (isset($_GET['id_aluno'], $_GET['tipo_relatorio'])) {
+    new SaidaPDFAlunoIndividual();
+} else {
+    header('Location: ../relatorioSaida.php?error=missing_params');
+    exit();
+}
