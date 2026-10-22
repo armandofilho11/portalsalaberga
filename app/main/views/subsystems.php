@@ -44,6 +44,15 @@ $temSistemasPermitidos = count(array_intersect($sistemasDisponiveis, $sistemasPe
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <meta http-equiv="content-language" content="pt-BR">
+    <script>
+        try {
+            if (localStorage.getItem('stgm-theme') === 'dark') {
+                document.documentElement.classList.add('dark');
+            }
+        } catch (error) {
+            console.warn('Não foi possível carregar a preferência de tema:', error);
+        }
+    </script>
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="theme-color" content="#005A24">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -83,66 +92,6 @@ $temSistemasPermitidos = count(array_intersect($sistemasDisponiveis, $sistemasPe
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-
-        .app-icon-estagio{
-            width: 64px;
-            height: 64px;
-        
-            background: linear-gradient(
-                135deg,
-                #719C79 0%,
-                #5C8969 55%,
-                #437053 100%
-            );
-        
-            -webkit-mask: url('../assets/img/logos_sistemas/estagio.png')
-                          center/contain no-repeat;
-            mask: url('../assets/img/logos_sistemas/estagio.png')
-                  center/contain no-repeat;
-        }
-        
-        
-
-
-        .app-icon-demandas{
-            width: 64px;
-            height: 64px;
-        
-            background: linear-gradient(
-                135deg,
-                #719C79 0%,
-                #5C8969 55%,
-                #437053 100%
-            );
-        
-            -webkit-mask: url('../assets/img/logos_sistemas/demandas.png')
-                          center/contain no-repeat;
-            mask: url('../assets/img/logos_sistemas/demandas.png')
-                  center/contain no-repeat;
-        }
-
-
-        .app-icon-pdt{
-            width: 64px;
-            height: 64px;
-        
-            background: linear-gradient(
-                135deg,
-                #719C79 0%,
-                #5C8969 55%,
-                #437053 100%
-            );
-        
-            -webkit-mask: url('../assets/img/logos_sistemas/pdt.png')
-                          center/contain no-repeat;
-            mask: url('../assets/img/logos_sistemas/pdt.png')
-                  center/contain no-repeat;
-        }
-        
-        
-        
-        
-        
 
         :root {
             --background-color: #f0f7ff;
@@ -546,7 +495,47 @@ $temSistemasPermitidos = count(array_intersect($sistemasDisponiveis, $sistemasPe
         .app-icon {
             width: 50px;
             height: 50px;
-            transition: transform 0.3s ease;
+            transition: filter 0.16s ease, transform 0.3s ease;
+        }
+
+        .app-icon-pcd {
+            filter: brightness(0.62) saturate(0.7);
+            transition: filter 0.16s ease, transform 0.3s ease;
+        }
+
+        .app-icon-estagio,
+        .app-icon-demandas,
+        .app-icon-pdt,
+        .app-icon-stock {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #719C79 0%, #5C8969 55%, #437053 100%);
+            -webkit-mask-position: center;
+            mask-position: center;
+            -webkit-mask-size: contain;
+            mask-size: contain;
+            -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
+        }
+
+        .app-icon-estagio {
+            -webkit-mask-image: url('../assets/img/logos_sistemas/estagio.png');
+            mask-image: url('../assets/img/logos_sistemas/estagio.png');
+        }
+
+        .app-icon-demandas {
+            -webkit-mask-image: url('../assets/img/logos_sistemas/demandas.png');
+            mask-image: url('../assets/img/logos_sistemas/demandas.png');
+        }
+
+        .app-icon-pdt {
+            -webkit-mask-image: url('../assets/img/logos_sistemas/pdt.png');
+            mask-image: url('../assets/img/logos_sistemas/pdt.png');
+        }
+
+        .app-icon-stock {
+            -webkit-mask-image: url('../assets/img/logos_sistemas/estoque.png');
+            mask-image: url('../assets/img/logos_sistemas/estoque.png');
         }
 
         .app-name {
@@ -652,7 +641,17 @@ $temSistemasPermitidos = count(array_intersect($sistemasDisponiveis, $sistemasPe
         }
 
         @media (prefers-reduced-motion: reduce) {
-            .theme-toggle {
+            body,
+            .main-header,
+            .app-card,
+            .icon-wrapper,
+            .app-name,
+            .category-tag,
+            .search-bar,
+            .mobile-footer,
+            .footer-btn,
+            .theme-toggle,
+            .app-icon-pcd {
                 transition: none;
             }
         }
@@ -853,8 +852,8 @@ $temSistemasPermitidos = count(array_intersect($sistemasDisponiveis, $sistemasPe
             bottom: 0;
             left: 0;
             right: 0;
-            background: #ffffff;
-            border-top: 1px solid #e5e7eb;
+            background: var(--header-bg);
+            border-top: 1px solid var(--grid-color);
             padding: 16px 0 24px 0;
             z-index: 1000;
             box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
@@ -911,6 +910,16 @@ $temSistemasPermitidos = count(array_intersect($sistemasDisponiveis, $sistemasPe
 
         .footer-btn.active i {
             transform: scale(1.1);
+        }
+
+        .dark .footer-btn {
+            color: #d1d5db;
+        }
+
+        .dark .footer-btn:hover,
+        .dark .footer-btn.active {
+            color: #83d59b;
+            background: rgba(131, 213, 155, 0.1);
         }
 
         /* Painéis de Acessibilidade e Perfil */
@@ -1287,6 +1296,29 @@ $temSistemasPermitidos = count(array_intersect($sistemasDisponiveis, $sistemasPe
             transform: translateY(0);
         }
 
+        body {
+            transition: background-color 0.18s ease, color 0.18s ease;
+        }
+
+        .main-header,
+        .app-card,
+        .icon-wrapper,
+        .app-name,
+        .category-tag,
+        .search-bar,
+        .mobile-footer,
+        .footer-btn,
+        .theme-toggle {
+            transition-duration: 0.18s;
+        }
+
+        .app-icon-estagio,
+        .app-icon-demandas,
+        .app-icon-pdt,
+        .app-icon-stock {
+            transition: background-color 0.18s ease;
+        }
+
     </style>
 </head>
 
@@ -1310,7 +1342,7 @@ $temSistemasPermitidos = count(array_intersect($sistemasDisponiveis, $sistemasPe
                         <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
                         <span>Sair</span>
                     </a>
-                    <button id="darkModeToggle"
+                    <button id="darkModeToggle" data-theme-toggle
                         class="theme-toggle"
                         aria-label="Ativar modo escuro" aria-pressed="false">
                         <i class="fa-solid fa-sun sun-icon" data-theme-icon="sun" aria-hidden="true"></i>
@@ -1344,7 +1376,7 @@ $temSistemasPermitidos = count(array_intersect($sistemasDisponiveis, $sistemasPe
                     <a href="../../subsystems/gerenciador_usuario/index.php" class="app-card-link">
                         <div class="app-card w-{100px} h-full">
                             <div class="icon-wrapper">
-                                <img src="https://i.postimg.cc/ZqY5Z9TG/useradm.png" alt="Ícone Gerenciador de Usuários" class="app-icon">
+                                <img src="../assets/img/logos_sistemas/gerenciador-usuarios-card.png" alt="Ícone Gerenciador de Usuários" class="app-icon">
                             </div>
                             <h3 class="app-name">Gerenciador de Usuários</h3>
                             <span class="category-tag">Sistema</span>
@@ -1357,7 +1389,7 @@ $temSistemasPermitidos = count(array_intersect($sistemasDisponiveis, $sistemasPe
                     <a href="../../subsystems/controle_de_estoque/default.php" class="app-card-link">
                         <div class="app-card w-{100px} h-full">
                             <div class="icon-wrapper">
-                                <img src="https://i.postimg.cc/wT8bLxNS/Design-sem-nome-7.png" alt="Ícone Controle de Estoque" class="app-icon">
+                                <span class="app-icon-stock" role="img" aria-label="Ícone Controle de Estoque"></span>
                             </div>
                             <h3 class="app-name">Controle de Estoque</h3>
                             <span class="category-tag">Sistema</span>
@@ -1369,7 +1401,7 @@ $temSistemasPermitidos = count(array_intersect($sistemasDisponiveis, $sistemasPe
                     <a href="../../subsystems/biblioteca/default.php" class="app-card-link">
                         <div class="app-card w-{100px} h-full">
                             <div class="icon-wrapper">
-                                <img src="https://i.postimg.cc/4dvShV26/icon-biblioteca.png" alt="Ícone Controle de Estoque" class="app-icon">
+                                <img src="../assets/img/logos_sistemas/biblioteca-card.png" alt="Ícone Controle de Estoque" class="app-icon">
                             </div>
                             <h3 class="app-name">Biblioteca</h3>
                             <span class="category-tag">Sistema</span>
@@ -1381,7 +1413,7 @@ $temSistemasPermitidos = count(array_intersect($sistemasDisponiveis, $sistemasPe
                     <a href="../../subsystems/entradasaida/app/main/views/inicio.php" class="app-card-link">
                         <div class="app-card w-{100px} h-full">
                             <div class="icon-wrapper">
-                                <img src="https://i.postimg.cc/j2mdwpFn/icon-entrada-e-saida.png" alt="Ícone Controle de Estoque" class="app-icon">
+                                <img src="../assets/img/logos_sistemas/entrada-saida-card.png" alt="Ícone Controle de Estoque" class="app-icon">
                             </div>
                             <h3 class="app-name">Entrada/saída</h3>
                             <span class="category-tag">Sistema</span>
@@ -1404,10 +1436,10 @@ $temSistemasPermitidos = count(array_intersect($sistemasDisponiveis, $sistemasPe
 
                 <!-- Card 6: Demandas -->
                 <?php if (in_array('Demandas', $sistemasPermitidos, true)) { ?>
-                    <a href="../../subsystems/demandas/" class="app-card-link">
+                    <a href="../../subsystems/demandas/default.php" class="app-card-link">
                         <div class="app-card w-{100px} h-full">
                             <div class="icon-wrapper">
-                                    <div class="app-icon-demandas"></div>
+                                <div class="app-icon-demandas"></div>
                             </div>
                             <h3 class="app-name">Demandas</h3>
                             <span class="category-tag">Sistema</span>
@@ -1418,11 +1450,10 @@ $temSistemasPermitidos = count(array_intersect($sistemasDisponiveis, $sistemasPe
 
                 <!-- Card 7: Professor DT -->
                 <?php if (in_array('PDT', $sistemasPermitidos, true)) { ?>
-                    <a href="../../subsystems/sysPDT/main/index.php" class="app-card-link">
+                    <a href="../../subsystems/sist_PDT/default.php" class="app-card-link">
                         <div class="app-card w-{100px} h-full">
                             <div class="icon-wrapper">
-                                    <div class="app-icon-pdt
-                                    "></div>
+                                <div class="app-icon-pdt"></div>
                             </div>
                             <h3 class="app-name">Professor DT</h3>
                             <span class="category-tag">Sistema</span>
@@ -1532,6 +1563,11 @@ $temSistemasPermitidos = count(array_intersect($sistemasDisponiveis, $sistemasPe
                 <i class="fas fa-sign-out-alt"></i>
                 <span class="footer-text">Sair</span>
             </button>
+            <button class="footer-btn" type="button" data-theme-toggle aria-label="Ativar modo escuro" aria-pressed="false">
+                <i class="fa-solid fa-sun sun-icon" aria-hidden="true"></i>
+                <i class="fa-solid fa-moon moon-icon hidden" aria-hidden="true"></i>
+                <span class="footer-text">Tema</span>
+            </button>
             <button class="footer-btn" title="Perfil do usuário" onclick="window.location.href='perfil.php'">
                 <i class="fas fa-user"></i>
                 <span class="footer-text">Perfil</span>
@@ -1556,17 +1592,17 @@ $temSistemasPermitidos = count(array_intersect($sistemasDisponiveis, $sistemasPe
         });
 
         document.addEventListener('DOMContentLoaded', function() {
-            const darkModeToggle = document.getElementById('darkModeToggle');
-            const sunIcon = darkModeToggle.querySelector('.sun-icon');
-            const moonIcon = darkModeToggle.querySelector('.moon-icon');
+            const themeToggles = document.querySelectorAll('[data-theme-toggle]');
             const themeColor = document.querySelector('meta[name="theme-color"]');
 
             function setTheme(isDark, persist = false) {
                 document.documentElement.classList.toggle('dark', isDark);
-                sunIcon.classList.toggle('hidden', isDark);
-                moonIcon.classList.toggle('hidden', !isDark);
-                darkModeToggle.setAttribute('aria-pressed', String(isDark));
-                darkModeToggle.setAttribute('aria-label', isDark ? 'Ativar modo claro' : 'Ativar modo escuro');
+                themeToggles.forEach(function(button) {
+                    button.querySelector('.sun-icon').classList.toggle('hidden', isDark);
+                    button.querySelector('.moon-icon').classList.toggle('hidden', !isDark);
+                    button.setAttribute('aria-pressed', String(isDark));
+                    button.setAttribute('aria-label', isDark ? 'Ativar modo claro' : 'Ativar modo escuro');
+                });
 
                 if (themeColor) {
                     themeColor.content = isDark ? '#1a1a1a' : '#005A24';
@@ -1589,74 +1625,23 @@ $temSistemasPermitidos = count(array_intersect($sistemasDisponiveis, $sistemasPe
             }
             setTheme(savedTheme === 'dark');
 
-            darkModeToggle.addEventListener('click', function() {
-                setTheme(!document.documentElement.classList.contains('dark'), true);
+            themeToggles.forEach(function(button) {
+                button.addEventListener('click', function() {
+                    setTheme(!document.documentElement.classList.contains('dark'), true);
+                });
             });
 
-            // Elementos
-            const searchInput = document.getElementById('searchSubsystems');
-            const cards = document.querySelectorAll('.system-card');
-            const animatedElements = document.querySelectorAll('.animate-on-scroll');
-
-            // Função de busca melhorada
+            const searchInput = document.getElementById('search-input');
+            const cards = document.querySelectorAll('.app-card-link');
             function performSearch() {
-                const searchTerm = searchInput.value.toLowerCase().trim();
-                let visibleCount = 0;
-
-                cards.forEach((card, index) => {
-                    const title = card.querySelector('.card-title').textContent.toLowerCase();
-                    const description = card.querySelector('p').textContent.toLowerCase();
-                    const isVisible = title.includes(searchTerm) || description.includes(searchTerm);
-
-                    if (isVisible) {
-                        card.style.display = 'block';
-                        card.style.animationDelay = `${visibleCount * 0.1}s`;
-                        visibleCount++;
-                    } else {
-                        card.style.display = 'none';
-                    }
+                const searchTerm = searchInput.value.trim().toLocaleLowerCase('pt-BR');
+                cards.forEach(function(card) {
+                    const name = card.querySelector('.app-name').textContent.toLocaleLowerCase('pt-BR');
+                    card.style.display = name.includes(searchTerm) ? '' : 'none';
                 });
-
-                // Feedback visual se nenhum resultado
-                const noResults = document.getElementById('noResults');
-                if (visibleCount === 0 && searchTerm !== '') {
-                    if (!noResults) {
-                        const noResultsDiv = document.createElement('div');
-                        noResultsDiv.id = 'noResults';
-                        noResultsDiv.className = 'text-center py-12 animate-fade-in';
-                        noResultsDiv.innerHTML = `
-                            <i class="fas fa-search text-gray-300 text-6xl mb-4"></i>
-                            <h3 class="text-xl font-semibold text-gray-600 mb-2">Nenhum resultado encontrado</h3>
-                            <p class="text-gray-500">Tente buscar por outros termos</p>
-                        `;
-                        document.querySelector('.card-grid').appendChild(noResultsDiv);
-                    }
-                } else if (noResults) {
-                    noResults.remove();
-                }
             }
 
-            // Event listeners para busca
             searchInput.addEventListener('input', performSearch);
-            searchInput.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    performSearch();
-                }
-            });
-
-            // Navegação por teclado nos cards
-            cards.forEach(card => {
-                card.setAttribute('tabindex', '0');
-                card.setAttribute('role', 'button');
-
-                card.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        this.click();
-                    }
-                });
-            });
 
             // Navegação por teclado no footer
             const footerButtons = document.querySelectorAll('.footer-btn');
@@ -1852,13 +1837,12 @@ $temSistemasPermitidos = count(array_intersect($sistemasDisponiveis, $sistemasPe
                     if ('speechSynthesis' in window) {
                         // Ler informações da página
                         const title = document.querySelector('h1').textContent;
-                        const cards = document.querySelectorAll('.system-card');
+                        const cards = document.querySelectorAll('.app-card-link');
                         let textToRead = `Página de subsistemas CREDE. ${title}. `;
 
                         cards.forEach((card, index) => {
-                            const cardTitle = card.querySelector('.card-title').textContent;
-                            const cardDesc = card.querySelector('p') ? card.querySelector('p').textContent : '';
-                            textToRead += `Card ${index + 1}: ${cardTitle}. ${cardDesc}. `;
+                            const cardTitle = card.querySelector('.app-name').textContent;
+                            textToRead += `Sistema ${index + 1}: ${cardTitle}. `;
                         });
 
                         textToRead += 'Use Tab para navegar pelos elementos. Pressione Enter para ativar. Comandos de voz disponíveis: "usuários", "estoque", "perfil", "acessibilidade".';
