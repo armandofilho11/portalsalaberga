@@ -1,3 +1,17 @@
+<?php
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+header('Expires: 0');
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+if (isset($_SESSION['email']) || isset($_SESSION['id'])) {
+    header('Location: dashboard.php');
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -374,7 +388,7 @@
 </head>
 
 <body>
-    <a href="../index.php" class="back-link">
+    <a id="backToSubsystems" href="../../../main/index.php" class="back-link">
         <i class="fas fa-arrow-left"></i> Voltar
     </a>
     <div class="login-container">
@@ -466,6 +480,26 @@
             setTimeout(() => {
                 return true;
             }, 300);
+        });
+
+        const backLink = document.getElementById('backToSubsystems');
+        const homeUrl = backLink.href;
+
+        history.pushState({ estagioLoginGuard: true }, '', window.location.href);
+
+        window.addEventListener('popstate', function() {
+            window.location.replace(homeUrl);
+        });
+
+        backLink.addEventListener('click', function(event) {
+            event.preventDefault();
+            window.location.replace(homeUrl);
+        });
+
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                window.location.replace(homeUrl);
+            }
         });
     </script>
 </body>
