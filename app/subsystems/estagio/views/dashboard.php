@@ -1033,51 +1033,6 @@ $CLS = [
             border-color: rgba(183, 215, 200, 0.2) !important;
         }
 
-        .estagio-sidebar .theme-toggle {
-            display: flex;
-            width: 42px;
-            height: 42px;
-            align-items: center;
-            justify-content: center;
-            margin: 0 0 0.65rem;
-            padding: 0;
-            border: 1px solid rgba(183, 215, 200, 0.24);
-            border-radius: 9999px;
-            background: rgba(255, 255, 255, 0.06);
-            color: #e8f2ed;
-            font-size: 0.8rem;
-            font-weight: 600;
-            box-shadow: none;
-        }
-
-        .estagio-sidebar .theme-toggle:hover {
-            background: rgba(255, 255, 255, 0.12);
-            transform: translateY(-1px);
-        }
-
-        .estagio-sidebar .theme-toggle__icon {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 1.25rem;
-            color: #ffc04d;
-            font-size: 1rem;
-            line-height: 1;
-            text-align: center;
-        }
-
-        .estagio-sidebar .theme-toggle .theme-toggle-label {
-            display: none;
-        }
-
-        html.light-mode .estagio-sidebar .theme-toggle,
-        html:not(.light-mode) .estagio-sidebar .theme-toggle {
-            background: rgba(255, 255, 255, 0.06) !important;
-            border-color: rgba(255, 255, 255, 0.14) !important;
-            color: #e5e7eb !important;
-            box-shadow: none !important;
-        }
-
         .estagio-sidebar .sidebar-exit {
             color: #f3c4bf !important;
         }
@@ -1107,10 +1062,59 @@ $CLS = [
             background: #282828;
         }
 
+        .floating-theme-toggle {
+            position: fixed;
+            right: 1.5rem;
+            bottom: 4.25rem;
+            z-index: 60;
+            display: inline-flex;
+            width: 3.25rem;
+            height: 3.25rem;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 9999px;
+            background: linear-gradient(135deg, #242424, #151515);
+            color: #f3f4f6;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
+            transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .floating-theme-toggle:hover {
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        .floating-theme-toggle:active {
+            transform: scale(0.95);
+        }
+
+        .floating-theme-toggle__icon {
+            font-size: 1.1rem;
+            line-height: 1;
+        }
+
+        html.light-mode .floating-theme-toggle {
+            border-color: rgba(255, 255, 255, 0.18);
+            background: linear-gradient(135deg, #1ea55f, #0c9a45);
+            color: #ffffff;
+        }
+
+        html.light-mode .floating-theme-toggle:hover {
+            background: linear-gradient(135deg, #22b96a, #0d9b48);
+        }
+
+        @media (max-width: 767px) {
+            .floating-theme-toggle {
+                right: 1rem;
+                bottom: 5rem;
+            }
+        }
+
         @media (prefers-reduced-motion: reduce) {
             .estagio-sidebar .nav-link,
             .estagio-sidebar .nav-link i,
-            .estagio-sidebar .theme-toggle {
+            .floating-theme-toggle {
                 transition-duration: 0.01ms;
             }
         }
@@ -1139,34 +1143,6 @@ $CLS = [
         html.light-mode input::placeholder,
         html.light-mode textarea::placeholder {
             color: #809087 !important;
-        }
-
-        html.light-mode .theme-toggle {
-            color: #ffffff;
-            background: #168447;
-            border-color: #168447;
-        }
-
-        html.light-mode #themeToggle {
-            background: #168447;
-            border-color: #168447;
-            color: #ffffff;
-            box-shadow: 0 2px 10px rgba(22, 132, 71, 0.18);
-        }
-
-        html:not(.light-mode) #themeToggle {
-            background: #202020;
-            border-color: #353535;
-            color: #ffffff;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-        }
-
-        .theme-toggle {
-            transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
-        }
-
-        .theme-toggle:active {
-            transform: scale(0.95);
         }
 
         .empresa-modal-shell {
@@ -2246,6 +2222,91 @@ $CLS = [
                 gap: 1.75rem;
             }
         }
+
+        .estagio-main {
+            padding-bottom: 5rem !important;
+        }
+
+        .estagio-footer {
+            position: fixed;
+            z-index: 30;
+            right: 0;
+            bottom: 0;
+            left: 16rem;
+            display: flex;
+            min-height: 3.5rem;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 0.65rem 1rem;
+            background: #ffffff;
+            color: #607268;
+            box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.1);
+            font-size: 0.75rem;
+        }
+
+        .estagio-footer::before {
+            position: absolute;
+            inset: 0 0 auto;
+            height: 4px;
+            background: linear-gradient(90deg, #006b35, #f6c400 48%, #ed8500 70%, #006b35);
+            content: "";
+        }
+
+        .estagio-footer__developers {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.4rem 1rem;
+        }
+
+        .estagio-footer a {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            color: #24332c;
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+        .estagio-footer a:hover,
+        .estagio-footer a:focus-visible {
+            color: #087443;
+            transform: translateY(-3px);
+        }
+
+        html:not(.light-mode) .estagio-footer {
+            background: #171717;
+            color: #d1d5db;
+            box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.35);
+        }
+
+        html:not(.light-mode) .estagio-footer a {
+            color: #f3f4f6;
+        }
+
+        html:not(.light-mode) .estagio-footer a:hover,
+        html:not(.light-mode) .estagio-footer a:focus-visible,
+        html:not(.light-mode) .estagio-footer a i {
+            color: #76d89e;
+        }
+
+        @media (max-width: 767px) {
+            .estagio-footer {
+                left: 0;
+                min-height: 4.25rem;
+                flex-direction: column;
+                gap: 0.2rem;
+                padding: 0.55rem 0.75rem;
+                font-size: 0.68rem;
+            }
+
+            .estagio-footer__developers {
+                gap: 0.25rem 0.85rem;
+            }
+        }
+
         @media (max-width: 1023px) {
             .kanban-wrapper { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         }
@@ -2307,10 +2368,6 @@ $CLS = [
                 </a>
             </nav>
             <div class="mt-auto pt-4 border-t sidebar-section-divider">
-                <button type="button" id="themeToggle" class="theme-toggle inline-flex items-center justify-center w-[52px] h-[52px] rounded-full border shadow-lg hover:scale-105 mb-3" aria-label="Alternar para modo claro" title="Alternar para modo claro">
-                    <i class="theme-toggle__icon fa-solid fa-sun" aria-hidden="true"></i><span class="theme-toggle-label">Modo claro</span>
-                </button>
-               
                 <a href="../../../main/views/subsystems.php" class="<?= $CLS['sidebar_link'] ?> sidebar-exit w-full" aria-label="Sair do sistema de estágio">
                     <i class="fas fa-sign-out-alt w-5 mr-3"></i> Sair
                 </a>
@@ -2352,9 +2409,6 @@ $CLS = [
                 </a>
             </nav>
             <div class="mt-auto pt-4 border-t sidebar-section-divider">
-                <button type="button" id="mobileThemeToggle" class="theme-toggle inline-flex items-center justify-center w-[52px] h-[52px] rounded-full border shadow-lg hover:scale-105 mb-3" aria-label="Alternar para modo claro" title="Alternar para modo claro">
-                    <i class="theme-toggle__icon fa-solid fa-sun" aria-hidden="true"></i><span class="theme-toggle-label">Modo claro</span>
-                </button>
                 <a href="../../../main/views/subsystems.php" class="<?= $CLS['sidebar_link'] ?> sidebar-exit w-full" aria-label="Sair do sistema de estágio">
                     <i class="fas fa-sign-out-alt w-5 mr-3"></i> Sair
                 </a>
@@ -2365,7 +2419,7 @@ $CLS = [
     <div class="flex-1 flex flex-col min-h-0 overflow-y-auto bg-[#1a1a1a] bg-[radial-gradient(circle_at_10%_20%,rgba(0,122,51,0.05)_0%,rgba(0,122,51,0)_20%),radial-gradient(circle_at_90%_80%,rgba(255,165,0,0.05)_0%,rgba(255,165,0,0)_20%)]">
 
 
-        <main class="max-w-[2200px] mx-auto px-2 sm:px-4 lg:px-8 py-4 sm:py-6 lg:py-8 w-full md:pt-6 pt-16">
+        <main class="estagio-main max-w-[2200px] mx-auto px-2 sm:px-4 lg:px-8 py-4 sm:py-6 lg:py-8 w-full md:pt-6 pt-16">
             <section id="view-dashboard" class="view-section">
                 <div class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-2 sm:gap-3">
                     <div>
@@ -3564,6 +3618,24 @@ $CLS = [
     </div>
 </div>
 
+<button type="button" id="themeToggle" class="floating-theme-toggle" aria-label="Alternar para modo claro" title="Alternar para modo claro">
+    <i class="floating-theme-toggle__icon fa-solid fa-sun" aria-hidden="true"></i>
+</button>
+
+<footer class="estagio-footer" aria-label="Desenvolvedores do sistema">
+    <span>Desenvolvido por</span>
+    <div class="estagio-footer__developers">
+        <a href="https://www.instagram.com/abraaolyncoln_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram de Abraão Lyncoln">
+            <i class="fab fa-instagram" aria-hidden="true"></i>
+            <span>Abraão Lyncoln</span>
+        </a>
+        <a href="https://www.instagram.com/arma_ndofilho/" target="_blank" rel="noopener noreferrer" aria-label="Instagram de Armando Filho">
+            <i class="fab fa-instagram" aria-hidden="true"></i>
+            <span>Armando Filho</span>
+        </a>
+    </div>
+</footer>
+
 <script>
 function applyTheme(theme) {
     const lightMode = theme === 'light';
@@ -3571,15 +3643,11 @@ function applyTheme(theme) {
     document.documentElement.classList.toggle('dark', !lightMode);
     const themeColor = document.querySelector('meta[name="theme-color"]');
     if (themeColor) themeColor.content = lightMode ? '#eaf3e8' : '#1a1a1a';
-    const toggles = [document.getElementById('themeToggle'), document.getElementById('mobileThemeToggle')].filter(Boolean);
-    toggles.forEach((toggle) => {
-        const icon = toggle.querySelector('i');
-        const label = toggle.querySelector('.theme-toggle-label');
-        if (icon) icon.className = lightMode ? 'theme-toggle__icon fa-solid fa-moon' : 'theme-toggle__icon fa-solid fa-sun';
-        if (label) label.textContent = lightMode ? 'Modo escuro' : 'Modo claro';
-        toggle.setAttribute('aria-label', lightMode ? 'Alternar para modo escuro' : 'Alternar para modo claro');
-        toggle.setAttribute('title', lightMode ? 'Alternar para modo escuro' : 'Alternar para modo claro');
-    });
+    const toggle = document.getElementById('themeToggle');
+    const icon = toggle?.querySelector('i');
+    if (icon) icon.className = lightMode ? 'floating-theme-toggle__icon fa-solid fa-moon' : 'floating-theme-toggle__icon fa-solid fa-sun';
+    toggle?.setAttribute('aria-label', lightMode ? 'Alternar para modo escuro' : 'Alternar para modo claro');
+    toggle?.setAttribute('title', lightMode ? 'Alternar para modo escuro' : 'Alternar para modo claro');
 }
 
 function toggleTheme() {
@@ -3640,7 +3708,6 @@ function closeMobileSidebar() {
 
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('themeToggle')?.addEventListener('click', toggleTheme);
-    document.getElementById('mobileThemeToggle')?.addEventListener('click', toggleTheme);
 
     const initial = (location.hash || '#dashboard').replace('#', '');
     showView(initial);
