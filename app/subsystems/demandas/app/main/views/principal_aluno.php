@@ -751,6 +751,21 @@ $perfilUsuarioExibicao = $tipoUsuario === 'master'
             display: none;
         }
 
+        .mobile-theme-row {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+
+        .theme-toggle-mobile {
+            min-height: 44px;
+            padding: 0.65rem 1rem;
+        }
+
+        .theme-toggle-mobile .theme-toggle__label {
+            display: inline;
+        }
+
         @media (min-width: 1024px) {
             .theme-toggle {
                 position: fixed;
@@ -1928,11 +1943,14 @@ $perfilUsuarioExibicao = $tipoUsuario === 'master'
                         <p class="fraseMenu text-gray-400 text-xs">Conectando demandas a quem pode resolvê-las.</p>
                     </div>
                 </div>
-                <button type="button" class="theme-toggle lg:hidden" aria-label="Alterar tema">
+                <button id="closeMenuBtn" type="button" class="self-start text-white" aria-label="Fechar menu"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+
+            <div class="mobile-theme-row lg:hidden">
+                <button type="button" class="theme-toggle theme-toggle-mobile w-full" aria-label="Alterar tema">
                     <i class="theme-toggle__icon fa-solid fa-moon" aria-hidden="true"></i>
                     <span class="theme-toggle__label">Dark</span>
                 </button>
-                <button id="closeMenuBtn" type="button" class="self-start text-white" aria-label="Fechar menu"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
 
             <nav class="pt-8 w-full">

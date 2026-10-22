@@ -703,6 +703,21 @@ $perfilUsuarioExibicao = $tipoSessao === 'master'
             display: none;
         }
 
+        .mobile-theme-row {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+
+        .theme-toggle-mobile {
+            min-height: 44px;
+            padding: 0.65rem 1rem;
+        }
+
+        .theme-toggle-mobile .theme-toggle__label {
+            display: inline;
+        }
+
         .filtro-global-projeto {
             top: 0;
             right: 2rem;
@@ -2169,14 +2184,16 @@ $perfilUsuarioExibicao = $tipoSessao === 'master'
                     </div>
                 </div>
 
-                <button type="button" class="theme-toggle lg:hidden" aria-label="Alterar tema">
-                    <i class="theme-toggle__icon fa-solid fa-moon" aria-hidden="true"></i>
-                    <span class="theme-toggle__label">Dark</span>
-                </button>
-
                 <div class="flex justify-end translate-y-[-25px]">
                     <button id="closeMenuBtn" type="button" aria-label="Fechar menu"><i class="fa-solid fa-xmark text-xl text-white"></i></button>
                 </div>
+            </div>
+
+            <div class="mobile-theme-row lg:hidden">
+                <button type="button" class="theme-toggle theme-toggle-mobile w-full" aria-label="Alterar tema">
+                    <i class="theme-toggle__icon fa-solid fa-moon" aria-hidden="true"></i>
+                    <span class="theme-toggle__label">Dark</span>
+                </button>
             </div>
 
             <nav class="pt-8 w-full">
