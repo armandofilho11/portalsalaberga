@@ -4039,11 +4039,11 @@ if (!empty($param)) {
     // Definição do destino (emprestimo ou devolução)
         // Prioriza devolução quando houver empréstimo ativo para este catálogo
         if ($activeLoan) {
-            $url_final = '../../index.php?section=devolucao_livro&id_emprestimo=' . rawurlencode((string) $activeLoan['id']);
+        $url_final = $mainUrl . 'index.php?section=devolucao_livro&id_emprestimo=' . rawurlencode((string) $activeLoan['id']);
         } else if (intval($livro['quantidade']) > $activeCount) {
-            $url_final = '../../index.php?section=emprestimo_livro&id_livro=' . rawurlencode((string) $id_livro);
+        $url_final = $mainUrl . 'index.php?section=emprestimo_livro&id_livro=' . rawurlencode((string) $id_livro);
         } else {
-            $url_final = '../../index.php?section=emprestimo_livro&id_livro=' . rawurlencode((string) $id_livro);
+        $url_final = $mainUrl . 'index.php?section=emprestimo_livro&id_livro=' . rawurlencode((string) $id_livro);
         }
         ?>
         <script>
