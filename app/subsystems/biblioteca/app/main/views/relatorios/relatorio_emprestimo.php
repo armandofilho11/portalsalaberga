@@ -1,34 +1,34 @@
 <?php
 require_once('../../assets/fpdf/fpdf.php');
-require_once(__DIR__.'../../config/connect.php');
+require_once('../../config/connect.php');
 class PDF extends connect
 {
     function __construct()
     {
         parent::__construct();
-        $this->Header();
         $this->main();
-        $this->Footer();
     }
+
     function Header()
     {
-        $pdf = new PDF("L", "pt", "A4");
-        if ($this->PageNo() == 1) {
-            $this->Image('../../assets/img/logo.png', 20, 14, 50);
-            $this->Ln(20);
+        $pdf = new FPDF("L", "pt", "A4");
+        if ($pdf->PageNo() == 1) {
+            $pdf->Image('../../assets/img/logo.png', 20, 14, 50);
+            $pdf->Ln(20);
 
-            $this->SetX(20);
-            $this->SetFont('Arial', 'B', 20);
-            $this->SetTextColor(0, 122, 51);
-            $this->Cell($this->GetPageWidth() - 40, 20, utf8_decode('RELATÓRIO DE EMPRÉSTIMOS'), 0, 1, 'C');
+            $pdf->SetX(20);
+            $pdf->SetFont('Arial', 'B', 20);
+            $pdf->SetTextColor(0, 122, 51);
+            $pdf->Cell($pdf->GetPageWidth() - 40, 20, utf8_decode('RELATÓRIO DE EMPRÉSTIMOS'), 0, 1, 'C');
 
-            $this->SetX(20);
-            $this->SetFont('Arial', 'B', 14);
-            $this->SetTextColor(255, 165, 0);
-            $this->Cell($this->GetPageWidth() - 40, 20, "BIBLIOTECA STGM", 0, 1, 'C');
+            $pdf->SetX(20);
+            $pdf->SetFont('Arial', 'B', 14);
+            $pdf->SetTextColor(255, 165, 0);
+            $pdf->Cell($pdf->GetPageWidth() - 40, 20, "BIBLIOTECA STGM", 0, 1, 'C');
 
-            $this->Ln(10);
+            $pdf->Ln(10);
         }
+        return $pdf;
     }
 
     function main()
@@ -38,14 +38,14 @@ class PDF extends connect
         $pdf->AddPage();
 
         // Consulta os dados dos empréstimos
-        $sql = $this->connect->prepare("
-            SELECT e.id, e.data_emprestimo, e.data_devolucao_estipulada, 
-                   a.nome AS nome_aluno, 
-                   t.turma AS turma_aluno, 
+        $sql = $this->connect_biblioteca->prepare("
+            SELECT e.id, e.data_emprestimo, e.data_devolucao_estipulada,
+                   a.nome AS nome_aluno,
+                   CONCAT(COALESCE(t.serie_turma, ''), CASE WHEN t.serie_turma <> '' THEN 'º ' ELSE '' END, COALESCE(t.nome_turma, '')) AS turma_aluno,
                    c.titulo_livro
             FROM emprestimo e
-            INNER JOIN aluno a ON e.id_aluno = a.id_aluno
-            INNER JOIN turma t ON a.id_turma = t.id_turma
+            INNER JOIN " . $this->connect_alunos . ".alunos a ON e.id_aluno = a.id_aluno
+            INNER JOIN " . $this->connect_alunos . ".turmas t ON a.id_turma = t.id_turma
             INNER JOIN catalogo c ON e.id_catalogo = c.id
             ORDER BY e.data_emprestimo DESC
         ");
@@ -87,15 +87,16 @@ class PDF extends connect
             $pdf->Cell($colunas[4]['largura'], 20, date('d/m/Y', strtotime($e['data_devolucao_estipulada'])), 1, 1, 'C', true);
         }
 
-        $pdf->Ln(10);
-        $pdf->Output('relatorio_emprestimos.pdf', 'I');
+        $this->Footer($pdf);
     }
-    function Footer()
+
+    function Footer($pdf)
     {
-        $this->SetY(-15);
-        $this->SetFont('Arial', 'I', 8);
-        $this->SetTextColor(0, 122, 51);
-        $this->Cell(0, 10, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'C');
+        $pdf->SetY(-15);
+        $pdf->SetFont('Arial', 'I', 8);
+        $pdf->SetTextColor(0, 122, 51);
+        $pdf->Cell(0, 10, utf8_decode('Página ') . $pdf->PageNo() . '/{nb}', 0, 0, 'C');
+        $pdf->Output('relatorio_emprestimos.pdf', 'I');
     }
 }
 $pdf = new PDF();

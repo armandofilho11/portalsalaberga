@@ -11,6 +11,20 @@
 
 	require_once("../models/turmas_model.php");
 
+	function formatarNomeExibicaoTurma(array $turma): string
+	{
+		$serie = trim((string) ($turma['serie_turma'] ?? ''));
+		$nome = trim((string) ($turma['nome_turma'] ?? ''));
+		if ($serie === '') {
+			return $nome;
+		}
+
+		$serieRegex = preg_quote($serie, '/');
+		$nome = preg_replace('/^(?:' . $serieRegex . '\s*(?:º|°)?\s*)+/iu', '', $nome);
+
+		return trim($serie . 'º ' . $nome);
+	}
+
 	$modelTurma = new TurmasModel();
 	$csrfToken = bin2hex(random_bytes(32));
 	$_SESSION['csrf_token'] = $csrfToken;
@@ -785,7 +799,7 @@
 						<select id="selectTurmaNotas" class="border border-gray-200 rounded-xl px-4 py-2 outline-none text-sm w-full sm:w-1/2">
 							<option value="">Selecione uma turma</option>
 							<?php foreach($turmas as $t): ?>
-								<option value="<?= $t['id_turma'] ?>"><?= $t['serie_turma'] ?>º <?= $t['nome_turma'] ?> - <?= $t['sala_turma'] ?></option>
+								<option value="<?= (int) $t['id_turma'] ?>"><?= htmlspecialchars(formatarNomeExibicaoTurma($t) . ' - ' . (string) $t['sala_turma'], ENT_QUOTES, 'UTF-8') ?></option>
 							<?php endforeach; ?>
 						</select>
 						<select id="selectDisciplinaNotas" class="border border-gray-200 rounded-xl px-4 py-2 outline-none text-sm w-full sm:w-1/3">
@@ -2496,7 +2510,7 @@ if (btnAtualizarOcorrenciasSec) {
 				<select id="selectTurmaOcorrencia" class="w-full h-12 border border-gray-200 rounded-xl px-3 outline-none">
 					<option value="">Selecione a turma</option>
 					<?php foreach($turmas as $turma): ?>
-						<option value="<?= $turma['id_turma'] ?>"><?= $turma['serie_turma'] ?> º <?= $turma['nome_turma'] ?></option>
+						<option value="<?= (int) $turma['id_turma'] ?>"><?= htmlspecialchars(formatarNomeExibicaoTurma($turma), ENT_QUOTES, 'UTF-8') ?></option>
 					<?php endforeach; ?>
 				</select>
 			</div>

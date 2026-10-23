@@ -19,6 +19,7 @@ $select = new select();
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="stock-sidebar.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         tailwind.config = {
@@ -492,7 +493,7 @@ $select = new select();
         <div class="flex flex-col h-full">
             <div class="p-6 border-b border-white/20">
                 <div class="flex items-center">
-                    <img src="https://i.postimg.cc/Dy40VtFL/Design-sem-nome-13-removebg-preview.png" alt="Logo STGM" class="h-12 mr-3 transition-transform hover:scale-105">
+                    <img src="../../demandas/app/main/assets/s_simbol.png" alt="Logo STGM" class="h-12 mr-3 transition-transform hover:scale-105">
                     <span class="text-white font-heading text-lg font-semibold">STGM Estoque</span>
                 </div>
             </div>
@@ -511,7 +512,7 @@ $select = new select();
                         <span>Adicionar</span>
                     </a>
                     <a href="solicitar.php" class="sidebar-link flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-white/10 hover:translate-x-2">
-                        <i class="fas fa-clipboard-list mr-3 text-lg"></i>
+                        <i class="fas fa-chart-column mr-3 text-lg"></i>
                         <span>Solicitar</span>
                     </a>
                     <a href="relatorios.php" class="sidebar-link flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-white/10 hover:translate-x-2">
@@ -528,7 +529,7 @@ $select = new select();
             </nav>
             <div class="p-4 border-t border-white/20">
                 <a href="../../../main/views/subsystems.php" class="w-full bg-transparent border border-white/40 hover:bg-white/10 text-white py-2 px-4 rounded-lg transition-all duration-200 flex items-center justify-center">
-                    <i class="fas fa-sign-out-alt mr-2"></i>
+                    <i class="fa-solid fa-right-from-bracket mr-2"></i>
                     Sair
                 </a>
             </div>
@@ -563,7 +564,18 @@ $select = new select();
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <?php
             $ambientes = $select->select_ambientes();
-            foreach ($ambientes as $ambiente) { ?>
+            foreach ($ambientes as $ambiente) {
+                $idAmbiente = (int) $ambiente['id'];
+                $nomeAmbienteJson = htmlspecialchars(
+                    json_encode(
+                        $ambiente['nome_ambiente'],
+                        JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT
+                    ),
+                    ENT_QUOTES,
+                    'UTF-8'
+                );
+                $ambientePadrao = $idAmbiente === 2;
+                ?>
                 <div class="report-card bg-white border-2 border-primary rounded-xl shadow-card p-6 flex flex-col items-center animate-fade-in">
                     <div class="card-shine"></div>
                     <div class="card-icon w-16 h-16 text-primary mb-4 flex items-center justify-center">
@@ -572,8 +584,8 @@ $select = new select();
                     <h3 class="text-lg font-bold text-primary mb-2 text-center"><?= htmlspecialchars($ambiente['nome_ambiente']) ?></h3>
                     <p class="text-gray-600 text-center mb-4 text-sm">Ambiente cadastrado</p>
                     <div class="flex space-x-2 w-full">
-                        <button onclick="openEditAmbiente(<?= json_encode($ambiente['id']) ?>, '<?= addslashes($ambiente['nome_ambiente']) ?>')" class="flex-1 bg-primary text-white py-2 px-4 rounded-lg hover:bg-dark transition-all font-medium text-sm">Editar</button>
-                        <button onclick="openDeleteAmbiente(<?= json_encode($ambiente['id']) ?>, '<?= addslashes($ambiente['nome_ambiente']) ?>')" class="flex-1 bg-danger text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-all font-medium text-sm">Excluir</button>
+                        <button type="button" onclick="openEditAmbiente(<?= $idAmbiente ?>, <?= $nomeAmbienteJson ?>)" class="flex-1 bg-primary text-white py-2 px-4 rounded-lg hover:bg-dark transition-all font-medium text-sm">Editar</button>
+                        <button type="button" onclick="openDeleteAmbiente(<?= $idAmbiente ?>, <?= $nomeAmbienteJson ?>)" class="flex-1 bg-danger text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-all font-medium text-sm disabled:cursor-not-allowed disabled:opacity-50" <?= $ambientePadrao ? 'disabled title="O ambiente padrão não pode ser excluído."' : '' ?>>Excluir</button>
                     </div>
                 </div>
             <?php } ?>
@@ -618,7 +630,7 @@ $select = new select();
         </div>
     </main>
 
-    <footer class="bg-gradient-to-r from-primary to-dark text-white py-8 md:py-10 mt-auto relative transition-all duration-300">
+    <footer class="stock-footer bg-gradient-to-r from-primary to-dark text-white py-8 md:py-10 mt-auto relative transition-all duration-300">
         <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-secondary to-transparent opacity-30"></div>
         <div class="px-4 md:px-8 transition-all duration-300" id="footerContent">
             <div class="max-w-7xl mx-auto">
@@ -779,43 +791,23 @@ $select = new select();
 
             // Validação do formulário de edição
             document.getElementById('editAmbienteForm').addEventListener('submit', function(e) {
-                e.preventDefault();
                 const nome = document.getElementById('inpEditAmbienteNome').value.trim();
                 if (!nome) {
+                    e.preventDefault();
                     showNotification('Por favor, preencha o nome do ambiente.', 'error');
                     return;
                 }
+                document.getElementById('inpEditAmbienteNome').value = nome;
                 const submitBtn = this.querySelector('button[type="submit"]');
-                const originalText = submitBtn.innerHTML;
                 submitBtn.innerHTML = '<span class="loading-spinner"></span> Salvando...';
                 submitBtn.disabled = true;
-                setTimeout(() => {
-                    this.submit();
-                }, 1000);
-                setTimeout(() => {
-                    if (submitBtn.disabled) {
-                        submitBtn.innerHTML = originalText;
-                        submitBtn.disabled = false;
-                    }
-                }, 5000);
             });
 
             // Validação do formulário de exclusão
             document.getElementById('deleteAmbienteForm').addEventListener('submit', function(e) {
-                e.preventDefault();
                 const submitBtn = this.querySelector('button[type="submit"]');
-                const originalText = submitBtn.innerHTML;
                 submitBtn.innerHTML = '<span class="loading-spinner"></span> Excluindo...';
                 submitBtn.disabled = true;
-                setTimeout(() => {
-                    this.submit();
-                }, 1000);
-                setTimeout(() => {
-                    if (submitBtn.disabled) {
-                        submitBtn.innerHTML = originalText;
-                        submitBtn.disabled = false;
-                    }
-                }, 5000);
             });
 
             // Função para mostrar notificações
@@ -858,6 +850,10 @@ $select = new select();
                 title = 'Sucesso!';
                 message = 'Ambiente excluído com sucesso.';
                 type = 'success';
+            } else if (urlParams.has('ambiente_padrao')) {
+                title = 'Aviso!';
+                message = 'O ambiente padrão não pode ser excluído.';
+                type = 'warning';
             } else if (urlParams.has('erro')) {
                 title = 'Erro!';
                 message = 'Ocorreu um erro ao processar a operação.';

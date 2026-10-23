@@ -33,7 +33,7 @@ class qrCode1 extends connect
         $prateleira = $_GET['prateleira'];
         $estante = $_GET['estante'];
 
-        $select_id_livro = $this->connect->query("SELECT id, titulo_livro, edicao, quantidade, cativo FROM catalogo WHERE prateleiras = '$prateleira' AND estantes = '$estante'");
+        $select_id_livro = $this->connect_biblioteca->query("SELECT id, titulo_livro, edicao, quantidade, cativo FROM catalogo WHERE prateleiras = '$prateleira' AND estantes = '$estante'");
         $id_livros = $select_id_livro->fetchAll(PDO::FETCH_ASSOC);
 
         // Configurações de layout
@@ -53,8 +53,13 @@ class qrCode1 extends connect
                 // Determinar a edição para a URL
                 $edicao = ($cod_livro['edicao'] == 'ENI*' || empty($cod_livro['edicao'])) ? '0' : $cod_livro['edicao'];
 
-                // Dados do QR Code
-                $dados = "https://salaberga.com/salaberga/portalsalaberga/app/subsystems/biblioteca/app/main/views/emprestimo/decisao.php?id_livro=" . $cod_livro['id'] . "_" . $edicao . "_" . $i . "_" . $estante . "_p" . $prateleira;
+                // Diferenciar o ambiente de desenvolvimento (localhost) do ambiente de produção para a URL do QR code
+                $host = $_SERVER['HTTP_HOST'];
+                if (strpos($host, 'localhost') !== false) {
+                    $dados = "http://localhost/app/subsystems/biblioteca/app/main/index.php?qr_livro=" . urlencode($cod_livro['id'] . "_" . $edicao . "_" . $i . "_" . $estante . "_" . $prateleira);
+                } else {
+                    $dados = "https://salaberga.com/salaberga/portalsalaberga/app/subsystems/biblioteca/app/main/index.php?qr_livro=" . urlencode($cod_livro['id'] . "_" . $edicao . "_" . $i . "_" . $estante . "_" . $prateleira);
+                }
 
                 // Usar um nome de arquivo único para cada QR Code
                 $arquivo_qrcode = __DIR__ . "/qrcode_" . $cod_livro['id'] . "_" . $i . ".png";

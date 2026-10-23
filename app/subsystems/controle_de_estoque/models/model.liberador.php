@@ -35,7 +35,7 @@ class liberador extends connect
             date_default_timezone_set('America/Fortaleza');
             $data = date('Y-m-d H:i:s');
 
-            $consulta = "INSERT INTO $this->table4 VALUES (null, :barcode, :nome, :quantidade, :id_categoria,:validade, :id_ambiente, :data)";
+            $consulta = "INSERT INTO $this->table4 (barcode, nome_produto, quantidade, id_categoria, vencimento, id_ambiente, `data`) VALUES (:barcode, :nome, :quantidade, :id_categoria, :validade, :id_ambiente, :data)";
             $query = $this->connect->prepare($consulta);
             $query->bindValue(":nome", $nome);
             $query->bindValue(":barcode", $barcode);
@@ -131,7 +131,7 @@ class liberador extends connect
                 $datetime = date('Y-m-d H:i:s');
                 $usuario = $_SESSION['nome'];
 
-                $consultaInsert = "INSERT INTO movimentacao VALUES (NULL, :id_produtos, :liberador, :solicitador, :tipo_movimentacao, :datareg, :quantidade_retirada)";
+                $consultaInsert = "INSERT INTO movimentacao (id_produtos, liberador, solicitador, tipo_movimentacao, datareg, quantidade_retirada) VALUES (:id_produtos, :liberador, :solicitador, :tipo_movimentacao, :datareg, :quantidade_retirada)";
                 $queryInsert = $this->connect->prepare($consultaInsert);
                 $queryInsert->bindValue(":id_produtos", $id_produto['id']);
                 $queryInsert->bindValue(":liberador", $usuario);
@@ -154,7 +154,7 @@ class liberador extends connect
                 $stmt_adicionar->bindValue(":vencimento", $validade);
                 $stmt_adicionar->execute();
 
-                $stmt_select = $this->connect->query("SELECT id FROM $this->table4 WHERE barcode = :barcode");
+                $stmt_select = $this->connect->prepare("SELECT id FROM $this->table4 WHERE barcode = :barcode");
                 $stmt_select->bindValue(":barcode", $barcode);
                 $stmt_select->execute();
                 $id_produto = $stmt_select->fetch(PDO::FETCH_ASSOC);
@@ -164,7 +164,7 @@ class liberador extends connect
                 $datetime = date('Y-m-d H:i:s');
                 $usuario = $_SESSION['nome'];
 
-                $consultaInsert = "INSERT INTO movimentacao VALUES (NULL, :id_produtos, :liberador, :solicitador, :tipo_movimentacao, :datareg, :quantidade_retirada)";
+                $consultaInsert = "INSERT INTO movimentacao (id_produtos, liberador, solicitador, tipo_movimentacao, datareg, quantidade_retirada) VALUES (:id_produtos, :liberador, :solicitador, :tipo_movimentacao, :datareg, :quantidade_retirada)";
                 $queryInsert = $this->connect->prepare($consultaInsert);
                 $queryInsert->bindValue(":id_produtos", $id_produto['id']);
                 $queryInsert->bindValue(":liberador", $usuario);
@@ -207,7 +207,7 @@ class liberador extends connect
 
             $tipo_movimentacao = "Retirada";
 
-            $consultaInsert = "INSERT INTO movimentacao VALUES (NULL, :id_produtos, :liberador, :solicitador, :tipo_movimentacao, :datareg, :quantidade_retirada)";
+            $consultaInsert = "INSERT INTO movimentacao (id_produtos, liberador, solicitador, tipo_movimentacao, datareg, quantidade_retirada) VALUES (:id_produtos, :liberador, :solicitador, :tipo_movimentacao, :datareg, :quantidade_retirada)";
             $queryInsert = $this->connect->prepare($consultaInsert);
             $queryInsert->bindValue(":id_produtos", $id_produto);
             $queryInsert->bindValue(":liberador", $liberador);
@@ -249,7 +249,7 @@ class liberador extends connect
 
             $tipo_movimentacao = "Retirada";
 
-            $consultaInsert = "INSERT INTO movimentacao VALUES (NULL, :id_produtos, :liberador, :solicitador, :tipo_movimentacao, :datareg, :quantidade_retirada)";
+            $consultaInsert = "INSERT INTO movimentacao (id_produtos, liberador, solicitador, tipo_movimentacao, datareg, quantidade_retirada) VALUES (:id_produtos, :liberador, :solicitador, :tipo_movimentacao, :datareg, :quantidade_retirada)";
             $queryInsert = $this->connect->prepare($consultaInsert);
             $queryInsert->bindValue(":id_produtos", $id_produto);
             $queryInsert->bindValue(":liberador", $liberador);

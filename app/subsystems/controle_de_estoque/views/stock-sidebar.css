@@ -1,0 +1,282 @@
+#sidebar {
+    background: #064923 !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 8px 0 24px rgba(4, 35, 20, 0.16);
+}
+
+#sidebar > div > div:first-child {
+    min-height: 5rem;
+    padding: 1rem 1.15rem;
+    border-color: rgba(255, 255, 255, 0.12);
+    border-bottom: 0 !important;
+}
+
+#sidebar > div > div:first-child img {
+    width: 2.75rem;
+    height: 2.75rem;
+    object-fit: contain;
+}
+
+#sidebar > div > div:first-child span {
+    display: block;
+    font-size: 0.95rem;
+    letter-spacing: 0.01em;
+}
+
+#sidebar > div > div:first-child span::after {
+    display: block;
+    margin-top: 0.18rem;
+    color: rgba(255, 255, 255, 0.58);
+    content: "Controle de estoque";
+    font-size: 0.64rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+}
+
+#sidebar nav {
+    padding: 1rem 0.65rem;
+}
+
+#sidebar nav::before {
+    display: none;
+    content: none;
+}
+
+#sidebar .sidebar-link {
+    position: relative;
+    min-height: 2.6rem;
+    margin-bottom: 0.25rem;
+    padding: 0.7rem 0.8rem !important;
+    border-radius: 0.6rem;
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 0.86rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+#sidebar .sidebar-link i {
+    width: 1.15rem;
+    flex: 0 0 1.15rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.95rem;
+    text-align: center;
+}
+
+#sidebar .sidebar-link:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #fff;
+}
+
+#sidebar .sidebar-link.active {
+    background: rgba(255, 165, 0, 0.16) !important;
+    color: #ffb21a !important;
+    font-weight: 600;
+}
+
+#sidebar .sidebar-link.active::before {
+    position: absolute;
+    top: 25%;
+    bottom: 25%;
+    left: 0;
+    width: 3px;
+    border-radius: 0 3px 3px 0;
+    background: #ffa500;
+    content: "";
+}
+
+#sidebar .sidebar-link.active i {
+    color: #ffa500;
+}
+
+#sidebar > div > div:nth-last-child(2) {
+    position: relative;
+    margin-top: auto;
+    padding: 0.75rem 0.65rem;
+    border-top: 0 !important;
+}
+
+#sidebar > div > div:nth-last-child(2)::before {
+    position: absolute;
+    top: 0;
+    right: 0.65rem;
+    left: 0.65rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.85);
+    content: "";
+}
+
+#sidebar > div > div:nth-last-child(2) > a {
+    min-height: 3.125rem;
+    justify-content: flex-start;
+    padding: 0 !important;
+    border-color: transparent;
+    border-radius: 0.6rem;
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 0.86rem;
+    font-weight: 600;
+}
+
+#sidebar > div > div:nth-last-child(2) > a:hover {
+    border-color: transparent;
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffb21a;
+}
+
+#sidebar > div > div:nth-last-child(2) > a i {
+    display: flex;
+    width: 3rem;
+    height: 3.125rem;
+    flex: 0 0 3rem;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    color: inherit;
+    font-size: 1rem;
+}
+
+@media (max-width: 767px) {
+    #sidebar > div > div:first-child {
+        min-height: 4.75rem;
+        padding: 0.75rem 1rem;
+    }
+}
+
+body > footer.stock-footer {
+    position: relative;
+    margin-top: auto;
+    padding: 0.8rem 0.75rem 0.55rem;
+    overflow: hidden;
+    background: #fff !important;
+    color: #475569 !important;
+    box-shadow: 0 -4px 18px rgba(15, 23, 42, 0.1);
+}
+
+body > footer.stock-footer::before {
+    position: absolute;
+    inset: 0 0 auto;
+    height: 4px;
+    background: linear-gradient(90deg, #006b35, #f6c400 48%, #ed8500 70%, #006b35);
+    content: "";
+}
+
+body > footer.stock-footer > div:first-child,
+body > footer.stock-footer > div:last-child {
+    display: none;
+}
+
+body > footer.stock-footer #footerContent {
+    width: min(calc(100% - 16rem), 80rem);
+    margin-inline: auto !important;
+    padding: 0.2rem 0.5rem 0;
+}
+
+@media (min-width: 768px) {
+    body > footer.stock-footer #footerContent {
+        transform: translateX(8rem);
+    }
+}
+
+body > footer.stock-footer #footerContent > div > div:first-child {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: start;
+    justify-items: center;
+    gap: 0.65rem 3rem;
+    text-align: center;
+}
+
+body > footer.stock-footer #footerContent > div > div:first-child > .group {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+}
+
+body > footer.stock-footer #footerContent > div > div:first-child > .group > div {
+    width: max-content;
+    max-width: 100%;
+}
+
+body > footer.stock-footer h3 {
+    justify-content: center;
+    margin-bottom: 0.35rem;
+    color: #14532d !important;
+    font-size: 0.88rem;
+}
+
+body > footer.stock-footer #footerContent > div > div:first-child > div > p {
+    width: 100%;
+    margin: 0;
+    line-height: 1.35;
+    text-align: center;
+}
+
+body > footer.stock-footer #footerContent > div > div:first-child > div > div {
+    display: flex;
+    width: max-content;
+    max-width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.35rem;
+}
+
+body > footer.stock-footer #footerContent > div > div:first-child > .group:nth-child(2) > div {
+    width: 100%;
+    align-items: center;
+}
+
+body > footer.stock-footer a {
+    justify-content: flex-start;
+    gap: 0;
+    line-height: 1.35;
+    text-align: left;
+}
+
+body > footer.stock-footer #footerContent > div > div:first-child > .group:nth-child(2) > div > a {
+    justify-content: center;
+}
+
+body > footer.stock-footer #footerContent > div > div:first-child > .group > div > a {
+    margin-top: 0 !important;
+}
+
+body > footer.stock-footer a i {
+    width: 1rem;
+    flex: 0 0 1rem;
+    margin-right: 0.45rem !important;
+    text-align: center;
+}
+
+body > footer.stock-footer h3 i,
+body > footer.stock-footer p i,
+body > footer.stock-footer a i {
+    color: #007a33 !important;
+}
+
+body > footer.stock-footer p,
+body > footer.stock-footer a {
+    color: #475569 !important;
+    font-size: 0.74rem;
+}
+
+body > footer.stock-footer a:hover {
+    color: #007a33 !important;
+}
+
+body > footer.stock-footer #footerContent > div > div:last-child {
+    display: none;
+}
+
+@media (max-width: 767px) {
+    body > footer.stock-footer {
+        padding: 0.75rem 0.65rem 0.5rem;
+    }
+
+    body > footer.stock-footer #footerContent {
+        padding-inline: 0.5rem;
+    }
+
+    body > footer.stock-footer #footerContent > div > div:first-child {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+}

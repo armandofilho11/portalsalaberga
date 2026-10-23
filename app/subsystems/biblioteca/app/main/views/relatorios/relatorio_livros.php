@@ -6,9 +6,7 @@ class PDF extends connect
     public function __construct()
     {
         parent::__construct();
-        $this->Header();
         $this->main();
-        $this->Footer();
     }
     function Header()
     {
@@ -36,11 +34,10 @@ class PDF extends connect
         $pdf = $this->Header();
         $pdf->AliasNbPages();
         $pdf->AddPage();
-        $livrosEmAlta = $this->connect->prepare("SELECT 
+        $livrosEmAlta = $this->connect_biblioteca->prepare("SELECT 
         c.id,
         c.titulo_livro,
         a.nome_autor,
-        a.sobrenome_autor,
         c.edicao,
         g.generos,
         COUNT(e.id) as total_emprestimos
@@ -49,7 +46,7 @@ class PDF extends connect
         INNER JOIN autores a ON l.id_autor = a.id
         LEFT JOIN genero g ON c.id_genero = g.id
         LEFT JOIN emprestimo e ON c.id = e.id_catalogo
-        GROUP BY c.id, c.titulo_livro, a.nome_autor, a.sobrenome_autor, c.edicao, g.generos
+        GROUP BY c.id, c.titulo_livro, a.nome_autor, c.edicao, g.generos
         ORDER BY total_emprestimos DESC
         LIMIT 10");
         $livrosEmAlta->execute();
@@ -82,7 +79,7 @@ class PDF extends connect
 
             $genero = utf8_decode(mb_strtoupper($livro['generos'] ?? 'N/A', 'UTF-8'));
             $titulo = utf8_decode(mb_strtoupper($livro['titulo_livro'], 'UTF-8'));
-            $autor = utf8_decode(mb_strtoupper($livro['nome_autor'] . ' ' . $livro['sobrenome_autor'], 'UTF-8'));
+            $autor = utf8_decode(mb_strtoupper($livro['nome_autor'] ?? 'N/A', 'UTF-8'));
             $edicao = empty($livro['edicao']) ? utf8_decode('ENI*') : utf8_decode(mb_strtoupper($livro['edicao'], 'UTF-8'));
 
             $pdf->Cell($colunas[0]['largura'], 20, $genero, 1, 0, 'L', true);
@@ -97,7 +94,6 @@ class PDF extends connect
         $pdf->SetFont('Arial', 'B', 12);
         $pdf->Cell($pageWidth / 2, 10, 'TOTAL DE LIVROS EM ALTA: ' . count($result), 0, 0, 'L');
         
-        $pdf->Output('relatorio_livros_em_alta.pdf', 'I');
         $this->Footer($pdf);
     }
 
@@ -106,7 +102,8 @@ class PDF extends connect
         $pdf->SetY(-15);
         $pdf->SetFont('Arial', 'I', 8);
         $pdf->SetTextColor(0, 122, 51);
-        $pdf->Cell(0, 10, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'C');
+        $pdf->Cell(0, 10, utf8_decode('Página ') . $pdf->PageNo() . '/{nb}', 0, 0, 'C');
+        $pdf->Output('relatorio_livros_em_alta.pdf', 'I');
     }
 }
 $pdf = new PDF();

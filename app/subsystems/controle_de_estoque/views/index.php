@@ -16,6 +16,7 @@ $session->tempo_session();
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="stock-sidebar.css">
     <script>
         tailwind.config = {
             theme: {
@@ -457,7 +458,7 @@ $session->tempo_session();
             <!-- Logo e título -->
             <div class="p-6 border-b border-white/20">
                 <div class="flex items-center">
-                    <img src="https://i.postimg.cc/Dy40VtFL/Design-sem-nome-13-removebg-preview.png " alt="Logo STGM" class="h-12 mr-3 transition-transform hover:scale-105">
+                    <img src="../../demandas/app/main/assets/s_simbol.png" alt="Logo STGM" class="h-12 mr-3 transition-transform hover:scale-105">
                     <span class="text-white font-heading text-lg font-semibold">STGM Estoque</span>
                 </div>
             </div>
@@ -490,13 +491,13 @@ $session->tempo_session();
                 <?php } ?>
                 <?php if (isset($_SESSION['Admin_estoque']) || isset($_SESSION['Dev_estoque'])|| isset($_SESSION['liberador_estoque'])) { ?>
                     <a href="relatorios.php" class="sidebar-link flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-white/10 hover:translate-x-2">
-                        <i class="fas fa-clipboard-list mr-3 text-lg"></i>
+                        <i class="fas fa-chart-column mr-3 text-lg"></i>
                         <span>Relatórios</span>
                     </a>
                 <?php } ?>
                 <?php if (isset($_SESSION['Admin_estoque']) || isset($_SESSION['Dev_estoque'])) { ?>
                     <a href="ambiente.php" class="sidebar-link flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-white/10 hover:translate-x-2">
-                        <i class="fas fa-clipboard-list mr-3 text-lg"></i>
+                        <i class="fas fa-building mr-3 text-lg"></i>
                         <span>Ambiente</span>
                     </a>
                 <?php } ?>
@@ -505,7 +506,7 @@ $session->tempo_session();
             <!-- Botão de Sair -->
             <div class="p-4 border-t border-white/20">
                 <a href="../../../main/views/subsystems.php" class="w-full bg-transparent border border-white/40 hover:bg-white/10 text-white py-2 px-4 rounded-lg transition-all duration-200 flex items-center justify-center">
-                    <i class="fas fa-sign-out-alt mr-2"></i>
+                    <i class="fa-solid fa-right-from-bracket mr-2"></i>
                     Sair
                 </a>
             </div>
@@ -598,7 +599,7 @@ $session->tempo_session();
         </div>
     </main>
 
-    <footer class="bg-gradient-to-r from-primary to-dark text-white py-8 md:py-10 mt-auto relative transition-all duration-300">
+    <footer class="stock-footer bg-gradient-to-r from-primary to-dark text-white py-8 md:py-10 mt-auto relative transition-all duration-300">
         <!-- Efeito de brilho sutil no topo -->
         <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-secondary to-transparent opacity-30"></div>
         

@@ -36,10 +36,10 @@ class Relatorio_geral_turma_pdf extends connect
                 $aluno_destaque = 'Nenhum aluno encontrado para este mês';
             }
 
-            $stmt_livros_por_aluno = $this->connect->prepare("
+            $stmt_livros_por_aluno = $this->connect_biblioteca->prepare("
                 SELECT a.nome AS student_name, COUNT(e.id) AS book_count
                 FROM emprestimo e
-                JOIN aluno a ON e.id_aluno = a.id_aluno
+                JOIN " . $this->connect_alunos . ".alunos a ON e.id_aluno = a.id_aluno
                 WHERE a.id_turma = :id_turma
                   AND MONTH(e.data_emprestimo) = :mes
                   AND YEAR(e.data_emprestimo) = YEAR(CURDATE())
@@ -68,7 +68,10 @@ class Relatorio_geral_turma_pdf extends connect
                 ];
 
                 // Definir fonte para GD
-                $font = '../../../../lib/pChart.1.27d/Fonts/tahoma.ttf';
+                $font = realpath(__DIR__ . '/../../assets/fpdf/pChart.1.27d/Fonts/tahoma.ttf');
+                if ($font === false || !is_file($font)) {
+                    $font = false;
+                }
                 $font_size_pie = 10; // Para porcentagens nas fatias
                 $font_size_legend = 9; // Para texto da legenda
 
@@ -106,11 +109,15 @@ class Relatorio_geral_turma_pdf extends connect
 
                     $percentage_text = round(($data['book_count'] / $total_books) * 100) . '%';
 
-                    $bbox = imagettfbbox($font_size_pie, 0, $font, $percentage_text);
-                    $text_width = $bbox[2] - $bbox[0];
-                    $text_height = $bbox[1] - $bbox[7];
+                    if ($font !== false && function_exists('imagettftext')) {
+                        $bbox = imagettfbbox($font_size_pie, 0, $font, $percentage_text);
+                        $text_width = $bbox[2] - $bbox[0];
+                        $text_height = $bbox[1] - $bbox[7];
 
-                    imagettftext($image, $font_size_pie, 0, $text_x - ($text_width / 2), $text_y + ($text_height / 2), $black, $font, $percentage_text);
+                        imagettftext($image, $font_size_pie, 0, $text_x - ($text_width / 2), $text_y + ($text_height / 2), $black, $font, $percentage_text);
+                    } else {
+                        imagestring($image, 3, (int)$text_x, (int)$text_y, $percentage_text, $black);
+                    }
 
                     $start_angle += $slice_angle;
                 }
@@ -121,7 +128,11 @@ class Relatorio_geral_turma_pdf extends connect
                 $line_height = 20;
                 $box_size = 15;
 
-                imagettftext($image, $font_size_legend + 2, 0, $legend_x, $legend_y, $black, $font, utf8_decode("Legenda:"));
+                if ($font !== false && function_exists('imagettftext')) {
+                    imagettftext($image, $font_size_legend + 2, 0, $legend_x, $legend_y, $black, $font, utf8_decode("Legenda:"));
+                } else {
+                    imagestring($image, 3, $legend_x, $legend_y, utf8_decode("Legenda:"), $black);
+                }
                 $legend_y += $line_height;
 
                 foreach ($livros_por_aluno as $index => $data) {
@@ -130,7 +141,11 @@ class Relatorio_geral_turma_pdf extends connect
                     imagerectangle($image, $legend_x, $legend_y, $legend_x + $box_size, $legend_y + $box_size, $black); // Borda
 
                     $legend_text = utf8_decode(htmlspecialchars_decode($data['student_name'])) . " (" . $data['book_count'] . ")";
-                    imagettftext($image, $font_size_legend, 0, $legend_x + $box_size + 10, $legend_y + $box_size - 3, $black, $font, $legend_text);
+                    if ($font !== false && function_exists('imagettftext')) {
+                        imagettftext($image, $font_size_legend, 0, $legend_x + $box_size + 10, $legend_y + $box_size - 3, $black, $font, $legend_text);
+                    } else {
+                        imagestring($image, 3, $legend_x + $box_size + 10, $legend_y + $box_size - 3, $legend_text, $black);
+                    }
                     $legend_y += $line_height;
                 }
 

@@ -39,17 +39,17 @@ if (isset($_POST['excluir_livro']) && !empty($_POST['excluir_livro'])) {
     $corredor = $_POST['corredor'];
     $estante = $_POST['estante'];
     $prateleira = $_POST['prateleira'];
-    $subgenero = $_POST['subgenero'];
-    $literatura = isset($_POST['literatura']) ? 1 : 0;
-    $ficcao = isset($_POST['ficcao']) ? 1 : 0;
-    $cativo = isset($_POST['cativo']) ? 1 : 0;
+    $literatura = (isset($_POST['literatura']) && $_POST['literatura'] == 1) ? 1 : 0;
+    $categoria = $_POST['categoria'];
+    $ficcao = (isset($_POST['ficcao']) && $_POST['ficcao'] == 1) ? 1 : 0;
+    $cativo = (isset($_POST['cativo']) && $_POST['cativo'] == 1) ? 1 : 0;
     $genero = $_POST['genero'];
     $ano_publicacao = $_POST['ano_publicacao'];
     $subgenero = $_POST['subgenero'];
     $genero = $_POST['genero'];
 
     $model = new main_model();
-    $result = $model->editar_livro($id_livro, $titulo, $ano_publicacao, $editora, $edicao, $quantidade, $corredor, $estante, $prateleira, $genero, $subgenero, $literatura, $ficcao, $cativo);
+    $result = $model->editar_livro($id_livro, $titulo, $ano_publicacao, $editora, $edicao, $quantidade, $corredor, $estante, $prateleira, $genero, $subgenero, $literatura, $categoria, $ficcao, $cativo);
 
     switch ($result) {
         case 1:
@@ -62,15 +62,13 @@ if (isset($_POST['excluir_livro']) && !empty($_POST['excluir_livro'])) {
     /*controller para editar autor*/
 } else if (
     isset($_POST['id_autor']) && !empty($_POST['id_autor']) &&
-    isset($_POST['nome']) && !empty($_POST['nome']) &&
-    isset($_POST['sobrenome']) && !empty($_POST['sobrenome'])
+    isset($_POST['nome']) && !empty($_POST['nome'])
 ) {
     $id_autor = $_POST['id_autor'];
     $nome = $_POST['nome'];
-    $sobrenome = $_POST['sobrenome'];
 
     $model = new main_model();
-    $result = $model->editar_autor($id_autor, $nome, $sobrenome);
+    $result = $model->editar_autor($id_autor, $nome);
 
     switch ($result) {
         case 1:
@@ -80,8 +78,65 @@ if (isset($_POST['excluir_livro']) && !empty($_POST['excluir_livro'])) {
             header('location:../views/editar_autor.php?error');
             break;
     }
-}else{
+    /*controller para editar categoria */
+} else if (
+    isset($_POST['id_categoria']) && !empty($_POST['id_categoria']) &&
+    isset($_POST['nome']) && !empty($_POST['nome'])
+) {
+    $id_categoria = $_POST['id_categoria'];
+    $nome = $_POST['nome'];
 
-    header('location:../views/decisao.php');
+    $model = new main_model();
+    $result = $model->editar_categoria($id_categoria, $nome);
+
+    switch ($result) {
+        case 1:
+            header('location:../views/editar_categoria.php?true');
+            break;
+        case 2:
+            header('location:../views/editar_categoria.php?error');
+            break;
+    }
+    /*controller para editar gênero */
+} else if (
+    isset($_POST['id_genero']) && !empty($_POST['id_genero']) &&
+    isset($_POST['nome']) && !empty($_POST['nome'])
+) {
+    $id_genero = $_POST['id_genero'];
+    $nome = $_POST['nome'];
+
+    $model = new main_model();
+    $result = $model->editar_genero($id_genero, $nome);
+
+    switch ($result) {
+        case 1:
+            header('location:../views/editar_genero.php?true');
+            break;
+        case 2:
+            header('location:../views/editar_genero.php?error');
+            break;
+    }
+    /*controller para editar subgênero */
+} else if (
+    isset($_POST['id_subgenero']) && !empty($_POST['id_subgenero']) &&
+    isset($_POST['nome']) && !empty($_POST['nome'])
+) {
+    $id_subgenero = $_POST['id_subgenero'];
+    $nome = $_POST['nome'];
+
+    $model = new main_model();
+    $result = $model->editar_subgenero($id_subgenero, $nome);
+
+    switch ($result) {
+        case 1:
+            header('location:../views/editar_subgenero.php?true');
+            break;
+        case 2:
+            header('location:../views/editar_subgenero.php?error');
+            break;
+    }
+} else{
+
+    header('location:../index.php');
     exit();
 }
