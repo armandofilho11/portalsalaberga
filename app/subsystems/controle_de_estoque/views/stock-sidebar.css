@@ -219,11 +219,20 @@ body > footer.stock-footer #footerContent > div > div:first-child > div > div {
     gap: 0.35rem;
 }
 
+body > footer.stock-footer #footerContent > div > div:first-child > .group:nth-child(2) > div {
+    width: 100%;
+    align-items: center;
+}
+
 body > footer.stock-footer a {
     justify-content: flex-start;
     gap: 0;
     line-height: 1.35;
     text-align: left;
+}
+
+body > footer.stock-footer #footerContent > div > div:first-child > .group:nth-child(2) > div > a {
+    justify-content: center;
 }
 
 body > footer.stock-footer #footerContent > div > div:first-child > .group > div > a {
