@@ -5288,8 +5288,10 @@ input[type="radio"] {
     body.reception-interface {
         --sidebar-width: 0px;
         display: flex;
-        min-height: 100vh;
+        height: 100dvh;
+        min-height: 0;
         flex-direction: column;
+        overflow: hidden;
         background: var(--salaberga-workspace);
     }
 
@@ -5389,10 +5391,24 @@ input[type="radio"] {
 
     .reception-interface .main-content {
         width: 100%;
+        height: auto;
         min-height: 0;
         flex: 1;
         margin: 0;
         padding: 24px 20px 48px;
+        overflow: hidden;
+    }
+
+    .reception-interface.reception-scroll-enabled .main-content {
+        overflow-x: hidden;
+        overflow-y: auto;
+        overscroll-behavior-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .reception-interface.reception-scroll-enabled .delay-list {
+        max-height: none;
+        overflow-y: visible;
     }
 
     .reception-interface #inicio {
@@ -11148,6 +11164,7 @@ function normalizeStudentSearch(value) {
   const activate = (target, selectedItem) => {
     navItems.forEach(nav => nav.classList.remove('active'));
     sections.forEach(section => section.classList.remove('active'));
+    document.body.classList.toggle('reception-scroll-enabled', target === 'atrasos');
     const receptionHomeLink = document.querySelector('[data-reception-home]');
     if (receptionHomeLink) receptionHomeLink.hidden = target === 'inicio';
     selectedItem?.classList.add('active');
@@ -13202,6 +13219,10 @@ html[data-theme="lula"] .sidebar > nav::-webkit-scrollbar-thumb {
 
 .main-content {
     padding-bottom: 5rem;
+}
+
+.reception-interface .main-content {
+    height: auto;
 }
 
 .floating-theme-toggle {
