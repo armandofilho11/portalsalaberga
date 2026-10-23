@@ -258,13 +258,24 @@ class MainModel extends connect
         $id_tipo_responsavel,
         $date_time,
         $id_motivo,
+        $justificativaAtraso,
         $usuarioSessao,
         $id_aluno
     ) {
 
         try{
+            if (!is_string($justificativaAtraso) || trim($justificativaAtraso) === '' || strlen(trim($justificativaAtraso)) > 2000) {
+                return 7;
+            }
+            $justificativaAtraso = trim($justificativaAtraso);
             if (!$this->usuarioSessaoValido($usuarioSessao)) {
                 return 3;
+            }
+            $colunasEntrada = $this->connect->query('SHOW COLUMNS FROM registro_entrada')
+                ->fetchAll(PDO::FETCH_COLUMN);
+            if (!in_array('justificativa_atraso', $colunasEntrada, true)) {
+                error_log('A coluna justificativa_atraso não existe em registro_entrada. Aplique a migração do banco.');
+                return 8;
             }
             // Verifica se o aluno existe
             $stmt_check_aluno = $this->connect->prepare("SELECT id_aluno FROM aluno WHERE id_aluno = :id_aluno");
@@ -312,7 +323,8 @@ class MainModel extends connect
                     id_usuario_sessao,
                     usuario_nome,
                     usuario_email,
-                    id_aluno
+                    id_aluno,
+                    justificativa_atraso
                 ) VALUES (
                     :nome_responsavel,
                     :nome_conducente,
@@ -324,7 +336,8 @@ class MainModel extends connect
                     :id_usuario_sessao,
                     :usuario_nome,
                     :usuario_email,
-                    :id_aluno
+                    :id_aluno,
+                    :justificativa_atraso
                 )
             ");
             $stmt_registrar->bindValue(":nome_responsavel", $nome_responsavel, $nome_responsavel === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
@@ -334,6 +347,7 @@ class MainModel extends connect
             $stmt_registrar->bindValue(":date_time", $date_time);
             $stmt_registrar->bindValue(":id_motivo", $id_motivo);
             $stmt_registrar->bindValue(":id_aluno", $id_aluno);
+            $stmt_registrar->bindValue(":justificativa_atraso", $justificativaAtraso, PDO::PARAM_STR);
             $parametrosUsuario = $this->parametrosUsuarioSessao($usuarioSessao);
             $stmt_registrar->bindValue(':id_usuario_sessao', $parametrosUsuario['id_usuario_sessao']);
             $stmt_registrar->bindValue(':usuario_nome', $parametrosUsuario['usuario_nome']);
@@ -422,9 +436,15 @@ class MainModel extends connect
         $sql = "UPDATE registro_entrada r
                 INNER JOIN aluno a ON a.id_aluno = r.id_aluno
                 SET r.status_justificativa = :decisao,
-                    r.id_motivo = :id_motivo,
+                    r.id_motivo = CASE
+                        WHEN COALESCE(r.justificativa_atraso, '') = '' THEN :id_motivo
+                        ELSE r.id_motivo
+                    END,
                     r.observacao_validacao = NULL,
-                    r.justificativa_atraso = COALESCE(:justificativa_atraso, r.justificativa_atraso),
+                    r.justificativa_atraso = CASE
+                        WHEN COALESCE(r.justificativa_atraso, '') = '' THEN NULLIF(:justificativa_atraso, '')
+                        ELSE r.justificativa_atraso
+                    END,
                     r.validado_por = :validador,
                     r.validado_em = NOW()
                 WHERE r.id_registro_entrada = :id_registro

@@ -5288,8 +5288,10 @@ input[type="radio"] {
     body.reception-interface {
         --sidebar-width: 0px;
         display: flex;
-        min-height: 100vh;
+        height: 100dvh;
+        min-height: 0;
         flex-direction: column;
+        overflow: hidden;
         background: var(--salaberga-workspace);
     }
 
@@ -5389,10 +5391,24 @@ input[type="radio"] {
 
     .reception-interface .main-content {
         width: 100%;
+        height: auto;
         min-height: 0;
         flex: 1;
         margin: 0;
         padding: 24px 20px 48px;
+        overflow: hidden;
+    }
+
+    .reception-interface.reception-scroll-enabled .main-content {
+        overflow-x: hidden;
+        overflow-y: auto;
+        overscroll-behavior-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .reception-interface.reception-scroll-enabled .delay-list {
+        max-height: none;
+        overflow-y: visible;
     }
 
     .reception-interface #inicio {
@@ -6278,7 +6294,7 @@ input[type="radio"] {
                             <label for="entrada-observacao" class="block text-sm font-medium text-gray-700 mb-2">
                                 Justificativa
                             </label>
-                            <textarea id="entrada-observacao" name="observacao" rows="3" placeholder="Digite a justificativa" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ceara-green focus:border-ceara-green resize-y"></textarea>
+                            <textarea id="entrada-observacao" name="observacao" rows="3" maxlength="2000" placeholder="Digite a justificativa" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ceara-green focus:border-ceara-green resize-y" required></textarea>
                         </div>
                     </div>
 
@@ -9591,7 +9607,7 @@ class TurmaSelector {
                             <?php if ($historicoPorTurma[$idTurma]) { ?>
                                 <?php foreach ($historicoPorTurma[$idTurma] as $registroAtraso) { ?>
                                     <?php $jsonDetalhes = json_encode($detalhesAtraso($registroAtraso), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_INVALID_UTF8_SUBSTITUTE); $statusHistorico = $registroAtraso['status_justificativa'] ?? 'pendente'; ?>
-                                    <article class="delay-history-entry" data-history-entry data-history-class="<?= (int) $registroAtraso['id_turma'] ?>" data-history-date="<?= date('Y-m-d', strtotime($registroAtraso['date_time'])) ?>" data-history-status="<?= htmlspecialchars($statusHistorico, ENT_QUOTES, 'UTF-8') ?>" data-history-name="<?= htmlspecialchars($registroAtraso['nome'], ENT_QUOTES, 'UTF-8') ?>" tabindex="0" role="group" aria-label="Registro histórico de atraso de <?= htmlspecialchars($registroAtraso['nome'], ENT_QUOTES, 'UTF-8') ?>">
+                                    <article class="delay-history-entry" data-history-entry data-history-record-id="<?= (int) $registroAtraso['id_registro_entrada'] ?>" data-history-class="<?= (int) $registroAtraso['id_turma'] ?>" data-history-turma="3º Ano <?= htmlspecialchars($turma, ENT_QUOTES, 'UTF-8') ?>" data-history-date="<?= date('Y-m-d', strtotime($registroAtraso['date_time'])) ?>" data-history-date-time="<?= htmlspecialchars((string) $registroAtraso['date_time'], ENT_QUOTES, 'UTF-8') ?>" data-history-matricula="<?= htmlspecialchars((string) ($registroAtraso['matricula'] ?? ''), ENT_QUOTES, 'UTF-8') ?>" data-history-status="<?= htmlspecialchars($statusHistorico, ENT_QUOTES, 'UTF-8') ?>" data-history-name="<?= htmlspecialchars($registroAtraso['nome'], ENT_QUOTES, 'UTF-8') ?>" tabindex="0" role="<?= $ehAdminEntradaSaida ? 'button' : 'group' ?>" aria-label="<?= $ehAdminEntradaSaida ? 'Opções para o atraso de ' : 'Registro histórico de atraso de ' ?><?= htmlspecialchars($registroAtraso['nome'], ENT_QUOTES, 'UTF-8') ?>">
                                         <div class="delay-history-entry-name-group"><div class="delay-history-entry-name"><?= htmlspecialchars($registroAtraso['nome'], ENT_QUOTES, 'UTF-8') ?></div><button type="button" class="delay-print-button" data-delay-print="<?= htmlspecialchars($jsonDetalhes, ENT_QUOTES, 'UTF-8') ?>" data-record-id="<?= (int) $registroAtraso['id_registro_entrada'] ?>" aria-label="Imprimir registro de atraso de <?= htmlspecialchars($registroAtraso['nome'], ENT_QUOTES, 'UTF-8') ?>" title="Imprimir registro de atraso"><i class="fas fa-print" aria-hidden="true"></i></button></div>
                                         <div class="delay-history-entry-meta"><time datetime="<?= date('Y-m-d\TH:i:s', strtotime($registroAtraso['date_time'])) ?>"><?= date('d/m/Y', strtotime($registroAtraso['date_time'])) ?> às <?= date('H:i', strtotime($registroAtraso['date_time'])) ?></time><span class="delay-status delay-status-<?= htmlspecialchars($statusHistorico, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars(['pendente' => 'Pendente', 'aprovada' => 'Aprovada', 'recusada' => 'Recusada'][$statusHistorico] ?? 'Pendente', ENT_QUOTES, 'UTF-8') ?></span></div>
                                         <div class="delay-history-entry-actions">
@@ -9708,8 +9724,23 @@ class TurmaSelector {
 
             document.addEventListener('click', (event) => {
                 const entry = event.target.closest('[data-history-entry]');
-                if (!entry || event.target.closest('button, a, input, select, textarea, summary')) return;
+                if (!entry) return;
+                <?php if ($ehAdminEntradaSaida) { ?>
+                if (event.target.closest('[data-delay-print]')) return;
+                document.dispatchEvent(new CustomEvent('history-delay-delete-request', {
+                    detail: {
+                        id_registro_entrada: entry.dataset.historyRecordId,
+                        id_turma: Number(entry.dataset.historyClass),
+                        nome: entry.dataset.historyName,
+                        matricula: entry.dataset.historyMatricula,
+                        turma: entry.dataset.historyTurma,
+                        dateTime: entry.dataset.historyDateTime
+                    }
+                }));
+                <?php } else { ?>
+                if (event.target.closest('button, a, input, select, textarea, summary')) return;
                 entry.querySelector('[data-delay-details]')?.click();
+                <?php } ?>
             });
 
             document.addEventListener('keydown', (event) => {
@@ -9717,7 +9748,11 @@ class TurmaSelector {
                 if (!entry || event.target !== entry || !['Enter', ' '].includes(event.key)) return;
 
                 event.preventDefault();
+                <?php if ($ehAdminEntradaSaida) { ?>
+                entry.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+                <?php } else { ?>
                 entry.querySelector('[data-delay-details]')?.click();
+                <?php } ?>
             });
 
             const dialog = document.getElementById('delay-details-dialog');
@@ -9753,6 +9788,7 @@ class TurmaSelector {
             document.addEventListener('click', (event) => {
                 const button = event.target.closest('[data-delay-details]');
                 if (!button) return;
+                if (button.closest('[data-history-entry]') && <?= $ehAdminEntradaSaida ? 'true' : 'false' ?>) return;
 
                 try {
                     const details = JSON.parse(button.dataset.delayDetails);
@@ -9787,7 +9823,11 @@ class TurmaSelector {
                     justification.name = 'justificativa_atraso';
                     justification.setAttribute('form', 'delay-validation-form');
                     justification.maxLength = 2000;
-                    justification.readOnly = !showValidationForm;
+                    const fixedManualJustification = Boolean(
+                        details['Justificativa do atraso']
+                        && details['Justificativa do atraso'] !== 'Não informada'
+                    );
+                    justification.readOnly = !showValidationForm || fixedManualJustification;
                     justification.required = showValidationForm;
                     justification.placeholder = showValidationForm ? 'Informe a justificativa do atraso' : '';
                     justification.value = details['Justificativa do atraso'] === 'Não informada'
@@ -9826,6 +9866,18 @@ class TurmaSelector {
                     dialogContent.appendChild(extraDetails);
                     validationForm.hidden = !showValidationForm;
                     motiveInput.value = button.dataset.motiveId || '';
+                    motiveInput.disabled = fixedManualJustification;
+                    motiveInput.required = showValidationForm && !fixedManualJustification;
+                    validationForm.querySelector('[data-fixed-motive]')?.remove();
+                    if (showValidationForm && fixedManualJustification) {
+                        const fixedMotive = document.createElement('input');
+                        fixedMotive.type = 'hidden';
+                        fixedMotive.name = 'id_motivo';
+                        fixedMotive.value = motiveInput.value;
+                        fixedMotive.dataset.fixedMotive = '';
+                        fixedMotive.setAttribute('form', 'delay-validation-form');
+                        validationForm.appendChild(fixedMotive);
+                    }
                     updateDecision('');
                     recordId.value = button.dataset.recordId || '';
                     if (!dialog.open) dialog.showModal();
@@ -11112,6 +11164,7 @@ function normalizeStudentSearch(value) {
   const activate = (target, selectedItem) => {
     navItems.forEach(nav => nav.classList.remove('active'));
     sections.forEach(section => section.classList.remove('active'));
+    document.body.classList.toggle('reception-scroll-enabled', target === 'atrasos');
     const receptionHomeLink = document.querySelector('[data-reception-home]');
     if (receptionHomeLink) receptionHomeLink.hidden = target === 'inicio';
     selectedItem?.classList.add('active');
@@ -11265,15 +11318,18 @@ function normalizeStudentSearch(value) {
 
     function abrirConfirmacaoExclusao(saida) {
         pendingDeleteExit = saida;
-        const ehAtraso = saida.origem === 'atraso';
+        const ehAtraso = ['atraso', 'historico_atraso'].includes(saida.origem);
+        const ehHistoricoAtraso = saida.origem === 'historico_atraso';
         document.getElementById('delete-exit-title').textContent = ehAtraso
-            ? 'Excluir registro de atraso?'
+            ? (ehHistoricoAtraso ? 'Excluir atraso do histórico?' : 'Excluir registro de atraso?')
             : 'Excluir registro de saída?';
         document.querySelector('#delete-exit-title + p').textContent = ehAtraso
-            ? 'Tem certeza de que deseja excluir este atraso? Esta ação não pode ser desfeita.'
+            ? (ehHistoricoAtraso
+                ? 'Tem certeza de que deseja excluir este atraso do histórico? Esta ação não pode ser desfeita.'
+                : 'Tem certeza de que deseja excluir este atraso? Esta ação não pode ser desfeita.')
             : 'Tem certeza de que deseja excluir este registro? Esta ação não pode ser desfeita.';
         document.getElementById('delete-exit-confirm').textContent = ehAtraso
-            ? 'Excluir atraso'
+            ? (ehHistoricoAtraso ? 'Excluir do histórico' : 'Excluir atraso')
             : 'Excluir registro';
         document.getElementById('delete-exit-aluno').textContent = saida.nome || 'Aluno';
         document.getElementById('delete-exit-matricula').textContent = saida.matricula || 'Não informada';
@@ -11287,6 +11343,13 @@ function normalizeStudentSearch(value) {
         deleteExitDialog.showModal();
         document.getElementById('delete-exit-cancel').focus();
     }
+
+    document.addEventListener('history-delay-delete-request', (event) => {
+        abrirConfirmacaoExclusao({
+            ...event.detail,
+            origem: 'historico_atraso'
+        });
+    });
 
     document.addEventListener('click', (event) => {
         const entry = event.target.closest('[data-delay-entry]');
@@ -11393,7 +11456,11 @@ function normalizeStudentSearch(value) {
         button.textContent = 'Excluindo...';
         errorMessage.textContent = '';
         try {
-            if (record.origem === 'atraso') {
+            if (record.origem === 'historico_atraso') {
+                await requestApi('excluir_atraso_historico', {
+                    id_registro_entrada: String(record.id_registro_entrada)
+                });
+            } else if (record.origem === 'atraso') {
                 await requestApi('excluir_atraso_pendente_qr', {
                     id_registro_entrada: String(record.id_registro_entrada)
                 });
@@ -11408,6 +11475,24 @@ function normalizeStudentSearch(value) {
                 });
             }
             deleteExitDialog.close();
+            if (record.origem === 'historico_atraso') {
+                const entry = Array.from(document.querySelectorAll('[data-history-entry]'))
+                    .find((item) => item.dataset.historyRecordId === String(record.id_registro_entrada));
+                const card = entry?.closest('[data-history-card]');
+                entry?.remove();
+                if (card) {
+                    const visibleEntries = Array.from(card.querySelectorAll('[data-history-entry]'))
+                        .filter((item) => !item.hidden);
+                    card.querySelector('[data-history-count]').textContent = String(visibleEntries.length);
+                    const emptyMessage = card.querySelector('[data-history-no-results]');
+                    if (emptyMessage && card.querySelectorAll('[data-history-entry]').length === 0) {
+                        emptyMessage.hidden = false;
+                        emptyMessage.textContent = 'Nenhum atraso registrado nesta turma.';
+                    }
+                }
+                notify('Atraso excluído do histórico.');
+                return;
+            }
             if (record.origem === 'atraso') {
                 const entry = Array.from(document.querySelectorAll('[data-delay-entry]'))
                     .find((item) => item.dataset.delayRecordId === String(record.id_registro_entrada));
@@ -11454,7 +11539,9 @@ function normalizeStudentSearch(value) {
             errorMessage.textContent = error.message;
         } finally {
             button.disabled = false;
-            button.textContent = pendingDeleteExit?.origem === 'atraso' ? 'Excluir atraso' : 'Excluir registro';
+            button.textContent = ['atraso', 'historico_atraso'].includes(record.origem)
+                ? (record.origem === 'historico_atraso' ? 'Excluir do histórico' : 'Excluir atraso')
+                : 'Excluir registro';
         }
     });
 
@@ -13132,6 +13219,10 @@ html[data-theme="lula"] .sidebar > nav::-webkit-scrollbar-thumb {
 
 .main-content {
     padding-bottom: 5rem;
+}
+
+.reception-interface .main-content {
+    height: auto;
 }
 
 .floating-theme-toggle {

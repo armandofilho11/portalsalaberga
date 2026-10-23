@@ -25,3 +25,5 @@ O perfil da recepção terá acesso a registrar atrasos, registrar saídas antec
 Para uma instalação nova, crie o banco configurado em `DB_NAME` e importe `app/main/docs/entradasaida.sql`. O dump já contém toda a estrutura necessária para o sistema, incluindo restrições por turma e validação de atrasos via QR Code. Não é necessário importar outros arquivos SQL.
 
 O dump também contém os dados presentes na exportação. Confira se deseja copiá-los para a nova máquina antes de importá-lo. Não importe esse arquivo sobre um banco em uso: ele é destinado à criação de uma instalação nova.
+
+Para atualizar uma instalação existente que ainda não possui a coluna `justificativa_atraso` em `registro_entrada`, execute `app/main/docs/migrations/2026-10-23-justificativa-atraso-manual.sql` no banco configurado em `DB_NAME`. A migração verifica se a coluna já existe antes de alterá-la.

@@ -133,7 +133,8 @@ if (in_array($_POST['acao'] ?? '', ['preparar_saida_estagio_qr', 'registrar_said
         'registrar_saida_estagio_qr',
         'registrar_atraso_qr',
         'listar_atrasos_hoje',
-        'listar_ausencias_estagio'
+        'listar_ausencias_estagio',
+        'excluir_atraso_historico'
     ], true), true);
 
     $csrfToken = $_SESSION['csrf_token'] ?? '';
@@ -286,6 +287,11 @@ if (in_array($_POST['acao'] ?? '', ['preparar_saida_estagio_qr', 'registrar_said
     }
 
     if ($_POST['acao'] === 'excluir_atraso_historico') {
+        $tiposUsuario = $_SESSION['tipos_usuario_permitidos'] ?? [];
+        if (!is_array($tiposUsuario) || !in_array('Admin_entrada_saida', $tiposUsuario, true)) {
+            responderJson(['success' => false, 'message' => 'Seu perfil não tem acesso a esta função.'], 403);
+        }
+
         $idRegistro = filter_var($_POST['id_registro_entrada'] ?? null, FILTER_VALIDATE_INT);
         if (!$idRegistro || $idRegistro < 1) {
             responderJson(['success' => false, 'message' => 'O atraso selecionado é inválido.'], 400);
@@ -668,7 +674,7 @@ if (isset($_POST['entrada'])) {
         (new sessions())->simularLoginLocalParaTeste();
     }
     $respostaAssincrona = ($_POST['entrada_ajax'] ?? '') === '1';
-    $camposObrigatorios = ['id_aluno', 'id_motivo'];
+    $camposObrigatorios = ['id_aluno', 'id_motivo', 'observacao'];
     foreach ($camposObrigatorios as $campo) {
         if (!isset($_POST[$campo]) || !is_string($_POST[$campo]) || trim($_POST[$campo]) === '') {
             if ($respostaAssincrona) {
@@ -677,6 +683,14 @@ if (isset($_POST['entrada'])) {
             header('Location: ../views/inicio.php?section=entrada&status=campos_obrigatorios');
             exit();
         }
+    }
+    $justificativaAtraso = trim($_POST['observacao']);
+    if (strlen($justificativaAtraso) > 2000) {
+        if ($respostaAssincrona) {
+            responderJson(['success' => false, 'message' => 'A justificativa deve ter no máximo 2000 caracteres.'], 422);
+        }
+        header('Location: ../views/inicio.php?section=entrada&status=campos_obrigatorios');
+        exit();
     }
 
     // Registros de atraso não exigem responsável ou acompanhante.
@@ -705,6 +719,7 @@ if (isset($_POST['entrada'])) {
         $id_tipo_responsavel,
         $date_time,
         $id_motivo,
+        $justificativaAtraso,
         $usuarioSessao,
         $id_aluno
     );
@@ -717,14 +732,16 @@ if (isset($_POST['entrada'])) {
             3 => 'Não foi possível salvar no banco. Confira os dados e tente novamente.',
             4 => $obj->obterMensagemRestricao(),
             5 => 'A restrição da turma direcionou o registro para saída de estágio.',
-            6 => 'Este aluno já possui uma saída para estágio registrada hoje.'
+            6 => 'Este aluno já possui uma saída para estágio registrada hoje.',
+            7 => 'Informe uma justificativa de até 2000 caracteres.',
+            8 => 'O banco de dados precisa ser atualizado para salvar a justificativa do atraso. Aplique a migração do sistema e tente novamente.'
         ];
         $sucesso = $result === 0 || $result === 5;
         responderJson([
             'success' => $sucesso,
             'message' => $mensagensResultado[$result] ?? 'O registro não foi concluído. Tente novamente.',
             'tipo_registro' => $result === 5 ? 'estagio' : 'entrada'
-        ], $sucesso ? 200 : ($result === 3 ? 500 : (in_array($result, [1, 6], true) ? 409 : 422)));
+        ], $sucesso ? 200 : (in_array($result, [3, 8], true) ? 500 : (in_array($result, [1, 6], true) ? 409 : 422)));
     }
 
     // Redireciona com base no resultado
@@ -749,6 +766,12 @@ if (isset($_POST['entrada'])) {
             exit();
         case 6:
             header('Location: ../views/inicio.php?section=ultimas-saidas&status=ja_registrado');
+            exit();
+        case 7:
+            header('Location: ../views/inicio.php?section=entrada&status=campos_obrigatorios');
+            exit();
+        case 8:
+            header('Location: ../views/inicio.php?section=entrada&status=erro_interno');
             exit();
         default:
             header('Location: ../views/inicio.php?section=entrada&status=erro_desconhecido');

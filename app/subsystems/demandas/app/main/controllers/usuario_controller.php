@@ -99,6 +99,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' || $_SERVER['REQUEST_METHOD'] === 'GET
                 if (session_status() === PHP_SESSION_NONE) {
                     session_start();
                 }
+
+                if (
+                    isset($_SESSION['id'], $_SESSION['email'], $_SESSION['nome'])
+                    && trim((string) $_SESSION['id']) !== ''
+                    && trim((string) $_SESSION['email']) !== ''
+                    && trim((string) $_SESSION['nome']) !== ''
+                ) {
+                    $_SESSION['demandas_portal_session'] = [
+                        'email' => $_SESSION['email'],
+                        'nome' => $_SESSION['nome']
+                    ];
+                }
                 
                 $_SESSION['id_usuario'] = $result['usuario']['id'];
                 $_SESSION['nome'] = $result['usuario']['nome'];
@@ -638,9 +650,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' || $_SERVER['REQUEST_METHOD'] === 'GET
     }
 
     else if ($action === 'logout') {
-        session_unset();
-        session_destroy();
-        header("Location: ../index.php?sucesso=logout");
+        $sessaoPortal = $_SESSION['demandas_portal_session'] ?? null;
+        unset(
+            $_SESSION['id_usuario'],
+            $_SESSION['tipo'],
+            $_SESSION['pontuacao'],
+            $_SESSION['foto'],
+            $_SESSION['reset_verified'],
+            $_SESSION['demandas_portal_session']
+        );
+
+        if (is_array($sessaoPortal)) {
+            $_SESSION['email'] = $sessaoPortal['email'];
+            $_SESSION['nome'] = $sessaoPortal['nome'];
+        }
+
+        $sessaoPortalAtiva = isset($_SESSION['id'], $_SESSION['email'], $_SESSION['nome'])
+            && trim((string) $_SESSION['id']) !== ''
+            && trim((string) $_SESSION['email']) !== ''
+            && trim((string) $_SESSION['nome']) !== '';
+        $_SESSION['demandas_logout_redirect'] = true;
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_regenerate_id(true);
+        }
+
+        header('Location: ' . ($sessaoPortalAtiva
+            ? '../../../../../main/views/subsystems.php'
+            : '../../../../../main/index.php'));
         exit;
     }
 
