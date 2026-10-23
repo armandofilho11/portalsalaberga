@@ -1240,6 +1240,47 @@ html,body{margin:0;min-height:100%;font-family:'Inter',sans-serif;color:var(--sa
             opacity: 1;
         }
 
+        .stage-exit-fireworks {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .stage-exit-fireworks span {
+            position: absolute;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            opacity: 0;
+        }
+
+        .stage-exit-confirmation.is-kauan-success .stage-exit-fireworks span {
+            animation: stage-firework-burst 1.2s ease-out both;
+        }
+
+        .stage-exit-fireworks span:nth-child(1) {
+            top: 16%;
+            left: 14%;
+        }
+
+        .stage-exit-fireworks span:nth-child(2) {
+            top: 20%;
+            right: 14%;
+            animation-delay: .18s;
+        }
+
+        .stage-exit-fireworks span:nth-child(3) {
+            right: 18%;
+            bottom: 13%;
+            animation-delay: .36s;
+        }
+
+        @keyframes stage-firework-burst {
+            15% { opacity: 1; transform: scale(.45) rotate(-15deg); }
+            55% { opacity: 1; transform: scale(1.15) rotate(8deg); }
+            100% { opacity: 0; transform: scale(1.5) rotate(15deg); }
+        }
+
         @keyframes stage-success-background {
             to { background-position: 100px 100px; }
         }
@@ -1399,7 +1440,8 @@ html,body{margin:0;min-height:100%;font-family:'Inter',sans-serif;color:var(--sa
         @media (prefers-reduced-motion: reduce) {
             .stage-exit-confirmation::before,
             .stage-exit-confirmation-icon,
-            .stage-exit-confirmation-dots span {
+            .stage-exit-confirmation-dots span,
+            .stage-exit-confirmation.is-kauan-success .stage-exit-fireworks span {
                 animation: none;
             }
         }
@@ -6047,6 +6089,7 @@ input[type="radio"] {
     <div class="success-toast-progress" aria-hidden="true"></div>
 </div>
 <div class="stage-exit-confirmation" id="stage-exit-confirmation" role="status" aria-live="assertive" aria-atomic="true" hidden>
+    <div class="stage-exit-fireworks" aria-hidden="true"><span>🎆</span><span>🎇</span><span>🎆</span></div>
     <div class="stage-exit-confirmation-container">
         <div class="stage-exit-confirmation-card">
             <div class="stage-exit-confirmation-icon" aria-hidden="true"><i class="fas fa-check"></i></div>
@@ -11274,6 +11317,16 @@ function normalizeStudentSearch(value) {
         window.clearTimeout(exitConfirmationTimeout);
         window.clearTimeout(exitConfirmationHideTimeout);
         const isPending = options.pending === true;
+        const studentName = String(exit.nome || '')
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/\s+/g, ' ')
+            .trim()
+            .toLocaleUpperCase('pt-BR');
+        const isKauanSuccessfulExit = !isError
+            && !isPending
+            && studentName === 'KAUAN CRISTIAN SANTO DE LIMA';
+        confirmation.classList.toggle('is-kauan-success', isKauanSuccessfulExit);
         confirmation.classList.toggle('is-error', isError && !isPending);
         confirmation.classList.toggle('is-pending', isPending);
         title.textContent = isPending
@@ -11305,6 +11358,13 @@ function normalizeStudentSearch(value) {
         details.textContent = detailsParts.join(' · ');
         confirmation.hidden = false;
         confirmation.classList.remove('visible');
+        if (isKauanSuccessfulExit) {
+            confirmation.querySelectorAll('.stage-exit-fireworks span').forEach(firework => {
+                firework.style.animation = 'none';
+                void firework.offsetWidth;
+                firework.style.animation = '';
+            });
+        }
         requestAnimationFrame(() => confirmation.classList.add('visible'));
         exitConfirmationTimeout = window.setTimeout(() => {
             confirmation.classList.remove('visible');
