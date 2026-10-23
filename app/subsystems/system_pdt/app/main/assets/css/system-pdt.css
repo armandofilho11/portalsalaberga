@@ -222,6 +222,11 @@ html[data-pdt-theme="dark"] .pdt-sidebar .coord-nav.active::before {
     transform: scaleY(1) !important;
 }
 
+html[data-pdt-theme="dark"] .sidebar-panel .menu-item::before,
+html[data-pdt-theme="dark"] .pdt-sidebar .coord-nav::before {
+    background: #1fae5a !important;
+}
+
 html[data-pdt-theme="dark"] .sidebar-panel .menu-item.active i {
     color: #76d89e !important;
 }
@@ -338,6 +343,35 @@ html[data-pdt-theme="dark"] .pdt-sidebar nav::-webkit-scrollbar-thumb {
 
 .pdt-topbar #btnNotificacoes i {
     color: inherit !important;
+}
+
+#notificacoesPanel {
+    border-color: var(--pdt-border) !important;
+    background: var(--pdt-surface) !important;
+    color: var(--pdt-text) !important;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, .2);
+}
+
+#notificacoesPanel .text-white,
+#notificacoesPanel .text-slate-200,
+#notificacoesPanel .text-slate-300,
+#notificacoesPanel .text-slate-400,
+#notificacoesPanel .text-slate-500 {
+    color: var(--pdt-text-soft) !important;
+}
+
+#notificacoesPanel .text-white,
+#notificacoesPanel .font-semibold {
+    color: var(--pdt-text) !important;
+}
+
+#notificacoesPanel .border-slate-700,
+#notificacoesPanel .border-slate-800 {
+    border-color: var(--pdt-border) !important;
+}
+
+html[data-pdt-theme="light"] #notificacoesPanel [class*="bg-slate-900"] {
+    background: #f2f7f3 !important;
 }
 
 html[data-pdt-theme="light"] .pdt-topbar #btnNotificacoes {

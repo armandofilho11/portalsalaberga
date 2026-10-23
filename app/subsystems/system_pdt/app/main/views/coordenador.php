@@ -32,7 +32,7 @@ $csrfToken = $_SESSION['csrf_token'] ?? gerarCsrfToken();
             transition: opacity .25s ease;
         }
     </style>
-    <link rel="stylesheet" href="../assets/css/system-pdt.css?v=14">
+    <link rel="stylesheet" href="../assets/css/system-pdt.css?v=16">
     <script src="../assets/js/system-pdt-ui.js" defer></script>
 </head>
 <body class="pdt-interface min-h-screen">

@@ -59,7 +59,7 @@ if (isset($_SESSION['id_usuario'])) {
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="./assets/css/system-pdt.css?v=14">
+    <link rel="stylesheet" href="./assets/css/system-pdt.css?v=16">
     <script src="./assets/js/system-pdt-ui.js" defer></script>
 
     <script>
