@@ -19,6 +19,7 @@ $select = new select();
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="stock-sidebar.css">
+    <script src="stock-theme.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -781,7 +782,7 @@ $select = new select();
         </div>
 
         <!-- Gráfico de Estoque -->
-        <div class="bg-white rounded-xl shadow-card p-6 mb-8">
+        <div class="chart-summary-card bg-white rounded-xl shadow-card p-6 mb-8">
             <h2 class="text-xl font-bold text-primary mb-4 flex items-center">
                 <i class="fas fa-chart-pie mr-2 text-secondary"></i>
                 Visão Geral do Estoque
@@ -1545,6 +1546,9 @@ $select = new select();
                 const semEstoque = parseInt(graficoData.sem_estoque) || 0;
                 
                 const totalProdutos = emEstoque + critico + semEstoque;
+                const darkTheme = document.documentElement.classList.contains('stock-dark');
+                const chartTextColor = darkTheme ? '#d1d1d1' : '#666666';
+                const chartBorderColor = darkTheme ? '#1f1f1f' : '#ffffff';
                 
                 // Calcular estoque crítico real (excluindo os sem estoque)
                 const criticoReal = Math.max(0, critico - semEstoque);
@@ -1574,7 +1578,7 @@ $select = new select();
                                 '#DC3545'
                             ],
                             borderWidth: 2,
-                            borderColor: '#FFFFFF'
+                            borderColor: chartBorderColor
                         }]
                     },
                                             options: {
@@ -1590,6 +1594,7 @@ $select = new select();
                                     labels: {
                                         padding: 20,
                                         usePointStyle: true,
+                                        color: chartTextColor,
                                         font: {
                                             size: 12
                                         }
@@ -1608,12 +1613,23 @@ $select = new select();
                             }
                         }
                 });
-                
+
                 console.log('Gráfico criado com sucesso!');
             } catch (error) {
                 console.error('Erro ao criar gráfico:', error);
             }
         }
+
+        document.addEventListener('stock-theme-change', function(event) {
+            if (!window.estoqueChartInstance) {
+                return;
+            }
+
+            const isDark = event.detail.dark;
+            window.estoqueChartInstance.data.datasets[0].borderColor = isDark ? '#1f1f1f' : '#ffffff';
+            window.estoqueChartInstance.options.plugins.legend.labels.color = isDark ? '#d1d1d1' : '#666666';
+            window.estoqueChartInstance.update();
+        });
 
         // Função para mostrar notificações
             function showNotification(message, type = 'info') {
