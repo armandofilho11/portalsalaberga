@@ -8,6 +8,7 @@
     min-height: 5rem;
     padding: 1rem 1.15rem;
     border-color: rgba(255, 255, 255, 0.12);
+    border-bottom: 0 !important;
 }
 
 #sidebar > div > div:first-child img {
@@ -37,13 +38,8 @@
 }
 
 #sidebar nav::before {
-    display: block;
-    content: "MENU PRINCIPAL";
-    padding: 0.45rem 0.8rem 0.7rem;
-    color: rgba(255, 255, 255, 0.52);
-    font-size: 0.65rem;
-    font-weight: 700;
-    letter-spacing: 0.13em;
+    display: none;
+    content: none;
 }
 
 #sidebar .sidebar-link {
@@ -94,9 +90,19 @@
 }
 
 #sidebar > div > div:nth-last-child(2) {
+    position: relative;
     margin-top: auto;
     padding: 0.75rem 0.65rem;
-    border-color: rgba(255, 255, 255, 0.12);
+    border-top: 0 !important;
+}
+
+#sidebar > div > div:nth-last-child(2)::before {
+    position: absolute;
+    top: 0;
+    right: 0.65rem;
+    left: 0.65rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.85);
+    content: "";
 }
 
 #sidebar > div > div:nth-last-child(2) > a {
@@ -118,9 +124,9 @@
 
 #sidebar > div > div:nth-last-child(2) > a i {
     display: flex;
-    width: 4.0625rem;
+    width: 3rem;
     height: 3.125rem;
-    flex: 0 0 4.0625rem;
+    flex: 0 0 3rem;
     align-items: center;
     justify-content: center;
     margin: 0;
