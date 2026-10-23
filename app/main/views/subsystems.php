@@ -1415,7 +1415,7 @@ $temSistemasPermitidos = count(array_intersect($sistemasDisponiveis, $sistemasPe
 
                 <!-- Card 7: Professor DT -->
                 <?php if (in_array('PDT', $sistemasPermitidos, true)) { ?>
-                    <a href="../../subsystems/sist_PDT/default.php" class="app-card-link">
+                    <a href="../../subsystems/system_pdt/default.php" class="app-card-link">
                         <div class="app-card w-{100px} h-full">
                             <div class="icon-wrapper">
                                 <img src="../assets/img/logos_sistemas/pdt-icon.png" alt="Ícone Professor DT" class="app-icon app-icon--system">
