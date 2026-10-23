@@ -68,6 +68,9 @@ if (
         case 3:
             header('Location: ../views/ambiente.php?nao_existe');
             exit();
+        case 4:
+            header('Location: ../views/ambiente.php?ambiente_padrao');
+            exit();
         default:
             header('Location: ../views/ambiente.php?falha');
             exit();

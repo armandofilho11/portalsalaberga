@@ -858,6 +858,10 @@ $select = new select();
                 title = 'Sucesso!';
                 message = 'Ambiente excluído com sucesso.';
                 type = 'success';
+            } else if (urlParams.has('ambiente_padrao')) {
+                title = 'Aviso!';
+                message = 'O ambiente padrão não pode ser excluído.';
+                type = 'warning';
             } else if (urlParams.has('erro')) {
                 title = 'Erro!';
                 message = 'Ocorreu um erro ao processar a operação.';

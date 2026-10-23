@@ -32,7 +32,7 @@ class admin extends liberador
                 $stmt_registrar->bindParam(':quantidade', $nova_quantidade);
                 $stmt_registrar->execute();
 
-                $stmt_registrar = $this->connect->prepare("INSERT INTO perdas_produtos VALUES(null, :id_produto, :quantidade, :tipo, :data_perda)");
+                $stmt_registrar = $this->connect->prepare("INSERT INTO perdas_produtos (id_produto, quantidade, tipo, `data`) VALUES (:id_produto, :quantidade, :tipo, :data_perda)");
                 $stmt_registrar->bindParam(':id_produto', $id_produto);
                 $stmt_registrar->bindParam(':quantidade', $quantidade);
                 $stmt_registrar->bindParam(':tipo', $tipo_perda);
@@ -176,6 +176,10 @@ class admin extends liberador
     public function excluir_ambiente($id_ambiente)
     {
         try {
+            if ((int) $id_ambiente === 2) {
+                return 4;
+            }
+
             $stmt_check = $this->connect->prepare("SELECT * FROM $this->table5 WHERE id = :id");
             $stmt_check->bindValue(":id", $id_ambiente);
             $stmt_check->execute();
