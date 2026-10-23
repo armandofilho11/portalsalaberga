@@ -1243,14 +1243,27 @@ html,body{margin:0;min-height:100%;font-family:'Inter',sans-serif;color:var(--sa
         .stage-exit-fireworks {
             position: absolute;
             inset: 0;
-            z-index: 0;
+            z-index: 2;
             overflow: hidden;
             pointer-events: none;
         }
 
         .stage-exit-fireworks span {
             position: absolute;
-            font-size: clamp(2rem, 5vw, 3.5rem);
+            width: clamp(4rem, 8vw, 7rem);
+            aspect-ratio: 1;
+            border-radius: 50%;
+            background:
+                radial-gradient(circle at 50% 4%, #fff 0 2px, transparent 3px),
+                radial-gradient(circle at 76% 13%, #ffe66d 0 3px, transparent 4px),
+                radial-gradient(circle at 96% 48%, #ff5c8a 0 3px, transparent 4px),
+                radial-gradient(circle at 78% 84%, #7df9ff 0 3px, transparent 4px),
+                radial-gradient(circle at 49% 98%, #fff 0 2px, transparent 3px),
+                radial-gradient(circle at 19% 82%, #ffe66d 0 3px, transparent 4px),
+                radial-gradient(circle at 4% 49%, #ff5c8a 0 3px, transparent 4px),
+                radial-gradient(circle at 20% 15%, #7df9ff 0 3px, transparent 4px),
+                radial-gradient(circle at 50% 50%, #fff 0 2px, transparent 3px);
+            filter: drop-shadow(0 0 7px rgba(255, 255, 255, .75));
             opacity: 0;
         }
 
@@ -1260,25 +1273,26 @@ html,body{margin:0;min-height:100%;font-family:'Inter',sans-serif;color:var(--sa
 
         .stage-exit-fireworks span:nth-child(1) {
             top: 16%;
-            left: 14%;
+            left: 12%;
         }
 
         .stage-exit-fireworks span:nth-child(2) {
-            top: 20%;
-            right: 14%;
-            animation-delay: .18s;
+            top: 13%;
+            right: 12%;
+            animation-delay: .25s;
         }
 
         .stage-exit-fireworks span:nth-child(3) {
-            right: 18%;
-            bottom: 13%;
-            animation-delay: .36s;
+            right: 16%;
+            bottom: 12%;
+            animation-delay: .5s;
         }
 
         @keyframes stage-firework-burst {
-            15% { opacity: 1; transform: scale(.45) rotate(-15deg); }
-            55% { opacity: 1; transform: scale(1.15) rotate(8deg); }
-            100% { opacity: 0; transform: scale(1.5) rotate(15deg); }
+            0% { opacity: 0; transform: scale(.1) rotate(-20deg); }
+            18% { opacity: 1; transform: scale(.65) rotate(0); }
+            55% { opacity: 1; transform: scale(1.1) rotate(18deg); }
+            100% { opacity: 0; transform: scale(1.4) rotate(35deg); }
         }
 
         @keyframes stage-success-background {
@@ -6089,7 +6103,7 @@ input[type="radio"] {
     <div class="success-toast-progress" aria-hidden="true"></div>
 </div>
 <div class="stage-exit-confirmation" id="stage-exit-confirmation" role="status" aria-live="assertive" aria-atomic="true" hidden>
-    <div class="stage-exit-fireworks" aria-hidden="true"><span>🎆</span><span>🎇</span><span>🎆</span></div>
+    <div class="stage-exit-fireworks" aria-hidden="true"><span></span><span></span><span></span></div>
     <div class="stage-exit-confirmation-container">
         <div class="stage-exit-confirmation-card">
             <div class="stage-exit-confirmation-icon" aria-hidden="true"><i class="fas fa-check"></i></div>
@@ -11325,7 +11339,10 @@ function normalizeStudentSearch(value) {
             .toLocaleUpperCase('pt-BR');
         const isKauanSuccessfulExit = !isError
             && !isPending
-            && studentName === 'KAUAN CRISTIAN SANTO DE LIMA';
+            && [
+                'KAUAN CRISTIAN SANTO DE LIMA',
+                'KAUAN CRISTIAN SANTOS DE LIMA'
+            ].includes(studentName);
         confirmation.classList.toggle('is-kauan-success', isKauanSuccessfulExit);
         confirmation.classList.toggle('is-error', isError && !isPending);
         confirmation.classList.toggle('is-pending', isPending);
