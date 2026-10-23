@@ -23,7 +23,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' || $_SERVER['REQUEST_METHOD'] === 'GET
 
     header('Content-Type: application/json; charset=utf-8');
 
-    if ($action === 'listar_alunos') {
+    if ($action === 'perfil_pedagogico') {
+        $idAluno = filter_var($_GET['id_aluno'] ?? null, FILTER_VALIDATE_INT);
+        if (!$idAluno || $idAluno < 1) {
+            http_response_code(422);
+            echo json_encode(['sucesso' => false, 'erro' => 'Aluno inválido']);
+            exit;
+        }
+
+        try {
+            $model = new AlunoModel();
+            $aluno = $model->buscarAlunoPorId($idAluno);
+            $idTurma = (int) ($aluno['id_turma'] ?? 0);
+            if (
+                !$idTurma
+                || !podeVisualizarTurma(
+                    (new connect())->getConnection(),
+                    $idTurma,
+                    (int) ($_SESSION['id_usuario'] ?? 0)
+                )
+            ) {
+                http_response_code(403);
+                echo json_encode(['sucesso' => false, 'erro' => 'Sem permissão para visualizar este perfil']);
+                exit;
+            }
+
+            $perfil = $model->obterPerfilPedagogico($idAluno);
+            if (!$perfil) {
+                http_response_code(404);
+                echo json_encode(['sucesso' => false, 'erro' => 'Aluno não encontrado']);
+                exit;
+            }
+            echo json_encode(['sucesso' => true, 'dados' => $perfil]);
+        } catch (RuntimeException $e) {
+            error_log('Erro ao carregar perfil pedagógico: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['sucesso' => false, 'erro' => 'Não foi possível carregar o perfil agora']);
+        }
+        exit;
+
+    } else if ($action === 'listar_alunos') {
         $id_turma = isset($_GET['id_turma']) ? intval($_GET['id_turma']) : (isset($_POST['id_turma']) ? intval($_POST['id_turma']) : null);
 
         if (!$id_turma || !podeVisualizarTurma((new connect())->getConnection(), $id_turma, (int) ($_SESSION['id_usuario'] ?? 0))) {
@@ -312,6 +351,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' || $_SERVER['REQUEST_METHOD'] === 'GET
             echo json_encode(['sucesso' => false, 'erro' => 'Professor não identificado']);
             exit;
         }
+        if ($bimestre < 1 || $bimestre > 4) {
+            http_response_code(422);
+            echo json_encode(['sucesso' => false, 'erro' => 'Bimestre inválido']);
+            exit;
+        }
 
         $model = new AlunoModel();
         $total = $model->contarAlunosPorProfessor($id_professor);
@@ -418,8 +462,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' || $_SERVER['REQUEST_METHOD'] === 'GET
             exit;
         }
 
-        $model = new AlunoModel();
-        $desempenho = $model->calcularDesempenhoPorTurma($id_turma);
+        try {
+            $model = new AlunoModel();
+            $desempenho = $model->calcularDesempenhoPorTurma($id_turma);
+        } catch (RuntimeException $e) {
+            error_log('Erro ao consultar desempenho da turma: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['sucesso' => false, 'erro' => 'Não foi possível consultar o desempenho agora']);
+            exit;
+        }
 
         if (!$desempenho) {
             echo json_encode(['sucesso' => false, 'erro' => 'Turma não encontrada ou sem dados suficientes']);
@@ -431,7 +482,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' || $_SERVER['REQUEST_METHOD'] === 'GET
 
     } else if ($action === 'calcular_desempenho') {
 
-        $id_professor = isset($_GET['id_professor']) ? intval($_GET['id_professor']) : 0;
+        $tipoUsuario = normalizarTipoUsuario($_SESSION['tipo'] ?? '');
+        if (!in_array($tipoUsuario, ['professor', 'gestor'], true)) {
+            http_response_code(403);
+            echo json_encode(['sucesso' => false, 'erro' => 'Sem permissão para consultar este desempenho']);
+            exit;
+        }
+
+        $id_professor = $tipoUsuario === 'professor'
+            ? (int) ($_SESSION['id_usuario'] ?? 0)
+            : (isset($_GET['id_professor']) ? intval($_GET['id_professor']) : 0);
         $bimestre = isset($_GET['bimestre']) ? intval($_GET['bimestre']) : (date('n') <= 3 ? 1 : (date('n') <= 6 ? 2 : (date('n') <= 9 ? 3 : 4)));
 
         if (!$id_professor) {
@@ -443,8 +503,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' || $_SERVER['REQUEST_METHOD'] === 'GET
             exit;
         }
 
-        $model = new AlunoModel();
-        $desempenho = $model->calcularDesempenhoMedioProfessor($id_professor, $bimestre);
+        try {
+            $model = new AlunoModel();
+            $desempenho = $model->calcularDesempenhoMedioProfessor($id_professor, $bimestre);
+        } catch (RuntimeException $e) {
+            error_log('Erro ao consultar desempenho do professor: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['sucesso' => false, 'erro' => 'Não foi possível consultar o desempenho agora']);
+            exit;
+        }
 
         echo json_encode(['sucesso' => true, 'desempenho' => $desempenho]);
         exit;

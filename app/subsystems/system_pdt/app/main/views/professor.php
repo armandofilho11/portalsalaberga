@@ -10,7 +10,6 @@
 
 
 	require_once("../models/turmas_model.php");
-	require_once("../models/usuario_model.php");
 
 	function formatarNomeExibicaoTurma(array $turma): string
 	{
@@ -27,18 +26,17 @@
 	}
 
 	$modelTurma = new TurmasModel();
-	$modelUsuario = new usuario_model();
-	$usuarioAtual = $modelUsuario->buscar_por_id($_SESSION['id_usuario']);
-	$isPdtUsuario = false;
-	if (!empty($usuarioAtual)) {
-		$isPdtUsuario = (isset($usuarioAtual['atribuicao']) && strtolower($usuarioAtual['atribuicao']) === 'pdt')
-		    || (isset($usuarioAtual['tipo']) && strtolower($usuarioAtual['tipo']) === 'pdt');
-	}
 	$csrfToken = bin2hex(random_bytes(32));
 	$_SESSION['csrf_token'] = $csrfToken;
 
-	// Para o professor, carregamos apenas as turmas vinculadas ao seu usu�rio
+	// Keep all classes visible as cards; retain the current teacher's class IDs for PDT access.
 	$turmas = $modelTurma->listarTurmas($_SESSION['id_usuario']);
+	$todasTurmas = $modelTurma->listarTurmas();
+	$isPdtUsuario = !empty($turmas);
+	$turmasPdtIds = [];
+	foreach ($turmas as $turmaPdt) {
+		$turmasPdtIds[(int) $turmaPdt['id_turma']] = true;
+	}
 
 	// Se houver exatamente uma turma, expor seu id para inicializa��o client-side
 	$initialTurmaId = (is_array($turmas) && count($turmas) === 1) ? $turmas[0]['id_turma'] : '';
@@ -291,23 +289,35 @@
 
 					<button data-section="sec-turmas" class="menu-item flex items-center gap-3 px-4 py-3 rounded-xl transition effect-bar">
 						<i class="bi bi-journal-bookmark"></i>
-						<span>Minhas turmas</span>
+						<span>Turmas</span>
 					</button>
 
 					<button data-section="sec-notas" class="menu-item flex items-center gap-3 px-4 py-3 rounded-xl transition effect-bar">
 						<i class="bi bi-journal-plus"></i>
 						<span>Rendimento</span>
 					</button>
+					<?php if ($isPdtUsuario): ?>
+						<button data-section="sec-pedagogico" class="menu-item flex items-center gap-3 px-4 py-3 rounded-xl transition effect-bar">
+							<i class="bi bi-clipboard2-pulse"></i>
+							<span>Acompanhamento e conselho</span>
+						</button>
+						<button data-section="sec-calendario" class="menu-item flex items-center gap-3 px-4 py-3 rounded-xl transition effect-bar">
+							<i class="bi bi-calendar-event"></i>
+							<span>Calendário</span>
+						</button>
+					<?php endif; ?>
 
 					<button data-section="sec-ocorrencias" class="menu-item flex items-center gap-3 px-4 py-3 rounded-xl transition effect-bar">
 					<i class="bi bi-exclamation-triangle"></i>
 					<span>Ocorrências</span>
 				</button>
 
-<!-- <button data-section="sec-relatorios" class="menu-item flex items-center gap-3 px-4 py-3 rounded-xl transition text-gray-600">
-                    <i class="bi bi-bar-chart"></i>
-                    <span>Relatórios</span>
-                </button> -->
+					<?php if ($isPdtUsuario): ?>
+						<button data-section="sec-relatorios" class="menu-item flex items-center gap-3 px-4 py-3 rounded-xl transition effect-bar">
+							<i class="bi bi-bar-chart"></i>
+							<span>Relatórios</span>
+						</button>
+					<?php endif; ?>
 
        
 
@@ -350,20 +360,32 @@
 				</button>
 				<button data-section="sec-turmas" class="menu-item flex items-center gap-3 px-4 py-3 rounded-xl transition effect-bar">
 					<i class="bi bi-journal-bookmark"></i>
-					<span>Minhas turmas</span>
+					<span>Turmas</span>
 				</button>
 				<button data-section="sec-notas" class="menu-item flex items-center gap-3 px-4 py-3 rounded-xl transition effect-bar">
 					<i class="bi bi-journal-plus"></i>
 					<span>Rendimento</span>
 				</button>
+				<?php if ($isPdtUsuario): ?>
+					<button data-section="sec-pedagogico" class="menu-item flex items-center gap-3 px-4 py-3 rounded-xl transition effect-bar">
+						<i class="bi bi-clipboard2-pulse"></i>
+						<span>Acompanhamento e conselho</span>
+					</button>
+					<button data-section="sec-calendario" class="menu-item flex items-center gap-3 px-4 py-3 rounded-xl transition effect-bar">
+						<i class="bi bi-calendar-event"></i>
+						<span>Calendário</span>
+					</button>
+				<?php endif; ?>
 				<button data-section="sec-ocorrencias" class="menu-item flex items-center gap-3 px-4 py-3 rounded-xl transition effect-bar">
 					<i class="bi bi-exclamation-triangle"></i>
 					<span>Ocorrências</span>
 				</button>
-				<!-- <button data-section="sec-relatorios" class="menu-item flex items-center gap-3 px-4 py-3 rounded-xl transition text-gray-600">
-					<i class="bi bi-bar-chart"></i>
-					<span>Relatórios</span>
-				</button> -->
+				<?php if ($isPdtUsuario): ?>
+					<button data-section="sec-relatorios" class="menu-item flex items-center gap-3 px-4 py-3 rounded-xl transition effect-bar">
+						<i class="bi bi-bar-chart"></i>
+						<span>Relatórios</span>
+					</button>
+				<?php endif; ?>
 			</nav>
 
 			<form action="../controllers/usuario_controller.php?action=logout" method="POST" class="mt-8">
@@ -435,7 +457,7 @@
 						Bem-vindo(a), <?= $_SESSION['nome'] ?>
 					</h1>
 					<p class="text-gray-500">
-						Aqui estão as turmas atribuídas a você.
+						Consulte as turmas cadastradas. O acesso completo é exclusivo ao PDT responsável.
 					</p>
 				</div>
 				<!-- CARDS -->
@@ -545,13 +567,14 @@
 
 				<!-- GRID DE TURMAS -->
 				<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
-					<?php if(empty($turmas)): ?>
+					<?php if(empty($todasTurmas)): ?>
 						<div class="col-span-full bg-white border border-gray-200 rounded-xl px-6 hover:shadow-xl transition duration-300 h-full w-full flex flex-col justify-between">
-							Nenhuma turma atribuída a você no sistema.
+							Nenhuma turma cadastrada no sistema.
 						</div>
 					<?php endif; ?>
 
-					<?php foreach($turmas as $turma): ?>
+					<?php foreach($todasTurmas as $turma): ?>
+						<?php $souPdtDaTurma = isset($turmasPdtIds[(int) $turma['id_turma']]); ?>
 
 						<div class="bg-white border border-gray-200 rounded-xl px-6 pt-6">
 
@@ -564,11 +587,14 @@
 									</div>
 
 									<h2 class="text-2xl font-bold text-gray-800">
-										<?= htmlspecialchars(formatarNomeExibicaoTurma($turma), ENT_QUOTES, 'UTF-8') ?>
-										<?php if(!empty($isPdtUsuario) && $isPdtUsuario): ?>
+										<?= htmlspecialchars((string) $turma['serie_turma'], ENT_QUOTES, 'UTF-8') ?>º <?= htmlspecialchars((string) $turma['nome_turma'], ENT_QUOTES, 'UTF-8') ?>
+										<?php if($souPdtDaTurma): ?>
 											<span class="ml-3 inline-block bg-amber-500 text-white px-2 py-1 rounded-full text-xs font-semibold">PDT</span>
 										<?php endif; ?>
 									</h2>
+									<p class="text-sm text-gray-500 mt-2">
+										<?= htmlspecialchars((string) ($turma['nome_curso'] ?? ''), ENT_QUOTES, 'UTF-8') ?>
+									</p>
 
     								</div>
 
@@ -585,7 +611,7 @@
 									</span>
 
 									<span class="font-semibold text-gray-700">
-										<?= $turma['sala_turma'] ?>
+										<?= htmlspecialchars((string) $turma['sala_turma'], ENT_QUOTES, 'UTF-8') ?>
 									</span>
 
 								</div>
@@ -598,16 +624,23 @@
 									</span>
 
 									<span class="font-semibold text-gray-700">
-										<?= $turma['ano_letivo'] ?>
+										<?= htmlspecialchars((string) $turma['ano_letivo'], ENT_QUOTES, 'UTF-8') ?>
 									</span>
 
 						</div>
 
 						<div class="flex items-center gap-3">
 
-							<button data-turma-id="<?= $turma['id_turma'] ?>" class="btn-entrar-turma flex-1 h-11 rounded-xl bg-green-700 text-white hover:bg-green-800 transition font-medium">
-								Entrar
-							</button>
+							<?php if($souPdtDaTurma): ?>
+								<button data-turma-id="<?= (int) $turma['id_turma'] ?>" class="btn-entrar-turma flex-1 h-11 rounded-xl bg-green-700 text-white hover:bg-green-800 transition font-medium">
+									Acessar turma
+								</button>
+							<?php else: ?>
+								<p class="text-sm text-gray-500">
+									PDT responsável: <?= htmlspecialchars((string) ($turma['professor_nome'] ?? 'Não informado'), ENT_QUOTES, 'UTF-8') ?>.
+									Acesso completo exclusivo ao PDT.
+								</p>
+							<?php endif; ?>
 
 						</div>
 
@@ -620,6 +653,124 @@
 				</div>
 
 			</div>
+
+			<?php if ($isPdtUsuario): ?>
+			<div id="sec-pedagogico" class="secs hidden">
+				<div class="mb-8">
+					<h1 class="text-3xl font-bold text-gray-800">Acompanhamento pedagógico</h1>
+					<p class="mt-1 text-gray-500">Registre intervenções individuais e atas de conselho das turmas pelas quais você responde como PDT.</p>
+				</div>
+				<div class="mb-6 rounded-2xl border border-gray-200 bg-white p-5">
+					<label for="selectTurmaPedagogico" class="mb-2 block text-sm font-medium text-gray-700">Turma PDT</label>
+					<select id="selectTurmaPedagogico" class="w-full rounded-xl border border-gray-200 px-4 py-3 md:max-w-xl">
+						<?php foreach ($turmas as $turma): ?>
+							<option value="<?= (int) $turma['id_turma'] ?>"><?= htmlspecialchars($turma['serie_turma'] . 'º ' . $turma['nome_turma'] . ' - ' . $turma['sala_turma'], ENT_QUOTES, 'UTF-8') ?></option>
+						<?php endforeach; ?>
+					</select>
+				</div>
+
+				<div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
+					<section class="rounded-2xl border border-gray-200 bg-white p-6">
+						<h2 class="mb-4 text-xl font-bold text-gray-800">Novo acompanhamento individual</h2>
+						<form id="formAcompanhamentoPedagogico" class="space-y-4">
+							<div>
+								<label for="alunoAcompanhamento" class="mb-1 block text-sm text-gray-700">Aluno</label>
+								<select id="alunoAcompanhamento" required class="w-full rounded-xl border border-gray-200 px-3 py-3">
+									<option value="">Selecione um aluno</option>
+								</select>
+							</div>
+							<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+								<div>
+									<label for="dataAcompanhamento" class="mb-1 block text-sm text-gray-700">Data do registro</label>
+									<input id="dataAcompanhamento" type="date" required class="w-full rounded-xl border border-gray-200 px-3 py-3">
+								</div>
+								<div>
+									<label for="motivoAcompanhamento" class="mb-1 block text-sm text-gray-700">Motivo</label>
+									<input id="motivoAcompanhamento" maxlength="150" required class="w-full rounded-xl border border-gray-200 px-3 py-3" placeholder="Ex.: frequência, aprendizagem">
+								</div>
+							</div>
+							<div>
+								<label for="observacaoAcompanhamento" class="mb-1 block text-sm text-gray-700">Registro pedagógico</label>
+								<textarea id="observacaoAcompanhamento" maxlength="10000" required rows="4" class="w-full rounded-xl border border-gray-200 px-3 py-3"></textarea>
+							</div>
+							<div>
+								<label for="encaminhamentoAcompanhamento" class="mb-1 block text-sm text-gray-700">Encaminhamento</label>
+								<textarea id="encaminhamentoAcompanhamento" maxlength="10000" rows="3" class="w-full rounded-xl border border-gray-200 px-3 py-3"></textarea>
+							</div>
+							<div>
+								<label for="dataRetornoAcompanhamento" class="mb-1 block text-sm text-gray-700">Data prevista para retorno (opcional)</label>
+								<input id="dataRetornoAcompanhamento" type="date" class="w-full rounded-xl border border-gray-200 px-3 py-3 md:max-w-xs">
+							</div>
+							<button type="submit" class="rounded-xl bg-green-700 px-5 py-3 font-medium text-white hover:bg-green-800">Salvar acompanhamento</button>
+						</form>
+					</section>
+
+					<section class="rounded-2xl border border-gray-200 bg-white p-6">
+						<h2 class="mb-4 text-xl font-bold text-gray-800">Registrar conselho de classe</h2>
+						<form id="formConselhoClasse" class="space-y-4">
+							<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+								<div>
+									<label for="dataConselhoClasse" class="mb-1 block text-sm text-gray-700">Data</label>
+									<input id="dataConselhoClasse" type="date" required class="w-full rounded-xl border border-gray-200 px-3 py-3">
+								</div>
+								<div>
+									<label for="bimestreConselhoClasse" class="mb-1 block text-sm text-gray-700">Bimestre</label>
+									<select id="bimestreConselhoClasse" class="w-full rounded-xl border border-gray-200 px-3 py-3">
+										<option value="1">1º bimestre</option><option value="2">2º bimestre</option>
+										<option value="3">3º bimestre</option><option value="4">4º bimestre</option>
+									</select>
+								</div>
+							</div>
+							<div>
+								<label for="pautaConselhoClasse" class="mb-1 block text-sm text-gray-700">Pauta</label>
+								<input id="pautaConselhoClasse" maxlength="200" required class="w-full rounded-xl border border-gray-200 px-3 py-3">
+							</div>
+							<div>
+								<label for="ataConselhoClasse" class="mb-1 block text-sm text-gray-700">Ata / síntese das deliberações</label>
+								<textarea id="ataConselhoClasse" maxlength="20000" required rows="5" class="w-full rounded-xl border border-gray-200 px-3 py-3"></textarea>
+							</div>
+							<button type="submit" class="rounded-xl bg-green-700 px-5 py-3 font-medium text-white hover:bg-green-800">Salvar conselho como rascunho</button>
+						</form>
+					</section>
+				</div>
+
+				<div class="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-2">
+					<section class="rounded-2xl border border-gray-200 bg-white p-6">
+						<h2 class="mb-4 text-xl font-bold text-gray-800">Acompanhamentos da turma</h2>
+						<div id="listaAcompanhamentosPedagogicos" class="space-y-3 text-gray-500" aria-live="polite">Carregando...</div>
+					</section>
+					<section class="rounded-2xl border border-gray-200 bg-white p-6">
+						<h2 class="mb-4 text-xl font-bold text-gray-800">Conselhos de classe</h2>
+						<div id="listaConselhosClasse" class="space-y-4 text-gray-500" aria-live="polite">Carregando...</div>
+					</section>
+				</div>
+
+				<section class="mt-6 rounded-2xl border border-gray-200 bg-white p-6">
+					<h2 class="mb-4 text-xl font-bold text-gray-800">Deliberação individual do conselho</h2>
+					<form id="formItemConselhoClasse" class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+						<div>
+							<label for="conselhoItemId" class="mb-1 block text-sm text-gray-700">Conselho em rascunho</label>
+							<select id="conselhoItemId" required class="w-full rounded-xl border border-gray-200 px-3 py-3"><option value="">Selecione um conselho</option></select>
+						</div>
+						<div>
+							<label for="alunoItemConselho" class="mb-1 block text-sm text-gray-700">Aluno</label>
+							<select id="alunoItemConselho" required class="w-full rounded-xl border border-gray-200 px-3 py-3"><option value="">Selecione um aluno</option></select>
+						</div>
+						<div>
+							<label for="observacaoItemConselho" class="mb-1 block text-sm text-gray-700">Observação / deliberação</label>
+							<textarea id="observacaoItemConselho" maxlength="10000" required rows="3" class="w-full rounded-xl border border-gray-200 px-3 py-3"></textarea>
+						</div>
+						<div>
+							<label for="encaminhamentoItemConselho" class="mb-1 block text-sm text-gray-700">Encaminhamento</label>
+							<textarea id="encaminhamentoItemConselho" maxlength="10000" rows="3" class="w-full rounded-xl border border-gray-200 px-3 py-3"></textarea>
+						</div>
+						<div class="lg:col-span-2">
+							<button type="submit" class="rounded-xl bg-green-700 px-5 py-3 font-medium text-white hover:bg-green-800">Salvar deliberação</button>
+						</div>
+					</form>
+				</section>
+			</div>
+			<?php endif; ?>
 
 			<!-- DETALHE TURMA -->
 			<div id="sec-turma-detalhe" class="secs hidden">
@@ -789,6 +940,21 @@
 						<h2 id="profRelMediaFrequencia" class="text-4xl font-bold text-gray-800">0%</h2>
 						<span class="text-gray-400 text-sm">Este m�s</span>
 					</div>
+					<div class="card-dashboard">
+						<p class="text-gray-500 text-sm mb-2">Acompanhamentos</p>
+						<h2 id="profRelTotalAcompanhamentos" class="text-4xl font-bold text-gray-800">0</h2>
+						<span class="text-gray-400 text-sm">Criados no período</span>
+					</div>
+					<div class="card-dashboard">
+						<p class="text-gray-500 text-sm mb-2">Em aberto</p>
+						<h2 id="profRelAcompanhamentosAbertos" class="text-4xl font-bold text-gray-800">0</h2>
+						<span class="text-gray-400 text-sm">Do período selecionado</span>
+					</div>
+					<div class="card-dashboard">
+						<p class="text-gray-500 text-sm mb-2">Conselhos</p>
+						<h2 id="profRelTotalConselhos" class="text-4xl font-bold text-gray-800">0</h2>
+						<span class="text-gray-400 text-sm">Registrados no período</span>
+					</div>
 				</div>
 				<div class="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
 					<div class="bg-white border border-gray-200 rounded-2xl p-6">
@@ -810,7 +976,8 @@
 				</div>
 			</div>
 
-			<!-- <div id="sec-calendario" class="secs hidden">
+			<?php if ($isPdtUsuario): ?>
+			<div id="sec-calendario" class="secs hidden">
 				<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
 					<div>
 						<h1 class="text-3xl font-bold text-gray-800">Calend�rio</h1>
@@ -835,10 +1002,24 @@
 					<h2 class="text-xl font-bold text-gray-800 mb-4">Eventos do m�s</h2>
 					<div id="profCalendarioEventos" class="space-y-4 text-gray-500">Carregando...</div>
 				</div>
-			</div> -->
+			</div>
+			<?php endif; ?>
 		</main>
 	</div>
 
+</div>
+
+<div id="perfilPedagogicoModal" class="fixed inset-0 z-[320] hidden items-center justify-center bg-black/60 p-4 backdrop-blur-sm" aria-hidden="true">
+	<section class="modal-card max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="perfilPedagogicoTitulo">
+		<div class="mb-5 flex items-start justify-between gap-4">
+			<div>
+				<h2 id="perfilPedagogicoTitulo" class="text-2xl font-bold text-gray-800">Perfil pedagógico</h2>
+				<p id="perfilPedagogicoIdentificacao" class="mt-1 text-sm text-gray-500">Carregando...</p>
+			</div>
+			<button id="fecharPerfilPedagogico" type="button" class="rounded-lg px-3 py-2 text-gray-600 hover:bg-gray-100" aria-label="Fechar perfil">Fechar</button>
+		</div>
+		<div id="perfilPedagogicoConteudo" class="space-y-5" aria-live="polite"></div>
+	</section>
 </div>
 
 <script>
@@ -948,7 +1129,236 @@
 			if (sectionId === 'sec-ocorrencias') carregarOcorrenciasSec();
 			if (sectionId === 'sec-relatorios') carregarRelatoriosSec();
 			if (sectionId === 'sec-calendario') carregarCalendarioSec();
+			if (sectionId === 'sec-pedagogico') carregarModuloPedagogico();
 		});
+	});
+
+	const selectTurmaPedagogico = document.getElementById('selectTurmaPedagogico');
+	const formAcompanhamentoPedagogico = document.getElementById('formAcompanhamentoPedagogico');
+	const formConselhoClasse = document.getElementById('formConselhoClasse');
+	const formItemConselhoClasse = document.getElementById('formItemConselhoClasse');
+	let alunosTurmaPedagogico = [];
+
+	function dataLocalISO() {
+		const hoje = new Date();
+		hoje.setMinutes(hoje.getMinutes() - hoje.getTimezoneOffset());
+		return hoje.toISOString().slice(0, 10);
+	}
+
+	async function requisicaoModuloPedagogico(action, options = {}, queryParams = {}) {
+		const query = new URLSearchParams({ action, ...queryParams });
+		const resposta = await fetch(`../controllers/pdt_pedagogico_controller.php?${query.toString()}`, options);
+		const resultado = await resposta.json();
+		if (!resposta.ok || !resultado.sucesso) {
+			throw new Error(resultado.erro || 'Não foi possível concluir a operação.');
+		}
+		return resultado;
+	}
+
+	function preencherAlunosPedagogico(alunos) {
+		alunosTurmaPedagogico = Array.isArray(alunos) ? alunos : [];
+		['alunoAcompanhamento', 'alunoItemConselho'].forEach(id => {
+			const select = document.getElementById(id);
+			if (!select) return;
+			select.replaceChildren(new Option('Selecione um aluno', ''));
+			alunosTurmaPedagogico.forEach(aluno => {
+				select.add(new Option(aluno.nome, aluno.id_aluno));
+			});
+		});
+	}
+
+	function elementoTexto(tag, className, text) {
+		const element = document.createElement(tag);
+		element.className = className;
+		element.textContent = text;
+		return element;
+	}
+
+	function renderizarAcompanhamentosPedagogicos(registros) {
+		const lista = document.getElementById('listaAcompanhamentosPedagogicos');
+		if (!lista) return;
+		lista.replaceChildren();
+		if (!registros.length) {
+			lista.append(elementoTexto('p', 'py-4 text-gray-500', 'Nenhum acompanhamento registrado nesta turma.'));
+			return;
+		}
+		registros.forEach(registro => {
+			const card = document.createElement('article');
+			card.className = 'rounded-xl border border-gray-200 p-4';
+			card.append(
+				elementoTexto('h3', 'font-semibold text-gray-800', `${registro.aluno_nome} · ${registro.motivo}`),
+				elementoTexto('p', 'mt-1 text-xs text-gray-500', `Registro: ${registro.data_registro} · Matrícula: ${registro.matricula}`),
+				elementoTexto('p', 'mt-3 whitespace-pre-wrap text-sm text-gray-700', registro.observacao)
+			);
+			if (registro.encaminhamento) card.append(elementoTexto('p', 'mt-2 whitespace-pre-wrap text-sm text-gray-600', `Encaminhamento: ${registro.encaminhamento}`));
+			if (registro.data_retorno) card.append(elementoTexto('p', 'mt-2 text-sm text-gray-600', `Retorno previsto: ${registro.data_retorno}`));
+			const status = document.createElement('select');
+			status.className = 'mt-3 rounded-lg border border-gray-200 px-3 py-2 text-sm';
+			[
+				['aberto', 'Aberto'],
+				['em_acompanhamento', 'Em acompanhamento'],
+				['concluido', 'Concluído']
+			].forEach(([value, label]) => status.add(new Option(label, value)));
+			status.value = registro.status;
+			status.addEventListener('change', async () => {
+				try {
+					await requisicaoModuloPedagogico('atualizar_status_acompanhamento', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ id_acompanhamento: registro.id_acompanhamento, status: status.value })
+					});
+					await carregarModuloPedagogico();
+				} catch (erro) {
+					alert(erro.message);
+				}
+			});
+			card.append(status);
+			lista.append(card);
+		});
+	}
+
+	function renderizarConselhosClasse(conselhos) {
+		const lista = document.getElementById('listaConselhosClasse');
+		const selectConselho = document.getElementById('conselhoItemId');
+		if (!lista || !selectConselho) return;
+		lista.replaceChildren();
+		selectConselho.replaceChildren(new Option('Selecione um conselho em rascunho', ''));
+		conselhos.forEach(conselho => {
+			const card = document.createElement('article');
+			card.className = 'rounded-xl border border-gray-200 p-4';
+			card.append(
+				elementoTexto('h3', 'font-semibold text-gray-800', `Conselho · ${conselho.bimestre}º bimestre · ${conselho.data_conselho}`),
+				elementoTexto('p', 'mt-1 text-sm font-medium text-gray-700', conselho.pauta),
+				elementoTexto('p', 'mt-2 whitespace-pre-wrap text-sm text-gray-600', conselho.ata),
+				elementoTexto('p', 'mt-2 text-xs font-semibold uppercase text-gray-500', conselho.status === 'finalizado' ? 'Finalizado' : 'Rascunho')
+			);
+			(conselho.alunos || []).forEach(item => {
+				card.append(elementoTexto('p', 'mt-3 border-t border-gray-100 pt-3 text-sm text-gray-700', `${item.aluno_nome}: ${item.observacao}`));
+				if (item.encaminhamento) card.append(elementoTexto('p', 'pl-3 text-sm text-gray-500', `Encaminhamento: ${item.encaminhamento}`));
+			});
+			if (conselho.status === 'rascunho') {
+				selectConselho.add(new Option(`${conselho.data_conselho} · ${conselho.pauta}`, conselho.id_conselho));
+				const finalizar = document.createElement('button');
+				finalizar.type = 'button';
+				finalizar.className = 'mt-3 rounded-lg border border-green-700 px-3 py-2 text-sm font-medium text-green-800 hover:bg-green-50';
+				finalizar.textContent = 'Finalizar conselho';
+				finalizar.addEventListener('click', async () => {
+					if (!confirm('Finalizar este conselho? Os registros individuais ficarão bloqueados para edição.')) return;
+					try {
+						await requisicaoModuloPedagogico('finalizar_conselho', {
+							method: 'POST',
+							headers: { 'Content-Type': 'application/json' },
+							body: JSON.stringify({ id_conselho: conselho.id_conselho })
+						});
+						await carregarModuloPedagogico();
+					} catch (erro) {
+						alert(erro.message);
+					}
+				});
+				card.append(finalizar);
+			}
+			lista.append(card);
+		});
+		if (!conselhos.length) lista.append(elementoTexto('p', 'py-4 text-gray-500', 'Nenhum conselho registrado nesta turma.'));
+	}
+
+	async function carregarModuloPedagogico() {
+		if (!selectTurmaPedagogico || !selectTurmaPedagogico.value) return;
+		const idTurma = selectTurmaPedagogico.value;
+		try {
+			const [alunosResposta, dados] = await Promise.all([
+				fetch(`../controllers/aluno_controller.php?action=listar_alunos&id_turma=${encodeURIComponent(idTurma)}`).then(resposta => resposta.json()),
+				requisicaoModuloPedagogico('listar', {}, { id_turma: idTurma })
+			]);
+			if (!alunosResposta.sucesso) throw new Error(alunosResposta.erro || 'Não foi possível carregar os alunos.');
+			preencherAlunosPedagogico(alunosResposta.dados);
+			renderizarAcompanhamentosPedagogicos(dados.acompanhamentos || []);
+			renderizarConselhosClasse(dados.conselhos || []);
+		} catch (erro) {
+			['listaAcompanhamentosPedagogicos', 'listaConselhosClasse'].forEach(id => {
+				const list = document.getElementById(id);
+				if (list) {
+					list.textContent = `Erro ao carregar módulo pedagógico: ${erro.message}`;
+					list.classList.add('text-red-600');
+				}
+			});
+			console.error('Erro ao carregar módulo pedagógico:', erro);
+		}
+	}
+
+	if (selectTurmaPedagogico) {
+		selectTurmaPedagogico.addEventListener('change', carregarModuloPedagogico);
+		['dataAcompanhamento', 'dataConselhoClasse'].forEach(id => {
+			const input = document.getElementById(id);
+			if (input) input.value = dataLocalISO();
+		});
+		carregarModuloPedagogico();
+	}
+
+	formAcompanhamentoPedagogico?.addEventListener('submit', async event => {
+		event.preventDefault();
+		try {
+			await requisicaoModuloPedagogico('criar_acompanhamento', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					id_turma: selectTurmaPedagogico.value,
+					id_aluno: document.getElementById('alunoAcompanhamento').value,
+					data_registro: document.getElementById('dataAcompanhamento').value,
+					motivo: document.getElementById('motivoAcompanhamento').value,
+					observacao: document.getElementById('observacaoAcompanhamento').value,
+					encaminhamento: document.getElementById('encaminhamentoAcompanhamento').value,
+					data_retorno: document.getElementById('dataRetornoAcompanhamento').value
+				})
+			});
+			formAcompanhamentoPedagogico.reset();
+			document.getElementById('dataAcompanhamento').value = dataLocalISO();
+			await carregarModuloPedagogico();
+		} catch (erro) {
+			alert(erro.message);
+		}
+	});
+
+	formConselhoClasse?.addEventListener('submit', async event => {
+		event.preventDefault();
+		try {
+			await requisicaoModuloPedagogico('criar_conselho', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					id_turma: selectTurmaPedagogico.value,
+					data_conselho: document.getElementById('dataConselhoClasse').value,
+					bimestre: document.getElementById('bimestreConselhoClasse').value,
+					pauta: document.getElementById('pautaConselhoClasse').value,
+					ata: document.getElementById('ataConselhoClasse').value
+				})
+			});
+			formConselhoClasse.reset();
+			document.getElementById('dataConselhoClasse').value = dataLocalISO();
+			await carregarModuloPedagogico();
+		} catch (erro) {
+			alert(erro.message);
+		}
+	});
+
+	formItemConselhoClasse?.addEventListener('submit', async event => {
+		event.preventDefault();
+		try {
+			await requisicaoModuloPedagogico('adicionar_item_conselho', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					id_conselho: document.getElementById('conselhoItemId').value,
+					id_aluno: document.getElementById('alunoItemConselho').value,
+					observacao: document.getElementById('observacaoItemConselho').value,
+					encaminhamento: document.getElementById('encaminhamentoItemConselho').value
+				})
+			});
+			formItemConselhoClasse.reset();
+			await carregarModuloPedagogico();
+		} catch (erro) {
+			alert(erro.message);
+		}
 	});
 
 	// NAVEGA��O TURMA DETALHE
@@ -1239,12 +1649,81 @@
 		}
 	}
 
+	function renderizarGraficoRosca(container, dados, chaveRotulo, chaveValor, descricao) {
+		if (!container) return;
+		container.replaceChildren();
+		const itens = dados
+			.map(item => ({
+				rotulo: String(item[chaveRotulo] ?? 'Sem identificação'),
+				valor: Number(item[chaveValor])
+			}))
+			.filter(item => Number.isFinite(item.valor) && item.valor > 0);
+		const total = itens.reduce((soma, item) => soma + item.valor, 0);
+
+		if (total <= 0) {
+			container.append(elementoTexto('p', 'py-4 text-gray-500', 'Sem dados para exibir neste período.'));
+			return;
+		}
+
+		const cores = ['#18b5d5', '#e84e43', '#06bf8f', '#a84fa3', '#f18700', '#f2cf20', '#5267c9', '#ec6b9b'];
+		let anguloAtual = 0;
+		const segmentos = itens.map((item, indice) => {
+			const inicio = anguloAtual;
+			anguloAtual += item.valor / total * 360;
+			return `${cores[indice % cores.length]} ${inicio}deg ${anguloAtual}deg`;
+		});
+
+		const grafico = document.createElement('div');
+		grafico.className = 'relative h-40 w-40 shrink-0 rounded-full';
+		grafico.style.background = `conic-gradient(${segmentos.join(', ')})`;
+		grafico.setAttribute('role', 'img');
+		grafico.setAttribute(
+			'aria-label',
+			`${descricao}: ${itens.map(item => `${item.rotulo}, ${item.valor}`).join('; ')}`
+		);
+
+		const centro = document.createElement('div');
+		centro.className = 'absolute inset-[24%] flex flex-col items-center justify-center rounded-full bg-white text-center shadow-inner';
+		centro.append(
+			elementoTexto('strong', 'text-2xl font-bold text-gray-800', String(total)),
+			elementoTexto('span', 'mt-1 text-[10px] leading-tight text-gray-500', 'Total')
+		);
+		grafico.append(centro);
+
+		const legenda = document.createElement('ul');
+		legenda.className = 'w-full space-y-2';
+		itens.forEach((item, indice) => {
+			const linha = document.createElement('li');
+			linha.className = 'flex items-center justify-between gap-3 text-sm';
+			const identificacao = document.createElement('span');
+			identificacao.className = 'flex min-w-0 items-center gap-2 text-gray-600';
+			const marcador = document.createElement('span');
+			marcador.className = 'h-3 w-3 shrink-0 rounded-sm';
+			marcador.style.backgroundColor = cores[indice % cores.length];
+			const rotulo = elementoTexto('span', 'truncate', item.rotulo);
+			identificacao.append(marcador, rotulo);
+			const valor = elementoTexto(
+				'strong',
+				'shrink-0 text-gray-800',
+				`${item.valor} · ${((item.valor / total) * 100).toFixed(1).replace('.', ',')}%`
+			);
+			linha.append(identificacao, valor);
+			legenda.append(linha);
+		});
+
+		container.className = 'flex flex-col items-center gap-5';
+		container.append(grafico, legenda);
+	}
+
 	async function carregarRelatoriosSec(force = false) {
 		const periodo = document.getElementById('profRelPeriodo')?.value || 'mes';
 		const totalTurmasEl = document.getElementById('profRelTotalTurmas');
 		const totalAlunosEl = document.getElementById('profRelTotalAlunos');
 		const totalOcorrenciasEl = document.getElementById('profRelTotalOcorrencias');
 		const mediaFrequenciaEl = document.getElementById('profRelMediaFrequencia');
+		const totalAcompanhamentosEl = document.getElementById('profRelTotalAcompanhamentos');
+		const acompanhamentosAbertosEl = document.getElementById('profRelAcompanhamentosAbertos');
+		const totalConselhosEl = document.getElementById('profRelTotalConselhos');
 		const recentesEl = document.getElementById('profRelOcorrenciasRecentes');
 		const topEl = document.getElementById('profRelTopTurmasOcorrencias');
 		const tipoEl = document.getElementById('profRelOcorrenciasPorTipo');
@@ -1290,6 +1769,9 @@
 			totalAlunosEl.textContent = data.total_alunos ?? 0;
 			totalOcorrenciasEl.textContent = data.total_ocorrencias_periodo ?? 0;
 			mediaFrequenciaEl.textContent = `${data.media_frequencia_periodo ?? 0}%`;
+			if (totalAcompanhamentosEl) totalAcompanhamentosEl.textContent = data.acompanhamentos_periodo ?? 0;
+			if (acompanhamentosAbertosEl) acompanhamentosAbertosEl.textContent = data.acompanhamentos_abertos ?? 0;
+			if (totalConselhosEl) totalConselhosEl.textContent = data.conselhos_periodo ?? 0;
 
 			if (recentesEl) {
 				recentesEl.innerHTML = (data.ocorrencias_recentes || []).length ? (data.ocorrencias_recentes || []).map(item => `
@@ -1301,32 +1783,9 @@
 				`).join('') : '<div class="text-gray-500">Nenhuma ocorrência recente.</div>';
 			}
 
-			if (topEl) {
-				topEl.innerHTML = (data.top_turmas_ocorrencias || []).length ? (data.top_turmas_ocorrencias || []).map(item => `
-					<div class="rounded-2xl border border-gray-200 p-4">
-						<p class="text-gray-500 text-sm">${item.turma}</p>
-						<p class="text-gray-800 text-xl font-semibold mt-2">${item.total}</p>
-					</div>
-				`).join('') : '<div class="text-gray-500">Sem dados.</div>';
-			}
-
-			if (tipoEl) {
-				tipoEl.innerHTML = (data.ocorrencias_por_tipo || []).length ? (data.ocorrencias_por_tipo || []).map(item => `
-					<div class="rounded-2xl border border-gray-200 p-4 flex items-center justify-between">
-						<span class="text-gray-500">${item.tipo_ocorrencia}</span>
-						<strong class="text-gray-800">${item.total}</strong>
-					</div>
-				`).join('') : '<div class="text-gray-500">Sem dados.</div>';
-			}
-
-			if (porCursoEl) {
-				porCursoEl.innerHTML = (data.turmas_por_curso || []).length ? (data.turmas_por_curso || []).map(item => `
-					<div class="rounded-2xl border border-gray-200 p-4 flex items-center justify-between">
-						<span class="text-gray-500">${item.nome_curso}</span>
-						<strong class="text-gray-800">${item.total}</strong>
-					</div>
-				`).join('') : '<div class="text-gray-500">Sem dados.</div>';
-			}
+			renderizarGraficoRosca(topEl, data.top_turmas_ocorrencias || [], 'turma', 'total', 'Ocorrências nas principais turmas');
+			renderizarGraficoRosca(tipoEl, data.ocorrencias_por_tipo || [], 'tipo_ocorrencia', 'total', 'Ocorrências por tipo');
+			renderizarGraficoRosca(porCursoEl, data.turmas_por_curso || [], 'nome_curso', 'total', 'Turmas por curso');
 
 			if (detalhesTurmasEl) {
 				detalhesTurmasEl.innerHTML = (turmasData.dados || []).length ? (turmasData.dados || []).map(item => `
@@ -1334,7 +1793,8 @@
 						<div class="flex items-center justify-between gap-4">
 							<div>
 								<p class="text-gray-500 text-sm">${item.turma}</p>
-								<p class="text-gray-800 font-semibold mt-2">Alunos: ${item.total_alunos} � Ocorr�ncias: ${item.ocorrencias_periodo}</p>
+								<p class="text-gray-800 font-semibold mt-2">Alunos: ${item.total_alunos} · Ocorrências: ${item.ocorrencias_periodo}</p>
+								<p class="mt-1 text-sm text-gray-500">Acompanhamentos: ${item.acompanhamentos_periodo} · Em aberto: ${item.acompanhamentos_abertos} · Conselhos: ${item.conselhos_periodo}</p>
 							</div>
 							<div class="text-slate-700 font-semibold">${item.frequencia_media_periodo ?? 0}%</div>
 						</div>
@@ -1371,7 +1831,14 @@
 		}
 		const response = await fetch('../controllers/relatorio_controller.php?action=calendario_eventos&ano=' + window.professorCalendarYear + '&mes=' + (window.professorCalendarMonth + 1));
 		const data = await response.json();
-		window.professorCalendarEvents = data.sucesso ? data.dados || [] : [];
+		if (!response.ok || !data.sucesso) {
+			window.professorCalendarEvents = [];
+			const eventsEl = document.getElementById('profCalendarioEventos');
+			if (eventsEl) eventsEl.textContent = data.erro || 'Não foi possível carregar o calendário.';
+			console.error('Erro ao carregar calendário:', data.erro || response.statusText);
+			return;
+		}
+		window.professorCalendarEvents = data.dados || [];
 		renderProfessorCalendar();
 	}
 
@@ -1418,8 +1885,11 @@
 					<span class="font-semibold text-gray-900">${day}</span>
 					${events.length ? `<span class="rounded-full bg-green-600 px-2 py-1 text-[11px] text-white">${events.length}</span>` : ''}
 				</div>
-				<p class="mt-2 text-xs text-gray-500">${events[0]?.titulo || ''}</p>
 			`;
+			const title = document.createElement('p');
+			title.className = 'mt-2 text-xs text-gray-500';
+			title.textContent = events[0]?.titulo || '';
+			cell.appendChild(title);
 			cell.addEventListener('click', () => renderProfessorCalendarEvents(dateKey));
 			grid.appendChild(cell);
 		}
@@ -1436,18 +1906,22 @@
 			eventsEl.innerHTML = '<div class="rounded-2xl border border-gray-200 bg-white p-5 text-gray-500">Nenhum evento dispon�vel.</div>';
 			return;
 		}
-		eventsEl.innerHTML = filtered.map(item => `
-			<div class="rounded-2xl border border-gray-200 bg-white p-5">
-				<div class="flex items-center justify-between gap-3 mb-2">
-					<div>
-						<p class="text-gray-500 text-sm">${item.evento_data}</p>
-						<h3 class="text-gray-800 text-lg font-semibold mt-2">${item.titulo}</h3>
-					</div>
-					<span class="rounded-full bg-green-100 px-3 py-1 text-xs text-green-700">${item.tipo}</span>
-				</div>
-				${item.descricao ? `<p class="text-gray-600 text-sm">${item.descricao}</p>` : ''}
-			</div>
-		`).join('');
+		eventsEl.replaceChildren();
+		filtered.forEach(item => {
+			const card = document.createElement('article');
+			card.className = 'rounded-2xl border border-gray-200 bg-white p-5';
+			const header = document.createElement('div');
+			header.className = 'mb-2 flex items-center justify-between gap-3';
+			const details = document.createElement('div');
+			details.append(
+				elementoTexto('p', 'text-gray-500 text-sm', item.evento_data || ''),
+				elementoTexto('h3', 'mt-2 text-gray-800 text-lg font-semibold', item.titulo || '')
+			);
+			header.append(details, elementoTexto('span', 'rounded-full bg-green-100 px-3 py-1 text-xs text-green-700', item.tipo || ''));
+			card.append(header);
+			if (item.descricao) card.append(elementoTexto('p', 'text-gray-600 text-sm', item.descricao));
+			eventsEl.append(card);
+		});
 	}
 
 	document.getElementById('btnProfessorRelatoriosAtualizar')?.addEventListener('click', carregarRelatoriosSec);
@@ -2315,8 +2789,11 @@ function renderizarListaAlunosFull(alunos = []){
 				<div class="flex items-center gap-2">
 					<button data-id="${a.id_aluno}" data-nome="${a.nome}" data-matricula="${a.matricula}" data-email="${a.email}" data-pcd="${a.pcd || 'nao'}" data-rendimento="${a.rendimento || 0}" class="btn-editar-aluno h-9 px-3 rounded-lg bg-amber-50 text-amber-700 border border-amber-100 text-xs font-medium hover:bg-amber-100 transition">Editar</button>
 					<button data-id="${a.id_aluno}" data-nome="${a.nome}" class="btn-excluir-aluno h-9 px-3 rounded-lg bg-red-50 text-red-700 border border-red-100 text-xs font-medium hover:bg-red-100 transition">Excluir</button>
+					<button type="button" data-id="${a.id_aluno}" class="btn-perfil-pedagogico h-9 px-3 rounded-lg bg-green-50 text-green-800 border border-green-100 text-xs font-medium hover:bg-green-100 transition">Perfil</button>
 				</div>
 			`;
+		} else {
+			acoes = `<button type="button" data-id="${a.id_aluno}" class="btn-perfil-pedagogico h-9 px-3 rounded-lg bg-green-50 text-green-800 border border-green-100 text-xs font-medium hover:bg-green-100 transition">Perfil pedagógico</button>`;
 		}
 		
 		div.innerHTML = `
@@ -2345,7 +2822,116 @@ function renderizarListaAlunosFull(alunos = []){
 			abrirModalExcluirAluno(btn.getAttribute('data-nome'), btn.getAttribute('data-id'));
 		});
 	});
+
+	listaFull.querySelectorAll('.btn-perfil-pedagogico').forEach(btn => {
+		btn.addEventListener('click', () => abrirPerfilPedagogico(btn.dataset.id));
+	});
 }
+
+function escaparTextoPerfil(valor){
+	return String(valor ?? '').replace(/[&<>"']/g, caractere => ({
+		'&': '&amp;',
+		'<': '&lt;',
+		'>': '&gt;',
+		'"': '&quot;',
+		"'": '&#039;'
+	}[caractere]));
+}
+
+async function abrirPerfilPedagogico(idAluno){
+	const modal = document.getElementById('perfilPedagogicoModal');
+	const identificacao = document.getElementById('perfilPedagogicoIdentificacao');
+	const conteudo = document.getElementById('perfilPedagogicoConteudo');
+	if (!modal || !identificacao || !conteudo) return;
+
+	modal.classList.remove('hidden');
+	modal.classList.add('flex');
+	modal.setAttribute('aria-hidden', 'false');
+	identificacao.textContent = 'Carregando dados pedagógicos...';
+	conteudo.textContent = '';
+	document.getElementById('fecharPerfilPedagogico')?.focus();
+
+	try {
+		const response = await fetch('../controllers/aluno_controller.php?action=perfil_pedagogico&id_aluno=' + encodeURIComponent(idAluno));
+		const result = await response.json();
+		if (!response.ok || !result.sucesso || !result.dados) {
+			throw new Error(result.erro || 'Não foi possível carregar o perfil.');
+		}
+
+		const aluno = result.dados;
+		const frequencia = aluno.frequencia || {};
+		identificacao.textContent = `${aluno.turma || 'Turma não informada'} · Ano letivo ${aluno.ano_letivo || 'não informado'}`;
+
+		const linhasNotas = (aluno.notas || []).map(nota => `
+			<tr class="border-t border-gray-100">
+				<td class="px-3 py-2">${escaparTextoPerfil(nota.bimestre)}º</td>
+				<td class="px-3 py-2">${escaparTextoPerfil(nota.disciplina)}</td>
+				<td class="px-3 py-2">${nota.nota === null ? '—' : Number(nota.nota).toFixed(2).replace('.', ',')}</td>
+				<td class="px-3 py-2">${escaparTextoPerfil(nota.classificacao || (nota.situacao === 'sem_nota' ? 'Sem nota lançada' : 'Nota inválida'))}</td>
+			</tr>
+		`).join('');
+
+		const ocorrencias = (aluno.ocorrencias || []).map(ocorrencia => `
+			<li class="rounded-xl border border-gray-100 bg-gray-50 p-3">
+				<p class="font-semibold text-gray-800">${escaparTextoPerfil(ocorrencia.tipo_ocorrencia)}</p>
+				<p class="mt-1 text-sm text-gray-600">${escaparTextoPerfil(ocorrencia.descricao || 'Sem descrição')}</p>
+				<p class="mt-2 text-xs text-gray-500">${escaparTextoPerfil(ocorrencia.data_ocorrencia)}</p>
+			</li>
+		`).join('');
+		const acompanhamentos = (aluno.acompanhamentos || []).map(acompanhamento => `
+			<li class="rounded-xl border border-gray-100 bg-gray-50 p-3">
+				<p class="font-semibold text-gray-800">${escaparTextoPerfil(acompanhamento.motivo)} · ${escaparTextoPerfil(acompanhamento.status)}</p>
+				<p class="mt-1 whitespace-pre-wrap text-sm text-gray-600">${escaparTextoPerfil(acompanhamento.observacao)}</p>
+				${acompanhamento.encaminhamento ? `<p class="mt-1 whitespace-pre-wrap text-sm text-gray-600">Encaminhamento: ${escaparTextoPerfil(acompanhamento.encaminhamento)}</p>` : ''}
+				<p class="mt-2 text-xs text-gray-500">Registro: ${escaparTextoPerfil(acompanhamento.data_registro)}${acompanhamento.data_retorno ? ` · Retorno previsto: ${escaparTextoPerfil(acompanhamento.data_retorno)}` : ''}</p>
+			</li>
+		`).join('');
+		const deliberacoesConselho = (aluno.deliberacoes_conselho || []).map(deliberacao => `
+			<li class="rounded-xl border border-gray-100 bg-gray-50 p-3">
+				<p class="font-semibold text-gray-800">${escaparTextoPerfil(deliberacao.bimestre)}º bimestre · ${escaparTextoPerfil(deliberacao.data_conselho)}</p>
+				<p class="mt-1 text-sm text-gray-600">${escaparTextoPerfil(deliberacao.pauta)}</p>
+				<p class="mt-1 whitespace-pre-wrap text-sm text-gray-600">${escaparTextoPerfil(deliberacao.observacao)}</p>
+				${deliberacao.encaminhamento ? `<p class="mt-1 whitespace-pre-wrap text-sm text-gray-600">Encaminhamento: ${escaparTextoPerfil(deliberacao.encaminhamento)}</p>` : ''}
+			</li>
+		`).join('');
+
+		conteudo.innerHTML = `
+			<div class="grid gap-3 sm:grid-cols-3">
+				<div class="rounded-xl border border-gray-100 bg-gray-50 p-4"><p class="text-xs text-gray-500">Aluno</p><p class="mt-1 font-semibold text-gray-800">${escaparTextoPerfil(aluno.nome)}</p><p class="text-sm text-gray-600">Matrícula: ${escaparTextoPerfil(aluno.matricula)}</p></div>
+				<div class="rounded-xl border border-gray-100 bg-gray-50 p-4"><p class="text-xs text-gray-500">Frequência registrada</p><p class="mt-1 font-semibold text-gray-800">${frequencia.percentual_presenca === null ? 'Sem dados registrados' : `${Number(frequencia.percentual_presenca).toFixed(1).replace('.', ',')}% de presença`}</p><p class="text-sm text-gray-600">${escaparTextoPerfil(frequencia.presencas || 0)} presenças · ${escaparTextoPerfil(frequencia.faltas || 0)} faltas · ${escaparTextoPerfil(frequencia.total_registros || 0)} registros</p></div>
+				<div class="rounded-xl border border-gray-100 bg-gray-50 p-4"><p class="text-xs text-gray-500">Período de frequência</p><p class="mt-1 font-semibold text-gray-800">${frequencia.primeira_data ? escaparTextoPerfil(frequencia.primeira_data) : 'Sem dados registrados'}</p><p class="text-sm text-gray-600">${frequencia.ultima_data ? `Último registro: ${escaparTextoPerfil(frequencia.ultima_data)}` : ''}</p></div>
+			</div>
+			<section><h3 class="mb-2 text-lg font-semibold text-gray-800">Notas por disciplina e bimestre</h3>
+				${linhasNotas ? `<div class="overflow-x-auto"><table class="w-full text-left text-sm"><thead><tr class="text-gray-500"><th class="px-3 py-2">Bimestre</th><th class="px-3 py-2">Disciplina</th><th class="px-3 py-2">Nota</th><th class="px-3 py-2">Classificação</th></tr></thead><tbody>${linhasNotas}</tbody></table></div>` : '<p class="rounded-xl bg-gray-50 p-4 text-sm text-gray-500">Sem notas registradas.</p>'}
+			</section>
+			<section><h3 class="mb-2 text-lg font-semibold text-gray-800">Ocorrências</h3>
+				${ocorrencias ? `<ul class="space-y-2">${ocorrencias}</ul>` : '<p class="rounded-xl bg-gray-50 p-4 text-sm text-gray-500">Sem ocorrências registradas.</p>'}
+			</section>
+			<section><h3 class="mb-2 text-lg font-semibold text-gray-800">Acompanhamento pedagógico</h3>
+				${acompanhamentos ? `<ul class="space-y-2">${acompanhamentos}</ul>` : '<p class="rounded-xl bg-gray-50 p-4 text-sm text-gray-500">Sem acompanhamentos registrados.</p>'}
+			</section>
+			<section><h3 class="mb-2 text-lg font-semibold text-gray-800">Deliberações de conselho</h3>
+				${deliberacoesConselho ? `<ul class="space-y-2">${deliberacoesConselho}</ul>` : '<p class="rounded-xl bg-gray-50 p-4 text-sm text-gray-500">Sem deliberações registradas.</p>'}
+			</section>
+		`;
+	} catch (error) {
+		identificacao.textContent = error.message || 'Erro ao carregar o perfil pedagógico.';
+		conteudo.innerHTML = '<p class="rounded-xl border border-red-100 bg-red-50 p-4 text-sm text-red-700">Não foi possível carregar os dados pedagógicos deste aluno.</p>';
+	}
+}
+
+function fecharPerfilPedagogico(){
+	const modal = document.getElementById('perfilPedagogicoModal');
+	if (!modal) return;
+	modal.classList.add('hidden');
+	modal.classList.remove('flex');
+	modal.setAttribute('aria-hidden', 'true');
+}
+
+document.getElementById('fecharPerfilPedagogico')?.addEventListener('click', fecharPerfilPedagogico);
+document.getElementById('perfilPedagogicoModal')?.addEventListener('click', event => {
+	if (event.target.id === 'perfilPedagogicoModal') fecharPerfilPedagogico();
+});
 
 // voltar da tela de gerenciar para detalhe
 const btnVoltarGerenciar = document.getElementById('btnVoltarGerenciar');
@@ -2980,12 +3566,17 @@ async function carregarDesempenhoProfessorDados(turmaId) {
 
 		const dados = json.dados;
 		turmaNomeEl.textContent = dados.turma_descricao || dados.nome_turma || 'Turma';
-		mediaEl.textContent = Number(dados.media_geral ?? 0).toFixed(2).replace('.', ',');
-		classificacaoEl.textContent = dados.classificacao || 'Adequado';
+		mediaEl.textContent = dados.media_geral === null || dados.media_geral === undefined
+			? '—'
+			: Number(dados.media_geral).toFixed(2).replace('.', ',');
+		classificacaoEl.textContent = dados.classificacao
+			|| (dados.situacao_desempenho === 'dados_invalidos' ? 'Dados inválidos' : 'Sem dados registrados');
 		alunosEl.textContent = String(dados.total_alunos ?? 0);
 		notasEl.textContent = String(dados.total_notas ?? 0);
 		if (document.getElementById('contadorDesempenho')) {
-			document.getElementById('contadorDesempenho').textContent = Number(dados.media_geral ?? 0).toFixed(2).replace('.', ',');
+			document.getElementById('contadorDesempenho').textContent = dados.media_geral === null || dados.media_geral === undefined
+				? '—'
+				: Number(dados.media_geral).toFixed(2).replace('.', ',');
 		}
 	} catch (err) {
 		console.error('Erro ao carregar desempenho da turma:', err);

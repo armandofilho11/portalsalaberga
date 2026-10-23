@@ -21,7 +21,11 @@ Execute os testes PHP manuais a partir da raiz do subsistema:
 ```powershell
 cd C:\xampp\htdocs\portalsalaberga\app\subsystems\system_pdt
 php tests\manual\test_alunos.php
+php tests\manual\test_classificacao_desempenho.php
 ```
 
 Os testes que criam dados devem ser executados somente em uma base de desenvolvimento.
 As interfaces autenticadas usam os temas Claro e Escuro, com preferência isolada em `localStorage`.
+
+Para ativar acompanhamento pedagógico e conselho em bancos existentes, aplique manualmente `app/main/config/migrations/002_acompanhamento_conselho.sql` no banco `sistema_pdt` antes de abrir a tela do professor. A migração usa `CREATE TABLE IF NOT EXISTS` e pode ser reaplicada.
+Para habilitar os metadados de entidade já usados pelo modelo de notificações, aplique também `app/main/config/migrations/003_notificacoes_entidade.sql`.

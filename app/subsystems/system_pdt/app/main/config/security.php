@@ -105,8 +105,18 @@ function podeVisualizarTurma(PDO $conn, int $idTurma, int $idUsuario): bool
         return true;
     }
 
-    // Todos os professores podem visualizar todas as turmas
-    $stmt = $conn->prepare('SELECT id_turma FROM turmas WHERE id_turma = :id_turma LIMIT 1');
-    $stmt->execute([':id_turma' => $idTurma]);
+    if ($tipoUsuario !== 'professor' || (int) ($_SESSION['id_usuario'] ?? 0) !== $idUsuario) {
+        return false;
+    }
+
+    $stmt = $conn->prepare(
+        'SELECT id_turma FROM turmas
+         WHERE id_turma = :id_turma AND id_professor = :id_professor
+         LIMIT 1'
+    );
+    $stmt->execute([
+        ':id_turma' => $idTurma,
+        ':id_professor' => $idUsuario
+    ]);
     return (bool) $stmt->fetchColumn();
 }

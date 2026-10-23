@@ -11,54 +11,65 @@ class connect
 
     function connect_database()
     {
-        try {
-            $config = require(__DIR__ . "/../../../../.env/config.php");
+        $config = require(__DIR__ . "/../../../../.env/config.php");
+        $tables = require(__DIR__ . "/../../../../.env/tables.php");
+        $requiredStockTables = array_values($tables['salaberga_estoque']);
+        $requiredUsersTables = [
+            $tables['salaberga_users'][1],
+            $tables['salaberga_users'][2],
+        ];
 
-            // Tentar primeiro o banco local
-            try {
-                $host = $config['local']['salaberga_estoque']['host'];
-                $database = $config['local']['salaberga_estoque']['banco'];
-                $user = $config['local']['salaberga_estoque']['user'];
-                $password = $config['local']['salaberga_estoque']['senha'];
-
-                $this->connect = new PDO('mysql:host=' . $host . ';dbname=' . $database . ';charset=utf8', $user, $password);
-                $this->connect->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                $this->connect->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-
-                $host_users = $config['local']['salaberga_users']['host'];
-                $database_users = $config['local']['salaberga_users']['banco'];
-                $user_users = $config['local']['salaberga_users']['user'];
-                $password_users = $config['local']['salaberga_users']['senha'];
-
-                $this->connect_users = new PDO('mysql:host=' . $host_users . ';dbname=' . $database_users . ';charset=utf8', $user_users, $password_users);
-                $this->connect_users->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                $this->connect_users->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-            } catch (PDOException $e) {
-                // Se falhar, tentar o banco da hospedagem
-                $host = $config['hospedagem']['salaberga_estoque']['host'];
-                $database = $config['hospedagem']['salaberga_estoque']['banco'];
-                $user = $config['hospedagem']['salaberga_estoque']['user'];
-                $password = $config['hospedagem']['salaberga_estoque']['senha'];
-
-                $this->connect = new PDO('mysql:host=' . $host . ';dbname=' . $database . ';charset=utf8', $user, $password);
-                $this->connect->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                $this->connect->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-                
-                $host_users = $config['hospedagem']['salaberga_users']['host'];
-                $database_users = $config['hospedagem']['salaberga_users']['banco'];
-                $user_users = $config['hospedagem']['salaberga_users']['user'];
-                $password_users = $config['hospedagem']['salaberga_users']['senha'];
-
-                $this->connect_users = new PDO('mysql:host=' . $host_users . ';dbname=' . $database_users . ';charset=utf8', $user_users, $password_users);
-                $this->connect_users->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                $this->connect_users->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+        foreach (['local', 'hospedagem'] as $environment) {
+            if (
+                !isset($config[$environment]['salaberga_estoque']) ||
+                !isset($config[$environment]['salaberga_users'])
+            ) {
+                continue;
             }
-        } catch (PDOException $e) {
 
-            error_log("Erro de conexão com banco: " . $e->getMessage());
-            $this->connect = null;
-            header('location:../views/windows/desconnect.php');
-            exit();
+            try {
+                $stockConnection = $this->openConnection($config[$environment]['salaberga_estoque']);
+                $this->assertTablesExist($stockConnection, $requiredStockTables);
+
+                $usersConnection = $this->openConnection($config[$environment]['salaberga_users']);
+                $this->assertTablesExist($usersConnection, $requiredUsersTables);
+
+                $this->connect = $stockConnection;
+                $this->connect_users = $usersConnection;
+                return;
+            } catch (PDOException $e) {
+                error_log("Banco de estoque indisponivel no ambiente {$environment}: " . $e->getMessage());
+            }
+        }
+
+        $this->connect = null;
+        $this->connect_users = null;
+        header('location:../views/windows/desconnect.php');
+        exit();
+    }
+
+    private function openConnection(array $databaseConfig): PDO
+    {
+        $dsn = 'mysql:host=' . $databaseConfig['host'] . ';dbname=' . $databaseConfig['banco'] . ';charset=utf8mb4';
+        $connection = new PDO($dsn, $databaseConfig['user'], $databaseConfig['senha']);
+        $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $connection->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+
+        return $connection;
+    }
+
+    private function assertTablesExist(PDO $connection, array $requiredTables): void
+    {
+        $statement = $connection->prepare(
+            'SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = :table_name'
+        );
+
+        foreach ($requiredTables as $tableName) {
+            $statement->execute(['table_name' => $tableName]);
+
+            if ((int) $statement->fetchColumn() !== 1) {
+                throw new PDOException("Tabela obrigatoria ausente: {$tableName}");
+            }
         }
     }
 }
