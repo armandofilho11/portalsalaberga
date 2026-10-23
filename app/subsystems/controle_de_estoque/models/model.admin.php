@@ -141,7 +141,7 @@ class admin extends liberador
                 return 3;
             }
         } catch (Exception $e) {
-
+            error_log("Erro ao cadastrar ambiente: " . $e->getMessage());
             return 0;
         }
     }
@@ -169,7 +169,7 @@ class admin extends liberador
                 return 3;
             }
         } catch (Exception $e) {
-
+            error_log("Erro ao editar ambiente: " . $e->getMessage());
             return 0;
         }
     }
@@ -180,6 +180,7 @@ class admin extends liberador
                 return 4;
             }
 
+            $this->connect->beginTransaction();
             $stmt_check = $this->connect->prepare("SELECT * FROM $this->table5 WHERE id = :id");
             $stmt_check->bindValue(":id", $id_ambiente);
             $stmt_check->execute();
@@ -190,21 +191,25 @@ class admin extends liberador
                 $stmt_check->bindValue(":id", $id_ambiente);
                 $stmt_check->execute();
                 
-                $stmt_check = $this->connect->prepare("DELETE FROM `ambientes` WHERE id =:id");
+                $stmt_check = $this->connect->prepare("DELETE FROM $this->table5 WHERE id = :id");
                 $stmt_check->bindValue(":id", $id_ambiente);
 
                 if ($stmt_check->execute()) {
-
+                    $this->connect->commit();
                     return 1;
                 } else {
+                    $this->connect->rollBack();
                     return 2;
                 }
             } else {
-
+                $this->connect->rollBack();
                 return 3;
             }
         } catch (Exception $e) {
-
+            if ($this->connect->inTransaction()) {
+                $this->connect->rollBack();
+            }
+            error_log("Erro ao excluir ambiente: " . $e->getMessage());
             return 0;
         }
     }

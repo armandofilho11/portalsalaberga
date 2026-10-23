@@ -563,7 +563,18 @@ $select = new select();
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <?php
             $ambientes = $select->select_ambientes();
-            foreach ($ambientes as $ambiente) { ?>
+            foreach ($ambientes as $ambiente) {
+                $idAmbiente = (int) $ambiente['id'];
+                $nomeAmbienteJson = htmlspecialchars(
+                    json_encode(
+                        $ambiente['nome_ambiente'],
+                        JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT
+                    ),
+                    ENT_QUOTES,
+                    'UTF-8'
+                );
+                $ambientePadrao = $idAmbiente === 2;
+                ?>
                 <div class="report-card bg-white border-2 border-primary rounded-xl shadow-card p-6 flex flex-col items-center animate-fade-in">
                     <div class="card-shine"></div>
                     <div class="card-icon w-16 h-16 text-primary mb-4 flex items-center justify-center">
@@ -572,8 +583,8 @@ $select = new select();
                     <h3 class="text-lg font-bold text-primary mb-2 text-center"><?= htmlspecialchars($ambiente['nome_ambiente']) ?></h3>
                     <p class="text-gray-600 text-center mb-4 text-sm">Ambiente cadastrado</p>
                     <div class="flex space-x-2 w-full">
-                        <button onclick="openEditAmbiente(<?= json_encode($ambiente['id']) ?>, '<?= addslashes($ambiente['nome_ambiente']) ?>')" class="flex-1 bg-primary text-white py-2 px-4 rounded-lg hover:bg-dark transition-all font-medium text-sm">Editar</button>
-                        <button onclick="openDeleteAmbiente(<?= json_encode($ambiente['id']) ?>, '<?= addslashes($ambiente['nome_ambiente']) ?>')" class="flex-1 bg-danger text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-all font-medium text-sm">Excluir</button>
+                        <button type="button" onclick="openEditAmbiente(<?= $idAmbiente ?>, <?= $nomeAmbienteJson ?>)" class="flex-1 bg-primary text-white py-2 px-4 rounded-lg hover:bg-dark transition-all font-medium text-sm">Editar</button>
+                        <button type="button" onclick="openDeleteAmbiente(<?= $idAmbiente ?>, <?= $nomeAmbienteJson ?>)" class="flex-1 bg-danger text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-all font-medium text-sm disabled:cursor-not-allowed disabled:opacity-50" <?= $ambientePadrao ? 'disabled title="O ambiente padrão não pode ser excluído."' : '' ?>>Excluir</button>
                     </div>
                 </div>
             <?php } ?>
@@ -779,43 +790,23 @@ $select = new select();
 
             // Validação do formulário de edição
             document.getElementById('editAmbienteForm').addEventListener('submit', function(e) {
-                e.preventDefault();
                 const nome = document.getElementById('inpEditAmbienteNome').value.trim();
                 if (!nome) {
+                    e.preventDefault();
                     showNotification('Por favor, preencha o nome do ambiente.', 'error');
                     return;
                 }
+                document.getElementById('inpEditAmbienteNome').value = nome;
                 const submitBtn = this.querySelector('button[type="submit"]');
-                const originalText = submitBtn.innerHTML;
                 submitBtn.innerHTML = '<span class="loading-spinner"></span> Salvando...';
                 submitBtn.disabled = true;
-                setTimeout(() => {
-                    this.submit();
-                }, 1000);
-                setTimeout(() => {
-                    if (submitBtn.disabled) {
-                        submitBtn.innerHTML = originalText;
-                        submitBtn.disabled = false;
-                    }
-                }, 5000);
             });
 
             // Validação do formulário de exclusão
             document.getElementById('deleteAmbienteForm').addEventListener('submit', function(e) {
-                e.preventDefault();
                 const submitBtn = this.querySelector('button[type="submit"]');
-                const originalText = submitBtn.innerHTML;
                 submitBtn.innerHTML = '<span class="loading-spinner"></span> Excluindo...';
                 submitBtn.disabled = true;
-                setTimeout(() => {
-                    this.submit();
-                }, 1000);
-                setTimeout(() => {
-                    if (submitBtn.disabled) {
-                        submitBtn.innerHTML = originalText;
-                        submitBtn.disabled = false;
-                    }
-                }, 5000);
             });
 
             // Função para mostrar notificações
