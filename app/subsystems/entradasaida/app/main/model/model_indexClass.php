@@ -66,7 +66,7 @@ class MainModel extends connect
             || in_array($codigoMySql, [1054, 1146], true);
     }
 
-    private function validarRestricaoDaTurma($idAluno, $dateTime)
+    private function validarRestricaoDaTurma($idAluno, $dateTime, $tipoRegistro)
     {
         $this->mensagemRestricao = '';
 
@@ -76,10 +76,15 @@ class MainModel extends connect
                  FROM aluno a
                  INNER JOIN restricao_turma rt ON rt.id_turma = a.id_turma
                  INNER JOIN restricao r ON r.id_restricao = rt.id_restricao
-                 WHERE a.id_aluno = :id_aluno AND r.ativo = 1
+                 WHERE a.id_aluno = :id_aluno
+                   AND r.ativo = 1
+                   AND r.tipo_registro IN (:tipo_registro, \'todos\')
                  ORDER BY r.nome'
             );
-            $consulta->execute(['id_aluno' => (int) $idAluno]);
+            $consulta->execute([
+                'id_aluno' => (int) $idAluno,
+                'tipo_registro' => $tipoRegistro
+            ]);
         } catch (PDOException $e) {
             if ($this->restricaoSemSchema($e)) {
                 error_log('Tabelas/colunas de restrição ausentes; validação de horário será ignorada: ' . $e->getMessage());
@@ -189,7 +194,7 @@ class MainModel extends connect
             if ($stmt_check_aluno->rowCount() === 0) {
                 return 2; // Aluno não encontrado
             }
-            if (!$this->validarRestricaoDaTurma($id_aluno, $date_time)) {
+            if (!$this->validarRestricaoDaTurma($id_aluno, $date_time, 'saida')) {
                 return 4;
             }
 
@@ -284,7 +289,7 @@ class MainModel extends connect
             if ($stmt_check_aluno->rowCount() === 0) {
                 return 2; // Aluno não encontrado
             }
-            if (!$this->validarRestricaoDaTurma($id_aluno, $date_time)) {
+            if (!$this->validarRestricaoDaTurma($id_aluno, $date_time, 'entrada')) {
                 return 4;
             }
             if (
@@ -492,7 +497,7 @@ class MainModel extends connect
             if (!$registroAtual) {
                 return 'not_found';
             }
-            if (!$this->validarRestricaoDaTurma($idAluno, $dateTime)) {
+            if (!$this->validarRestricaoDaTurma($idAluno, $dateTime, 'saida')) {
                 return 'restricted';
             }
 
@@ -560,7 +565,7 @@ class MainModel extends connect
             if (!$registroAtual) {
                 return 'not_found';
             }
-            if (!$this->validarRestricaoDaTurma($idAluno, $dateTime)) {
+            if (!$this->validarRestricaoDaTurma($idAluno, $dateTime, 'estagio')) {
                 return 'restricted';
             }
 
@@ -675,7 +680,7 @@ class MainModel extends connect
             if (!$verificarAluno->fetchColumn()) {
                 return 2;
             }
-            if (!$this->validarRestricaoDaTurma($idAluno, $dateTime)) {
+            if (!$this->validarRestricaoDaTurma($idAluno, $dateTime, 'entrada')) {
                 return 9;
             }
 
@@ -915,7 +920,7 @@ class MainModel extends connect
                 $row2 = $queryVerificar_id->fetch(PDO::FETCH_ASSOC);
                 $row = $queryVerificar->fetch(PDO::FETCH_ASSOC);
                 $id_aluno = $row['id_aluno'] ?? $row2['id_aluno'];
-                if (!$this->validarRestricaoDaTurma($id_aluno, $date_time)) {
+                if (!$this->validarRestricaoDaTurma($id_aluno, $date_time, 'estagio')) {
                     return 4;
                 }
 
