@@ -44,10 +44,12 @@
 <body class="min-h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center p-4 sm:p-6 md:p-8 select-none"
     style="background-image: url('../../assets/img/layout.png'); background-opacity: 0.3;">
 
-    <a href="../../index.php" class="fixed top-5 left-5 z-50 group flex items-center space-x-2 bg-white/80 rounded-full px-4 py-2 shadow-lg hover:bg-ceara-green transition-all duration-300">
-        <i class="fa-solid fa-arrow-left text-ceara-green group-hover:text-white"></i>
-        <span class="text-ceara-green group-hover:text-white font-medium">Voltar</span>
-    </a>
+    <?php if (isset($_GET['from']) && $_GET['from'] === 'gerenciar_acervo'): ?>
+        <a href="../gerenciar_acervo.php" class="fixed top-5 left-12 z-50 group flex items-center space-x-2 bg-white/80 rounded-full px-4 py-2 shadow-lg hover:bg-ceara-green transition-all duration-300">
+            <i class="fa-solid fa-arrow-left text-ceara-green group-hover:text-white"></i>
+            <span class="text-ceara-green group-hover:text-white font-medium">Voltar</span>
+        </a>
+    <?php endif; ?>
 
     <div class="bg-white bg-opacity-90 rounded-xl shadow-2xl p-8 w-full max-w-md transform transition-all duration-300">
         <div class="text-center mb-10">
@@ -56,15 +58,23 @@
         </div>
 
         <div class="space-y-5">
-        <a href="./relatorio_acervo.php"
+            <a href="./relatorio_acervo.php?from=decisao"
                 class="card-hover block w-full bg-gray-50 border border-gray-200 text-gray-700 font-semibold py-4 px-6 rounded-lg transition-all duration-300 flex items-center justify-between hover:bg-gray-100">
                 <span class="flex items-center">
                     <i class="fas fa-tags mr-4 text-xl text-ceara-green"></i>
-                    <span class="text-lg">Relatório geral</span>
+                    <span class="text-lg">Relatório Geral</span>
                 </span>
                 <i class="fas fa-chevron-right text-gray-400"></i>
             </a>
-            <a href="./relatorios.php"
+            <a href="./relatorio_emprestimo.php?from=decisao"
+                class="card-hover block w-full bg-gray-50 border border-gray-200 text-gray-700 font-semibold py-4 px-6 rounded-lg transition-all duration-300 flex items-center justify-between hover:bg-gray-100">
+                <span class="flex items-center">
+                    <i class="fas fa-tags mr-4 text-xl text-ceara-green"></i>
+                    <span class="text-lg">Relatório Empréstimo</span>
+                </span>
+                <i class="fas fa-chevron-right text-gray-400"></i>
+            </a>
+            <a href="./relatorios.php?from=decisao"
                 class="card-hover block w-full bg-gray-50 border border-gray-200 text-gray-700 font-semibold py-4 px-6 rounded-lg transition-all duration-300 flex items-center justify-between hover:bg-gray-100">
                 <span class="flex items-center">
                     <i class="fas fa-tags mr-4 text-xl text-ceara-green"></i>
@@ -72,28 +82,28 @@
                 </span>
                 <i class="fas fa-chevron-right text-gray-400"></i>
             </a>
-            <a href="./geral_turma.php"
+            <a href="./geral_turma.php?from=decisao"
                 class="card-hover block w-full bg-gray-50 border border-gray-200 text-gray-700 font-semibold py-4 px-6 rounded-lg transition-all duration-300 flex items-center justify-between hover:bg-gray-100">
                 <span class="flex items-center">
                     <i class="fas fa-tags mr-4 text-xl text-ceara-green"></i>
-                    <span class="text-lg">Turma geral</span>
+                    <span class="text-lg">Turma Geral</span>
                 </span>
                 <i class="fas fa-chevron-right text-gray-400"></i>
             </a>
-            <a href="./relatorio_livros.php"
+            <a href="./relatorio_livros.php?from=decisao"
                 class="card-hover block w-full bg-gray-50 border border-gray-200 text-gray-700 font-semibold py-4 px-6 rounded-lg transition-all duration-300 flex items-center justify-between hover:bg-gray-100">
                 <span class="flex items-center">
                     <i class="fas fa-tags mr-4 text-xl text-ceara-green"></i>
-                    <span class="text-lg">Relatório de livros</span>
+                    <span class="text-lg">Relatório de Livros</span>
                 </span>
                 <i class="fas fa-chevron-right text-gray-400"></i>
             </a>
         </div>
         <div class="mt-10 pt-6 border-t border-gray-200 text-center">
-            <p class="text-gray-500 text-sm font-medium">Sistema Biblioteca © 2025</p>
+            <p class="text-gray-500 text-sm font-medium">Sistema Biblioteca © 2026</p>
         </div>
     </div>
 
 </body>
 
-</html>,
+</html>

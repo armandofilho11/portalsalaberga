@@ -1,86 +1,54 @@
-<!DOCTYPE html>
-<html lang="en">
+<?php
+require_once('../../models/select_model.php');
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulário Biblioteca</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link rel="shortcut icon" href="../assets/img/icon.png" type="image/x-icon">
-    <style>
-        .card-hover {
-            transition: all 0.2s ease-in-out;
-        }
+$select_model = new select_model();
+$param = $_GET['id_livro'] ?? '';
 
-        .card-hover:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
+if (!empty($param)) {
+    // QR flow: id_livro passed via QR -> auto-decision
+    $parts = explode('_', $param);
+    $id_livro = intval($parts[0] ?? 0);
 
-        .gradient-text {
-            background: linear-gradient(45deg, #008C45, #FFA500);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-    </style>
-</head>
-<script>
-    tailwind.config = {
-        theme: {
-            extend: {
-                colors: {
-                    'ceara-green': '#008C45',
-                    'ceara-orange': '#FFA500',
-                    'ceara-white': '#FFFFFF',
-                    primary: '#4CAF50',
-                    secondary: '#FFB74D',
-                }
-            }
-        }
+    if (!$id_livro) {
+        http_response_code(400);
+        echo 'Parâmetro id_livro inválido.';
+        exit;
     }
-</script>
 
-<body class="min-h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center p-4 sm:p-6 md:p-8 select-none"
-    style="background-image: url('../../assets/img/layout.png'); background-opacity: 0.3;">
+    $livro = $select_model->id_livro_selecionado($id_livro);
+    if (!$livro) {
+        http_response_code(404);
+        echo 'Livro não encontrado.';
+        exit;
+    }
 
-    <a href="../../index.php" class="fixed top-5 left-5 z-50 group flex items-center space-x-2 bg-white/80 rounded-full px-4 py-2 shadow-lg hover:bg-ceara-green transition-all duration-300">
-        <i class="fa-solid fa-arrow-left text-ceara-green group-hover:text-white"></i>
-        <span class="text-ceara-green group-hover:text-white font-medium">Voltar</span>
-    </a>
+    $activeCount = $select_model->count_emprestimos_ativos_por_catalogo($id_livro);
+    $activeLoan = $select_model->select_emprestimo_ativo_por_catalogo($id_livro);
 
-    <div class="bg-white bg-opacity-90 rounded-xl shadow-2xl p-8 w-full max-w-md transform transition-all duration-300">
-        <div class="text-center mb-10">
-            <h1 class="text-4xl font-bold text-black-500 mb-3 tracking-tight gradient-text">Sistema Biblioteca</h1>
-            <p class="text-gray-600 text-lg">Escolha uma opção para continuar</p>
-        </div>
-
-        <div class="space-y-5">
-            <a href="emprestimo_livro.php?id_livro=<?php echo $_GET['id_livro'] ?? ''?>"
-                class="card-hover block w-full bg-gray-50 border border-gray-200 text-gray-700 font-semibold py-4 px-6 rounded-lg transition-all duration-300 flex items-center justify-between hover:bg-gray-100">
-                <span class="flex items-center">
-                    <i class="fas fa-tags mr-4 text-xl text-ceara-green"></i>
-                    <span class="text-lg">Empréstimo</span>
-                </span>
-                <i class="fas fa-chevron-right text-gray-400"></i>
-            </a>
-        </div>
-
-        <div class="space-y-5">
-            <a href="devolucao_livro.php"
-                class="card-hover block w-full bg-gray-50 border border-gray-200 text-gray-700 font-semibold py-4 px-6 rounded-lg transition-all duration-300 flex items-center justify-between hover:bg-gray-100">
-                <span class="flex items-center">
-                    <i class="fas fa-tags mr-4 text-xl text-ceara-green"></i>
-                    <span class="text-lg">Devolução</span>
-                </span>
-                <i class="fas fa-chevron-right text-gray-400"></i>
-            </a>
-        </div>
-        <div class="mt-10 pt-6 border-t border-gray-200 text-center">
-            <p class="text-gray-500 text-sm font-medium">Sistema Biblioteca © 2025</p>
-        </div>
-    </div>
-
-</body>
-
-</html>
+    // Definição do destino (emprestimo ou devolução)
+        // Prioriza devolução quando houver empréstimo ativo para este catálogo
+        if ($activeLoan) {
+            $sessao_alvo = 'devolucao_livro';
+            $url_final = 'views/emprestimo/devolucao_livro.php?id_emprestimo=' . $activeLoan['id'];
+        } else if (intval($livro['quantidade']) > $activeCount) {
+            $sessao_alvo = 'emprestimo_livro';
+            $url_final = 'views/emprestimo/emprestimo_livro.php?id_livro=' . $id_livro;
+        } else {
+            $sessao_alvo = 'emprestimo_livro';
+            $url_final = 'views/emprestimo/emprestimo_livro.php?id_livro=' . $id_livro;
+        }
+        ?>
+        <script>
+            // Se a página atual for a janela principal (o usuário leu o QR Code pela câmera externa)
+            if (window.top === window.self) {
+                // Redireciona para o index.php passando as coordenadas de qual sessão abrir
+                window.location.href = "../../../index.php?action=<?php echo $sessao_alvo; ?>&target_url=<?php echo urlencode($url_final); ?>";
+            } else {
+                // Se já estiver rodando dentro do iframe do sistema, avisa o Dashboard pai
+                window.parent.ativarSessaoPeloQrCode("<?php echo $sessao_alvo; ?>", "<?php echo $url_final; ?>");
+            }
+        </script>
+        <?php
+        exit;
+    }   
+?>

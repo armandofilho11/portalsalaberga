@@ -63,9 +63,14 @@ class qrCode1 extends connect
             // Determinar a edição para a URL
             $edicao_url = ($edicao == 'ENI*' || empty($edicao)) ? '0' : $edicao;
 
-            // Dados do QR Code
-            $dados = "https://salaberga.com/salaberga/portalsalaberga/app/subsystems/biblioteca/app/main/views/emprestimo/decisao.php?id_livro=" . $id_livro . "_" . $edicao_url . "_" . $numero . "_" . $estante . "_" . $prateleira;
-
+            // Diferenciar o ambiente de desenvolvimento (localhost) do ambiente de produção para a URL do QR code
+            $host = $_SERVER['HTTP_HOST'];
+            if (strpos($host, 'localhost') !== false) {
+                $dados = "http://localhost/app/subsystems/biblioteca/app/main/index.php?qr_livro=" . urlencode($id_livro . "_" . $edicao_url . "_" . $numero . "_" . $estante . "_" . $prateleira);
+            } else {
+                $dados = "https://salaberga.com/salaberga/portalsalaberga/app/subsystems/biblioteca/app/main/index.php?qr_livro=" . urlencode($id_livro . "_" . $edicao_url . "_" . $numero . "_" . $estante . "_" . $prateleira);
+            }
+    
             // Usar um nome de arquivo único para cada QR Code
             $arquivo_qrcode = __DIR__ . "/qrcode_" . $id_livro . "_" . $numero . ".png";
 

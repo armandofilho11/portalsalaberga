@@ -8,13 +8,6 @@ $select_model = new select_model();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <?php
-    // Verifica se algum dos parâmetros está presente
-    if (isset($_GET['true']) || isset($_GET['erro']) || isset($_GET['ja_cadastrado'])) {
-        // Redireciona após 3 segundos
-        echo '<meta http-equiv="refresh" content="3; url=https://salaberga.com/salaberga/portalsalaberga/app/subsystems/biblioteca/app/main/views/decisão.php">';
-    }
-    ?>
     <title>Cadastro de Gêneros Bibliográficos</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
@@ -39,14 +32,15 @@ $select_model = new select_model();
 <body class="min-h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center p-4 sm:p-6 md:p-8 select-none"
     style="background-image: url('../assets/img/layout.png'); background-opacity: 0.3;">
 
-  
-    <a href="decisão.php" class="fixed top-5 left-5 z-50 group flex items-center space-x-2 bg-white/80 rounded-full px-4 py-2 shadow-lg hover:bg-ceara-green transition-all duration-300">
-        <i class="fa-solid fa-arrow-left text-ceara-green group-hover:text-white"></i>
-        <span class="text-ceara-green group-hover:text-white font-medium">Voltar</span>
-    </a>
+    <?php if (isset($_GET['from']) && $_GET['from'] === 'classificacao'): ?>
+        <a href="classificacao.php" class="fixed top-5 left-12 z-50 group flex items-center space-x-2 bg-white/80 rounded-full px-4 py-2 shadow-lg hover:bg-ceara-green transition-all duration-300">
+            <i class="fa-solid fa-arrow-left text-ceara-green group-hover:text-white"></i>
+            <span class="text-ceara-green group-hover:text-white font-medium">Voltar</span>
+        </a>
+    <?php endif; ?>
 
     <div class="flex flex-col items-center">
-        <img src="../assets/img/logo1.png" class="w-[250px] h-auto xs:w-[280px] sm:w-[320px] md:w-[350px] lg:w-[400px] mt-[-150px]" alt="Logo">
+        <!-- <img src="../assets/img/logo1.png" class="w-[250px] h-auto xs:w-[280px] sm:w-[320px] md:w-[350px] lg:w-[400px] mt-[-150px]" alt="Logo"> -->
 
         <div class="w-full max-w-xl h-full bg-white rounded-xl shadow-2xl overflow-hidden ">
             <div class="bg-[#007A33] p-4 sm:p-6">
@@ -84,7 +78,7 @@ $select_model = new select_model();
                         <i class="fas fa-book-open absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-hover:text-[#007A33] transition-colors duration-200"></i>
                         <input type="text" id="subgenero" name="subgenero"
                             class="w-full pl-10 pr-3 py-2.5 border-2 border-gray-200 rounded-lg focus:border-[#007A33] focus:ring focus:ring-[#007A33]/20 focus:outline-none hover:border-gray-300 transition-all duration-200 shadow-sm text-gray-500"
-                            placeholder="Digite o Subgênero" required>
+                            placeholder="Digite o novo subgênero" required>
                     </div>
                 </div>
 
@@ -141,6 +135,21 @@ $select_model = new select_model();
             });
 
         });
+    </script>
+    <script>
+        (function(){
+            const params = new URLSearchParams(window.location.search);
+            if (params.has('true') || params.has('false') || params.has('erro') || params.has('error') || params.has('ja_cadastrado')) {
+                setTimeout(function(){
+                    try {
+                        if (window.parent && typeof window.parent.alternarSecaoEfetiva === 'function') {
+                            window.parent.alternarSecaoEfetiva('dashboard');
+                        }
+                    } catch(e){}
+                    const f = document.querySelector('form'); if (f) f.reset();
+                }, 3000);
+            }
+        })();
     </script>
 </body>
 
