@@ -1248,37 +1248,10 @@ html,body{margin:0;min-height:100%;font-family:'Inter',sans-serif;color:var(--sa
             pointer-events: none;
         }
 
-        .stage-exit-fireworks span {
-            position: absolute;
-            font-size: clamp(2rem, 5vw, 3.5rem);
-            opacity: 0;
-        }
-
-        .stage-exit-confirmation.is-kauan-success .stage-exit-fireworks span {
-            animation: stage-firework-burst 1.2s ease-out both;
-        }
-
-        .stage-exit-fireworks span:nth-child(1) {
-            top: 16%;
-            left: 14%;
-        }
-
-        .stage-exit-fireworks span:nth-child(2) {
-            top: 20%;
-            right: 14%;
-            animation-delay: .18s;
-        }
-
-        .stage-exit-fireworks span:nth-child(3) {
-            right: 18%;
-            bottom: 13%;
-            animation-delay: .36s;
-        }
-
-        @keyframes stage-firework-burst {
-            15% { opacity: 1; transform: scale(.45) rotate(-15deg); }
-            55% { opacity: 1; transform: scale(1.15) rotate(8deg); }
-            100% { opacity: 0; transform: scale(1.5) rotate(15deg); }
+        .stage-exit-fireworks canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
         }
 
         @keyframes stage-success-background {
@@ -1440,8 +1413,7 @@ html,body{margin:0;min-height:100%;font-family:'Inter',sans-serif;color:var(--sa
         @media (prefers-reduced-motion: reduce) {
             .stage-exit-confirmation::before,
             .stage-exit-confirmation-icon,
-            .stage-exit-confirmation-dots span,
-            .stage-exit-confirmation.is-kauan-success .stage-exit-fireworks span {
+            .stage-exit-confirmation-dots span {
                 animation: none;
             }
         }
@@ -6089,7 +6061,7 @@ input[type="radio"] {
     <div class="success-toast-progress" aria-hidden="true"></div>
 </div>
 <div class="stage-exit-confirmation" id="stage-exit-confirmation" role="status" aria-live="assertive" aria-atomic="true" hidden>
-    <div class="stage-exit-fireworks" aria-hidden="true"><span>🎆</span><span>🎇</span><span>🎆</span></div>
+    <div class="stage-exit-fireworks" aria-hidden="true"><canvas></canvas></div>
     <div class="stage-exit-confirmation-container">
         <div class="stage-exit-confirmation-card">
             <div class="stage-exit-confirmation-icon" aria-hidden="true"><i class="fas fa-check"></i></div>
@@ -11273,6 +11245,7 @@ function normalizeStudentSearch(value) {
     let qrBusy = false;
     let exitConfirmationTimeout = null;
     let exitConfirmationHideTimeout = null;
+    let stopStageFireworks = null;
 
     function formatDate(date) {
         return typeof date === 'string' ? date.split('-').reverse().join('/') : '';
@@ -11302,6 +11275,107 @@ function normalizeStudentSearch(value) {
         }, 4000);
     }
 
+    function startStageFireworks(container) {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return null;
+
+        const canvas = container.querySelector('.stage-exit-fireworks canvas');
+        const context = canvas?.getContext('2d');
+        if (!canvas || !context) return null;
+
+        const colors = ['#fff176', '#ff4d8d', '#72f1ff', '#ffffff', '#a7ff83', '#ff9f43'];
+        const particles = [];
+        const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+        let animationFrame = null;
+        let stopped = false;
+        let width = 0;
+        let height = 0;
+
+        const resizeCanvas = () => {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = Math.round(width * pixelRatio);
+            canvas.height = Math.round(height * pixelRatio);
+            context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+        };
+
+        const burst = (x, y, color) => {
+            const particleCount = 120;
+            for (let index = 0; index < particleCount; index += 1) {
+                const angle = (Math.PI * 2 * index) / particleCount + Math.random() * 0.08;
+                const speed = 2 + Math.random() * 6.5;
+                const life = 45 + Math.floor(Math.random() * 35);
+                particles.push({
+                    x,
+                    y,
+                    previousX: x,
+                    previousY: y,
+                    velocityX: Math.cos(angle) * speed,
+                    velocityY: Math.sin(angle) * speed,
+                    color: Math.random() < 0.72 ? color : colors[Math.floor(Math.random() * colors.length)],
+                    life,
+                    maxLife: life,
+                    size: 1.5 + Math.random() * 2
+                });
+            }
+        };
+
+        const stop = () => {
+            if (stopped) return;
+            stopped = true;
+            if (animationFrame !== null) window.cancelAnimationFrame(animationFrame);
+            window.removeEventListener('resize', resizeCanvas);
+            context.clearRect(0, 0, width, height);
+        };
+
+        const animate = () => {
+            if (stopped) return;
+            context.clearRect(0, 0, width, height);
+
+            for (let index = particles.length - 1; index >= 0; index -= 1) {
+                const particle = particles[index];
+                particle.previousX = particle.x;
+                particle.previousY = particle.y;
+                particle.x += particle.velocityX;
+                particle.y += particle.velocityY;
+                particle.velocityX *= 0.986;
+                particle.velocityY = particle.velocityY * 0.986 + 0.035;
+                particle.life -= 1;
+
+                if (particle.life <= 0) {
+                    particles.splice(index, 1);
+                    continue;
+                }
+
+                context.globalAlpha = particle.life / particle.maxLife;
+                context.beginPath();
+                context.moveTo(particle.previousX, particle.previousY);
+                context.lineTo(particle.x, particle.y);
+                context.strokeStyle = particle.color;
+                context.lineWidth = particle.size;
+                context.shadowBlur = 10;
+                context.shadowColor = particle.color;
+                context.stroke();
+            }
+
+            context.globalAlpha = 1;
+            context.shadowBlur = 0;
+            if (particles.length) {
+                animationFrame = window.requestAnimationFrame(animate);
+            } else {
+                stop();
+            }
+        };
+
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        burst(width * 0.16, height * 0.2, '#ff9f43');
+        burst(width * 0.84, height * 0.2, '#ff4d8d');
+        burst(width * 0.2, height * 0.72, '#fff176');
+        burst(width * 0.8, height * 0.72, '#72f1ff');
+        animationFrame = window.requestAnimationFrame(animate);
+        return stop;
+    }
+
     function showExitConfirmation(exit, isError = false, errorMessage = '', options = {}) {
         const confirmation = document.getElementById('stage-exit-confirmation');
         const title = document.getElementById('stage-exit-confirmation-title');
@@ -11316,6 +11390,8 @@ function normalizeStudentSearch(value) {
 
         window.clearTimeout(exitConfirmationTimeout);
         window.clearTimeout(exitConfirmationHideTimeout);
+        stopStageFireworks?.();
+        stopStageFireworks = null;
         const isPending = options.pending === true;
         const studentName = String(exit.nome || '')
             .normalize('NFD')
@@ -11325,7 +11401,10 @@ function normalizeStudentSearch(value) {
             .toLocaleUpperCase('pt-BR');
         const isKauanSuccessfulExit = !isError
             && !isPending
-            && studentName === 'KAUAN CRISTIAN SANTO DE LIMA';
+            && [
+                'KAUAN CRISTIAN SANTO DE LIMA',
+                'KAUAN CRISTIAN SANTOS DE LIMA'
+            ].includes(studentName);
         confirmation.classList.toggle('is-kauan-success', isKauanSuccessfulExit);
         confirmation.classList.toggle('is-error', isError && !isPending);
         confirmation.classList.toggle('is-pending', isPending);
@@ -11359,15 +11438,13 @@ function normalizeStudentSearch(value) {
         confirmation.hidden = false;
         confirmation.classList.remove('visible');
         if (isKauanSuccessfulExit) {
-            confirmation.querySelectorAll('.stage-exit-fireworks span').forEach(firework => {
-                firework.style.animation = 'none';
-                void firework.offsetWidth;
-                firework.style.animation = '';
-            });
+            stopStageFireworks = startStageFireworks(confirmation);
         }
         requestAnimationFrame(() => confirmation.classList.add('visible'));
         exitConfirmationTimeout = window.setTimeout(() => {
             confirmation.classList.remove('visible');
+            stopStageFireworks?.();
+            stopStageFireworks = null;
             exitConfirmationHideTimeout = window.setTimeout(() => {
                 confirmation.hidden = true;
                 exitConfirmationHideTimeout = null;

@@ -16,6 +16,20 @@ class select_model extends connect
         $this->catalogo = "catalogo";
     }
 
+    private function nomeTurmaExibicao($serie, $nomeTurma)
+    {
+        $serie = trim((string) $serie);
+        $nomeTurma = trim((string) $nomeTurma);
+        if ($serie === '') {
+            return $nomeTurma;
+        }
+
+        $serieRegex = preg_quote($serie, '/');
+        $nomeTurma = preg_replace('/^(?:' . $serieRegex . '\s*(?:º|°)?\s*)+/iu', '', $nomeTurma);
+
+        return trim($serie . 'º ' . $nomeTurma);
+    }
+
     // protected function alunoTable($table)
     // {
     //     if (!empty($this->alunosDatabase)) {
@@ -356,13 +370,7 @@ class select_model extends connect
             if ($info) {
                 $serie = isset($info['serie_turma']) && $info['serie_turma'] !== '' ? trim((string)$info['serie_turma']) : '';
                 $nomeTurma = isset($info['nome_turma']) && $info['nome_turma'] !== '' ? trim((string)$info['nome_turma']) : '';
-                $turma = '';
-                if ($serie !== '') {
-                    $turma .= $serie . 'º ';
-                }
-                if ($nomeTurma !== '') {
-                    $turma .= $nomeTurma;
-                }
+                $turma = $this->nomeTurmaExibicao($serie, $nomeTurma);
                 if ($turma === '' && isset($info['sala_turma']) && $info['sala_turma'] !== '') {
                     $turma = 'Sala ' . $info['sala_turma'];
                 }
@@ -526,13 +534,7 @@ class select_model extends connect
             if ($info) {
                 $serie = isset($info['serie_turma']) && $info['serie_turma'] !== '' ? trim((string)$info['serie_turma']) : '';
                 $nomeTurma = isset($info['nome_turma']) && $info['nome_turma'] !== '' ? trim((string)$info['nome_turma']) : '';
-                $turma = '';
-                if ($serie !== '') {
-                    $turma .= $serie . 'º ';
-                }
-                if ($nomeTurma !== '') {
-                    $turma .= $nomeTurma;
-                }
+                $turma = $this->nomeTurmaExibicao($serie, $nomeTurma);
                 if ($turma === '' && isset($info['sala_turma']) && $info['sala_turma'] !== '') {
                     $turma = 'Sala ' . $info['sala_turma'];
                 }
@@ -559,7 +561,8 @@ class select_model extends connect
         }
         try {
             $sql = "SELECT 
-                        CONCAT(serie_turma, 'º ', nome_turma) AS nome_turma
+                        serie_turma,
+                        nome_turma
                     FROM " . $this->connect_alunos . ".turmas
                     WHERE id_turma = :id_turma";
             $stmt = $this->connect_biblioteca->prepare($sql);
@@ -567,7 +570,9 @@ class select_model extends connect
             $stmt->execute();
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            return $result ? $result['nome_turma'] : false;
+            return $result
+                ? $this->nomeTurmaExibicao($result['serie_turma'], $result['nome_turma'])
+                : false;
         } catch (PDOException $e) {
             error_log("Erro ao buscar nome da turma no model: " . $e->getMessage());
             return false;
@@ -658,13 +663,21 @@ class select_model extends connect
                         nome_turma,
                         serie_turma,
                         sala_turma,
-                        ano_letivo,
-                        CONCAT(serie_turma, 'º ', nome_turma) AS nome_exibicao
+                        ano_letivo
                     FROM " . $this->connect_alunos . ".turmas
                     ORDER BY ano_letivo DESC, serie_turma, nome_turma";
             $stmt = $this->connect_biblioteca->prepare($sql);
             $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $turmas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($turmas as &$turma) {
+                $turma['nome_exibicao'] = $this->nomeTurmaExibicao(
+                    $turma['serie_turma'],
+                    $turma['nome_turma']
+                );
+            }
+            unset($turma);
+
+            return $turmas;
         } catch (PDOException $e) {
             error_log("Erro ao buscar turmas no model: " . $e->getMessage());
             return false;
