@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teste Completo de Registro de Aluno - Simulação</title>
+    <style>
+        body { font-family: Arial; margin: 20px; max-width: 1200px; }
+        .container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .section { border: 1px solid #ddd; padding: 15px; border-radius: 5px; }
+        h2 { margin-top: 0; }
+        button { padding: 8px 15px; margin: 5px; cursor: pointer; }
+        input, select { display: block; width: 100%; padding: 8px; margin: 8px 0; box-sizing: border-box; }
+        .log { border: 1px solid #ccc; padding: 10px; height: 300px; overflow: auto; font-family: monospace; font-size: 12px; background: #f5f5f5; }
+        .log-entry { margin: 5px 0; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; }
+        .modal.visible { display: flex; justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 20px; border-radius: 8px; min-width: 400px; }
+        .modal-header { font-size: 18px; font-weight: bold; margin-bottom: 15px; }
+        .modal-body { margin: 15px 0; }
+        .modal-footer { margin-top: 15px; text-align: right; }
+    </style>
+</head>
+<body>
+    <h1>Teste Completo do Fluxo de Registro de Aluno</h1>
+    <div class="container">
+        <div class="section">
+            <h2>1️⃣ Simulação de Cliques</h2>
+            <p>Simula o usuário clicando em "Entrar" numa turma</p>
+            <button onclick="simularCliqueBotaoEntrar()">Clicar em "Entrar" (Turma ID: 1)</button>
+            <p id="estado-turma" style="margin-top: 10px; font-weight: bold;"></p>
+        </div>
+
+        <div class="section">
+            <h2>2️⃣ Log de Eventos</h2>
+            <div class="log" id="log"></div>
+            <button onclick="document.getElementById('log').innerHTML = ''" style="width: 100%; margin-top: 10px;">Limpar Log</button>
+        </div>
+    </div>
+
+    <!-- Modal de Alunos -->
+    <div class="modal" id="modalAlunos">
+        <div class="modal-content">
+            <div class="modal-header">Gerenciar Alunos</div>
+            <div class="modal-body">
+                <p>Turma selecionada: <strong id="turmaNoModal">-</strong></p>
+                <p>turmaIdModal.value: <strong id="turmaIdModalValue">-</strong></p>
+                <input type="hidden" id="turmaIdModal">
+                <button onclick="abrirModalRegistrar()">Registrar Aluno</button>
+                <button onclick="fecharModalAlunos()">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Registrar Aluno -->
+    <div class="modal" id="modalRegistrar">
+        <div class="modal-content">
+            <div class="modal-header">Registrar Aluno</div>
+            <div class="modal-body">
+                <p>Turma ID (deve estar preenchido): <strong id="turmaIdRegistrarDisplay">-</strong></p>
+                <input type="hidden" id="turmaIdRegistrar">
+                <input type="text" id="nomeAluno" placeholder="Nome">
+                <input type="text" id="matriculaAluno" placeholder="Matrícula (7 dígitos)" maxlength="7">
+                <input type="email" id="emailAluno" placeholder="Email">
+                <select id="pcdAluno">
+                    <option value="nao">PCD: Não</option>
+                    <option value="sim">PCD: Sim</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button onclick="registrarAluno()">Registrar</button>
+                <button onclick="fecharModalRegistrar()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let turmaAtualId = null;
+
+        function addLog(msg, type = 'info') {
+            const time = new Date().toLocaleTimeString();
+            const logEl = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${time}] ${msg}`;
+            logEl.appendChild(entry);
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        function simularCliqueBotaoEntrar() {
+            addLog('👆 Clicou no botão "Entrar"', 'info');
+            turmaAtualId = '1';
+            addLog(`✅ turmaAtualId setado para: ${turmaAtualId}`, 'success');
+            
+            // Simular o que faz abrirModalAlunos
+            const turmaIdModal = document.getElementById('turmaIdModal');
+            turmaIdModal.value = turmaAtualId;
+            addLog(`✅ turmaIdModal.value setado para: ${turmaIdModal.value}`, 'success');
+            
+            document.getElementById('turmaNoModal').textContent = turmaAtualId;
+            document.getElementById('turmaIdModalValue').textContent = turmaIdModal.value;
+            const estadoEl = document.getElementById('estado-turma');
+            if (estadoEl) estadoEl.textContent = `✅ Turma ${turmaAtualId} selecionada`;
+            
+            // Abrir modal
+            document.getElementById('modalAlunos').classList.add('visible');
+            addLog('📂 Modal de alunos aberto', 'info');
+        }
+
+        function abrirModalRegistrar() {
+            addLog('👆 Clicou no botão "Registrar Aluno"', 'info');
+            
+            // Simular abrirModalRegistrarAluno
+            const turmaIdModal = document.getElementById('turmaIdModal');
+            const turmaIdRegistrar = document.getElementById('turmaIdRegistrar');
+            
+            addLog(`🔍 Verificando turmaIdModal.value: "${turmaIdModal.value}"`, 'info');
+            
+            if (turmaIdModal.value) {
+                turmaIdRegistrar.value = turmaIdModal.value;
+                addLog(`✅ turmaIdRegistrar.value setado para: ${turmaIdRegistrar.value}`, 'success');
+            } else {
+                addLog(`❌ turmaIdModal.value está vazio!`, 'error');
+                alert('Erro: Turma não foi selecionada!');
+                return;
+            }
+
+            document.getElementById('turmaIdRegistrarDisplay').textContent = turmaIdRegistrar.value;
+            document.getElementById('modalAlunos').classList.remove('visible');
+            document.getElementById('modalRegistrar').classList.add('visible');
+            addLog('📂 Modal de registrar aluno aberto', 'info');
+        }
+
+        function registrarAluno() {
+            const turmaIdRegistrar = document.getElementById('turmaIdRegistrar');
+            const nome = document.getElementById('nomeAluno').value;
+            const matricula = document.getElementById('matriculaAluno').value;
+            const email = document.getElementById('emailAluno').value;
+            const pcd = document.getElementById('pcdAluno').value;
+
+            addLog('👆 Clicou no botão "Registrar"', 'info');
+            addLog(`📋 Dados do formulário: nome="${nome}", matricula="${matricula}", email="${email}", turmaId="${turmaIdRegistrar.value}"`, 'info');
+
+            if (!turmaIdRegistrar.value) {
+                addLog(`❌ ERRO: turmaId não foi preenchido!`, 'error');
+                alert('Erro: Turma não foi selecionada!');
+                return;
+            }
+
+            const data = {
+                nome, matricula, email, pcd, rendimento: 0,
+                turma_id: parseInt(turmaIdRegistrar.value)
+            };
+
+            addLog(`📤 Enviando para backend: ${JSON.stringify(data)}`, 'info');
+
+            fetch('../../app/main/controllers/aluno_controller.php?action=cadastrar_aluno', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            })
+            .then(r => r.json())
+            .then(j => {
+                if (j.sucesso) {
+                    addLog(`✅ Aluno registrado com sucesso! ID: ${j.id_aluno}`, 'success');
+                    fecharModalRegistrar();
+                } else {
+                    addLog(`❌ Erro do servidor: ${j.erro}`, 'error');
+                }
+            })
+            .catch(err => {
+                addLog(`❌ Erro: ${err.message}`, 'error');
+            });
+        }
+
+        function fecharModalAlunos() {
+            document.getElementById('modalAlunos').classList.remove('visible');
+            addLog('📂 Modal de alunos fechado', 'info');
+        }
+
+        function fecharModalRegistrar() {
+            document.getElementById('modalRegistrar').classList.remove('visible');
+            addLog('📂 Modal de registrar aluno fechado', 'info');
+        }
+
+        addLog('Página carregada. Clique em "Clicar em Entrar" para começar.', 'info');
+    </script>
+</body>
+</html>

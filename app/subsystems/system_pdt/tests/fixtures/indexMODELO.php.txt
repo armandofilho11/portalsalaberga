@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistema PCD</title>
+
+  <!-- Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    :root {
+      --c1: #005A24;
+      --c2: #007A33;
+      --c3: #4CAF50;
+      --c4: #8BC34A;
+      --gold: #FFD700;
+      --amber: #FF8C00;
+      --peach: #FFB74D;
+      --bg: #020E06;
+      --surface: #061409;
+      --surface2: #091C0D;
+      --border: rgba(76,175,80,0.14);
+      --text-muted: rgba(255,255,255,0.42);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; font-family: 'Poppins', sans-serif; background: var(--bg); color: #fff; overflow: hidden; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--c2); border-radius: 4px; }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 244px; min-width: 244px;
+      background: linear-gradient(170deg, #003D18 0%, #002210 60%, #001A0C 100%);
+      border-right: 1px solid rgba(76,175,80,0.18);
+      display: flex; flex-direction: column;
+      position: relative; overflow: hidden;
+    }
+    .sidebar::before {
+      content:''; position:absolute; bottom:-80px; left:-80px;
+      width:260px; height:260px; border-radius:50%;
+      background: radial-gradient(circle, rgba(255,215,0,0.06) 0%, transparent 70%);
+      pointer-events:none;
+    }
+    .sidebar::after {
+      content:''; position:absolute; top:-60px; right:-60px;
+      width:180px; height:180px; border-radius:50%;
+      background: radial-gradient(circle, rgba(76,175,80,0.06) 0%, transparent 70%);
+      pointer-events:none;
+    }
+    .nav-item {
+      display:flex; align-items:center; gap:11px;
+      padding:10px 14px; border-radius:10px; cursor:pointer;
+      transition: all 0.2s ease;
+      color: rgba(255,255,255,0.5); font-size:13.5px; font-weight:500;
+      border: 1px solid transparent; margin: 2px 10px;
+    }
+    .nav-item:hover { color:#fff; background:rgba(255,255,255,0.07); }
+    .nav-item.active {
+      color:#fff; background:rgba(76,175,80,0.16);
+      border-color:rgba(76,175,80,0.32);
+      box-shadow: 0 0 24px rgba(76,175,80,0.1);
+    }
+    .nav-item.active .ni { color: var(--gold); }
+    .ni { font-size:16px; transition:color 0.2s; flex-shrink:0; }
+
+    /* MAIN */
+    .main { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+
+    /* TOPBAR */
+    .topbar {
+      padding:13px 30px;
+      border-bottom:1px solid var(--border);
+      background:rgba(2,14,6,0.85);
+      backdrop-filter:blur(14px);
+      display:flex; align-items:center; justify-content:space-between;
+      position:sticky; top:0; z-index:20;
+    }
+
+    /* CONTENT */
+    .content { flex:1; overflow-y:auto; padding:26px 30px; }
+
+    /* PAGES */
+    .page { display:none; animation: pgIn 0.28s ease; }
+    .page.active { display:block; }
+    @keyframes pgIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+    /* CARD */
+    .card {
+      background:var(--surface2); border:1px solid var(--border);
+      border-radius:16px; transition:border-color 0.2s;
+    }
+    .card:hover { border-color:rgba(76,175,80,0.26); }
+
+    /* STAT CARD */
+    .stat-card {
+      background:var(--surface2); border:1px solid var(--border);
+      border-radius:16px; padding:22px;
+      transition:transform 0.2s, box-shadow 0.2s;
+      position:relative; overflow:hidden;
+    }
+    .stat-card:hover { transform:translateY(-3px); box-shadow:0 14px 36px rgba(0,0,0,0.35); }
+
+    /* BUTTONS */
+    .btn-p {
+      background:linear-gradient(135deg, var(--c2), var(--c3));
+      color:#fff; border:none; border-radius:10px;
+      padding:9px 20px; font-size:13.5px; font-weight:600;
+      cursor:pointer; transition:all 0.2s; font-family:'Poppins',sans-serif;
+      display:inline-flex; align-items:center; gap:7px;
+    }
+    .btn-p:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,122,51,0.38); filter:brightness(1.08); }
+    .btn-p:active { transform:none; filter:brightness(0.97); }
+    .btn-g {
+      background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);
+      color:rgba(255,255,255,0.65); border-radius:10px;
+      padding:8px 16px; font-size:13px; font-weight:500;
+      cursor:pointer; transition:all 0.2s; font-family:'Poppins',sans-serif;
+      display:inline-flex; align-items:center; gap:7px;
+    }
+    .btn-g:hover { background:rgba(255,255,255,0.09); color:#fff; border-color:rgba(255,255,255,0.18); }
+
+    /* INPUTS */
+    .inp {
+      background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);
+      color:#fff; border-radius:10px;
+      padding:10px 15px; font-size:13.5px; font-family:'Poppins',sans-serif;
+      width:100%; outline:none; transition:all 0.2s;
+    }
+    .inp::placeholder { color:rgba(255,255,255,0.28); }
+    .inp:focus { border-color:var(--c3); box-shadow:0 0 0 3px rgba(76,175,80,0.14); background:rgba(255,255,255,0.07); }
+    select.inp option { background:#091C0D; }
+    textarea.inp { resize:vertical; min-height:80px; }
+    .lbl { font-size:11.5px; font-weight:600; color:rgba(255,255,255,0.45); margin-bottom:5px; display:block; letter-spacing:0.3px; }
+
+    /* TAGS */
+    .tag { display:inline-flex; align-items:center; gap:5px; font-size:10.5px; font-weight:700; padding:3px 10px; border-radius:20px; }
+    .t-tea  { background:rgba(255,215,0,0.1); color:var(--gold); border:1px solid rgba(255,215,0,0.28); }
+    .t-tdah { background:rgba(139,195,74,0.1); color:var(--c4); border:1px solid rgba(139,195,74,0.28); }
+    .t-out  { background:rgba(255,140,0,0.1); color:var(--peach); border:1px solid rgba(255,140,0,0.28); }
+
+    /* TABLE */
+    .trow { border-top:1px solid var(--border); transition:background 0.14s; cursor:pointer; }
+    .trow:hover { background:rgba(76,175,80,0.05); }
+
+    /* TABS */
+    .tab-btn {
+      padding:7px 16px; border-radius:8px; font-size:13px; font-weight:500;
+      cursor:pointer; transition:all 0.18s; color:rgba(255,255,255,0.42);
+      border:1px solid transparent; font-family:'Poppins',sans-serif;
+    }
+    .tab-btn:hover { color:rgba(255,255,255,0.75); background:rgba(255,255,255,0.05); }
+    .tab-btn.active { background:rgba(76,175,80,0.14); color:#fff; border-color:rgba(76,175,80,0.3); }
+
+    /* CALENDAR */
+    .cal-cell {
+      min-height:82px; border-right:1px solid var(--border); border-bottom:1px solid var(--border);
+      padding:7px; transition:background 0.13s; cursor:pointer;
+    }
+    .cal-cell:hover { background:rgba(76,175,80,0.05); }
+    .cal-day {
+      width:25px; height:25px; display:flex; align-items:center; justify-content:center;
+      border-radius:50%; font-size:11.5px; font-weight:500; color:rgba(255,255,255,0.48);
+    }
+    .cal-day.today { background:var(--c2); color:#fff; font-weight:700; }
+    .ev-chip {
+      font-size:10px; font-weight:500; padding:2px 6px; border-radius:5px;
+      margin-top:3px; display:block; cursor:pointer;
+      border-left:2px solid var(--gold); background:rgba(255,215,0,0.09); color:rgba(255,255,255,0.78);
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis; transition:background 0.13s;
+    }
+    .ev-chip:hover { background:rgba(255,215,0,0.17); }
+
+    /* MODAL */
+    .modal-bg {
+      position:fixed; inset:0; background:rgba(0,0,0,0.72); backdrop-filter:blur(6px);
+      z-index:50; display:none; align-items:center; justify-content:center;
+    }
+    .modal-bg.open { display:flex; animation:mfade 0.2s ease; }
+    @keyframes mfade { from{opacity:0} to{opacity:1} }
+    .modal-box {
+      background:var(--surface2); border:1px solid rgba(76,175,80,0.22);
+      border-radius:20px; padding:26px; width:100%; max-width:450px; margin:16px;
+      animation:mslide 0.22s cubic-bezier(.4,0,.2,1);
+    }
+    @keyframes mslide { from{transform:scale(0.95);opacity:0} to{transform:scale(1);opacity:1} }
+
+    /* TOAST */
+    .toast {
+      position:fixed; bottom:26px; right:26px; z-index:100;
+      background:var(--surface2); border:1px solid rgba(76,175,80,0.3);
+      border-left:3px solid var(--c3);
+      color:#fff; padding:13px 18px; border-radius:12px;
+      font-size:13px; font-weight:500;
+      display:flex; align-items:center; gap:10px;
+      transform:translateX(120%); opacity:0;
+      transition:all 0.3s cubic-bezier(.4,0,.2,1);
+      box-shadow:0 8px 32px rgba(0,0,0,0.45);
+      max-width:320px;
+    }
+    .toast.show { transform:translateX(0); opacity:1; }
+
+    /* DOC ITEM */
+    .doc-item {
+      display:flex; align-items:center; justify-content:space-between;
+      background:rgba(255,255,255,0.03); border:1px solid var(--border);
+      border-radius:10px; padding:11px 15px; transition:all 0.16s;
+    }
+    .doc-item:hover { background:rgba(76,175,80,0.05); border-color:rgba(76,175,80,0.22); }
+
+    /* AVATAR */
+    .av {
+      border-radius:50%; display:flex; align-items:center; justify-content:center;
+      font-weight:700; background:linear-gradient(135deg,var(--c1),var(--c3)); color:#fff; flex-shrink:0;
+    }
+
+    /* EMPTY */
+    .empty {
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      padding:52px 20px; color:var(--text-muted); text-align:center; gap:4px;
+    }
+    .empty i { font-size:42px; margin-bottom:10px; color:rgba(76,175,80,0.28); }
+
+    /* SEARCH */
+    .srch { position:relative; }
+    .srch i { position:absolute; left:13px; top:50%; transform:translateY(-50%); color:rgba(255,255,255,0.33); font-size:14px; }
+    .srch input { padding-left:40px; }
+
+    /* NOTIF DROPDOWN */
+    #notif-dd {
+      position:absolute; top:60px; right:24px; width:290px;
+      background:var(--surface2); border:1px solid var(--border);
+      border-radius:14px; padding:14px; z-index:30;
+      box-shadow:0 16px 48px rgba(0,0,0,0.55);
+      display:none;
+    }
+
+    /* PROGRESS */
+    .pb { background:rgba(255,255,255,0.07); border-radius:9999px; overflow:hidden; }
+    .pf { height:100%; border-radius:9999px; transition:width 0.7s ease; }
+  </style>
+</head>
+<body style="display:flex;height:100vh">
+
+<!-- ======================== SIDEBAR ======================== -->
+<aside class="sidebar">
+  <div style="padding:22px 18px 18px;border-bottom:1px solid rgba(76,175,80,0.18)">
+    <div style="display:flex;align-items:center;gap:11px">
+      <div style="display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <img src="S logo.png" alt="">
+      </div>
+      <div>
+        <div style="font-size:14.5px;font-weight:700;line-height:1.1">Sistema <span style="color:var(--gold)">PCD</span></div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.38);margin-top:2px">Gestão de Acessibilidade</div>
+      </div>
+    </div>
+  </div>
+
+  <nav style="flex:1;padding:14px 0;overflow-y:auto">
+    <div style="padding:0 20px 7px;font-size:10px;font-weight:700;color:rgba(255,255,255,0.22);letter-spacing:1.5px">MENU</div>
+    <div class="nav-item active" id="nav-dashboard" onclick="go('dashboard')">
+      <i class="bi bi-house-fill ni"></i><span>Início</span>
+    </div>
+    <div class="nav-item" id="nav-perfis" onclick="go('perfis')">
+      <i class="bi bi-people-fill ni"></i><span>Perfis</span>
+    </div>
+    <div class="nav-item" id="nav-agenda" onclick="go('agenda')">
+      <i class="bi bi-calendar3 ni"></i><span>Agenda</span>
+    </div>
+    <div class="nav-item" id="nav-cadastrar" onclick="go('cadastrar')">
+      <i class="bi bi-person-plus-fill ni"></i><span>Cadastrar Alunos</span>
+    </div>
+  </nav>
+
+  <div style="padding:12px 10px;border-top:1px solid rgba(76,175,80,0.14)">
+    <div class="nav-item" style="color:rgba(239,68,68,0.55)"
+         onmouseenter="this.style.color='#f87171';this.style.background='rgba(239,68,68,0.07)'"
+         onmouseleave="this.style.color='rgba(239,68,68,0.55)';this.style.background=''">
+      <i class="bi bi-box-arrow-right ni"></i><span>Sair</span>
+    </div>
+  </div>
+</aside>
+
+<!-- ======================== MAIN ======================== -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div>
+      <div style="font-size:17px;font-weight:700" id="pg-title">Dashboard</div>
+      <div style="font-size:11.5px;color:var(--text-muted)" id="pg-sub">Visão geral do sistema</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;position:relative">
+      <!-- Bell -->
+      <button id="bell-btn" onclick="toggleDD()" style="width:37px;height:37px;border-radius:10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:background 0.2s" onmouseenter="this.style.background='rgba(255,255,255,0.1)'" onmouseleave="this.style.background='rgba(255,255,255,0.05)'">
+        <i class="bi bi-bell-fill" style="font-size:14px;color:rgba(255,255,255,0.55)"></i>
+        <span id="notif-badge" style="position:absolute;top:-4px;right:-4px;width:16px;height:16px;border-radius:50%;background:var(--amber);color:#000;font-size:9px;font-weight:800;display:none;align-items:center;justify-content:center">0</span>
+      </button>
+      <!-- Notif dropdown -->
+      <div id="notif-dd">
+        <div style="font-size:12.5px;font-weight:700;margin-bottom:10px;color:rgba(255,255,255,0.6)"><i class="bi bi-bell me-1"></i> Notificações</div>
+        <div id="notif-list">
+          <div class="empty" style="padding:20px 0">
+            <i class="bi bi-bell-slash" style="font-size:28px;margin-bottom:6px"></i>
+            <span style="font-size:12px">Nenhuma notificação</span>
+          </div>
+        </div>
+      </div>
+      <!-- User -->
+      <div style="display:flex;align-items:center;gap:9px;padding:7px 13px;border-radius:10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1)">
+        <div class="av" style="width:28px;height:28px;font-size:12px">A</div>
+        <div>
+          <div style="font-size:13px;font-weight:600;line-height:1.1">Admin</div>
+          <div style="font-size:10px;color:var(--text-muted)">Gestor PCD</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- ============= DASHBOARD ============= -->
+    <div class="page active" id="page-dashboard">
+      <!-- Stats -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:22px">
+        <div class="stat-card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+            <span style="font-size:10.5px;font-weight:700;letter-spacing:1px;color:rgba(255,255,255,0.38)">PCDs CADASTRADOS</span>
+            <div style="width:34px;height:34px;border-radius:9px;background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.2);display:flex;align-items:center;justify-content:center">
+              <i class="bi bi-person-wheelchair" style="font-size:15px;color:var(--gold)"></i>
+            </div>
+          </div>
+          <div id="s-pcds" style="font-size:36px;font-weight:800;color:var(--gold);line-height:1">—</div>
+          
+        </div>
+        <div class="stat-card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+            <span style="font-size:10.5px;font-weight:700;letter-spacing:1px;color:rgba(255,255,255,0.38)">ACOMPANHANTES</span>
+            <div style="width:34px;height:34px;border-radius:9px;background:rgba(76,175,80,0.1);border:1px solid rgba(76,175,80,0.2);display:flex;align-items:center;justify-content:center">
+              <i class="bi bi-person-heart" style="font-size:15px;color:var(--c3)"></i>
+            </div>
+          </div>
+          <div id="s-acomp" style="font-size:36px;font-weight:800;color:var(--c3);line-height:1">—</div>
+          
+        </div>
+        <div class="stat-card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+            <span style="font-size:10.5px;font-weight:700;letter-spacing:1px;color:rgba(255,255,255,0.38)">TURMAS ATENDIDAS</span>
+            <div style="width:34px;height:34px;border-radius:9px;background:rgba(255,140,0,0.1);border:1px solid rgba(255,140,0,0.2);display:flex;align-items:center;justify-content:center">
+              <i class="bi bi-mortarboard-fill" style="font-size:15px;color:var(--amber)"></i>
+            </div>
+          </div>
+          <div id="s-turmas" style="font-size:36px;font-weight:800;color:var(--peach);line-height:1">—</div>
+          
+        </div>
+      </div>
+
+      <!-- Row 2 -->
+      <div style="display:grid;grid-template-columns:3fr 2fr;gap:18px;margin-bottom:18px">
+        <!-- Diagnósticos -->
+        <div class="card" style="padding:22px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+            <div>
+              <div style="font-size:14.5px;font-weight:700">Diagnósticos</div>
+              <div style="font-size:11px;color:var(--text-muted)">Distribuição por categoria</div>
+            </div>
+            
+          </div>
+          <div id="dash-diag">
+            <div class="empty" style="padding:30px 0">
+              <i class="bi bi-bar-chart-line" style="font-size:38px;margin-bottom:10px"></i>
+              <span style="font-size:13px;font-weight:500">Dados indisponíveis</span>
+              <span style="font-size:11.5px;margin-top:3px">Os dados serão carregados via backend</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Próximos eventos -->
+        <div class="card" style="padding:22px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+            <div style="font-size:14.5px;font-weight:700">Próximos Eventos</div>
+            <button class="btn-g" style="padding:5px 11px;font-size:11.5px" onclick="go('agenda')">
+              <i class="bi bi-calendar3"></i>
+            </button>
+          </div>
+          <div id="dash-events" style="max-height:230px; overflow-y:auto; padding-right:4px;">
+            <div class="empty" style="padding:24px 0">
+              <i class="bi bi-calendar-x" style="font-size:34px;margin-bottom:8px"></i>
+              <span style="font-size:13px;font-weight:500">Nenhum evento</span>
+              <span style="font-size:11.5px;margin-top:3px">Crie eventos na agenda</span>
+            </div>
+          </div>
+         
+        </div>
+      </div>
+
+      <!-- Alunos recentes -->
+      <div class="card" style="padding:22px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <div>
+            <div style="font-size:14.5px;font-weight:700">Alunos Recentes</div>
+            <div style="font-size:11px;color:var(--text-muted)">Últimos cadastros realizados</div>
+          </div>
+          <button onclick="go('perfis')" class="btn-g" style="font-size:12px">
+            <i class="bi bi-people"></i> Ver todos
+          </button>
+        </div>
+        <div id="dash-students">
+          <div class="empty">
+            <i class="bi bi-person-x"></i>
+            <span style="font-size:13.5px;font-weight:600">Nenhum aluno cadastrado</span>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============= PERFIS ============= -->
+    <div class="page" id="page-perfis">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+        <div class="srch" style="flex:1">
+          <i class="bi bi-search"></i>
+          <input type="text" class="inp" id="srch-inp" placeholder="Buscar por nome ou matrícula..." oninput="filterS(this.value)" />
+        </div>
+        <select class="inp" style="width:165px" id="fil-turma" onchange="filterS(document.getElementById('srch-inp').value)">
+          <option value="">Todas as Turmas</option>
+          <option value="1 Ano">1º Ano</option>
+          <option value="2 Ano">2º Ano</option>
+          <option value="3 Ano">3º Ano</option>
+        </select>
+        <select class="inp" style="width:185px" id="fil-diag" onchange="filterS(document.getElementById('srch-inp').value)">
+          <option value="">Todos os Diagnósticos</option>
+          <option>TEA</option><option>TDAH</option>
+          <option>Deficiência Física</option>
+          <option>Deficiência Visual</option>
+          <option>Deficiência Auditiva</option>
+          <option>Outro</option>
+        </select>
+        <button onclick="go('cadastrar')" class="btn-p" style="white-space:nowrap">
+          <i class="bi bi-person-plus-fill"></i> Novo Aluno
+        </button>
+      </div>
+
+      <div class="card" style="overflow:hidden">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-bottom:1px solid var(--border)">
+          <div style="display:flex;align-items:center;gap:8px">
+            <i class="bi bi-people" style="color:var(--c3)"></i>
+            <span style="font-size:13px;font-weight:600" id="s-count">Alunos: 0</span>
+          </div>
+          <button class="btn-g" style="font-size:12px" onclick="exportCSV()">
+            <i class="bi bi-download"></i> Exportar CSV
+          </button>
+        </div>
+        <table style="width:100%;border-collapse:collapse">
+          <thead>
+            <tr style="background:rgba(255,255,255,0.02)">
+              <th style="text-align:left;padding:11px 22px;font-size:10.5px;font-weight:700;letter-spacing:0.8px;color:rgba(255,255,255,0.32)">ALUNO</th>
+              <th style="text-align:left;padding:11px 22px;font-size:10.5px;font-weight:700;letter-spacing:0.8px;color:rgba(255,255,255,0.32)">TURMA</th>
+              <th style="text-align:left;padding:11px 22px;font-size:10.5px;font-weight:700;letter-spacing:0.8px;color:rgba(255,255,255,0.32)">CURSO</th>
+              <th style="text-align:left;padding:11px 22px;font-size:10.5px;font-weight:700;letter-spacing:0.8px;color:rgba(255,255,255,0.32)">DIAGNÓSTICO</th>
+              <th style="text-align:left;padding:11px 22px;font-size:10.5px;font-weight:700;letter-spacing:0.8px;color:rgba(255,255,255,0.32)">MATRÍCULA</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="s-table"></tbody>
+        </table>
+        <div id="s-empty" class="empty">
+          <i class="bi bi-person-x-fill"></i>
+          <span style="font-size:14px;font-weight:600">Nenhum aluno encontrado</span>
+          
+          
+        </div>
+      </div>
+    </div>
+
+    <!-- ============= AGENDA ============= -->
+    <div class="page" id="page-agenda">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <button onclick="prevM()" class="btn-g" style="padding:8px 12px"><i class="bi bi-chevron-left"></i></button>
+          <div style="font-size:17px;font-weight:700;min-width:190px;text-align:center" id="cal-title"></div>
+          <button onclick="nextM()" class="btn-g" style="padding:8px 12px"><i class="bi bi-chevron-right"></i></button>
+          <button onclick="goToday()" class="btn-g" style="font-size:12.5px">Hoje</button>
+        </div>
+        <button onclick="openEvModal()" class="btn-p">
+          <i class="bi bi-plus-circle-fill"></i> Novo Evento
+        </button>
+      </div>
+      <div class="card" style="overflow:hidden">
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border)">
+          <div style="text-align:center;padding:11px;font-size:10.5px;font-weight:700;letter-spacing:0.8px;color:rgba(255,255,255,0.36)">SEG</div>
+          <div style="text-align:center;padding:11px;font-size:10.5px;font-weight:700;letter-spacing:0.8px;color:rgba(255,255,255,0.36)">TER</div>
+          <div style="text-align:center;padding:11px;font-size:10.5px;font-weight:700;letter-spacing:0.8px;color:rgba(255,255,255,0.36)">QUA</div>
+          <div style="text-align:center;padding:11px;font-size:10.5px;font-weight:700;letter-spacing:0.8px;color:rgba(255,255,255,0.36)">QUI</div>
+          <div style="text-align:center;padding:11px;font-size:10.5px;font-weight:700;letter-spacing:0.8px;color:rgba(255,255,255,0.36)">SEX</div>
+          <div style="text-align:center;padding:11px;font-size:10.5px;font-weight:700;letter-spacing:0.8px;color:rgba(255,255,255,0.36)">SÁB</div>
+          <div style="text-align:center;padding:11px;font-size:10.5px;font-weight:700;letter-spacing:0.8px;color:rgba(255,255,255,0.36)">DOM</div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr)" id="cal-grid"></div>
+      </div>
+    </div>
+
+    <!-- ============= CADASTRAR ============= -->
+    <div class="page" id="page-cadastrar">
+      <div style="max-width:660px;margin:0 auto">
+        <div class="card" style="padding:32px">
+          <div style="text-align:center;margin-bottom:26px">
+            <div style="width:58px;height:58px;border-radius:15px;background:linear-gradient(135deg,var(--c1),var(--c3));display:flex;align-items:center;justify-content:center;margin:0 auto 12px;box-shadow:0 8px 22px rgba(0,122,51,0.32)">
+              <i class="bi bi-person-plus-fill" style="font-size:22px;color:#fff"></i>
+            </div>
+            <div style="font-size:19px;font-weight:700">Cadastrar Novo Aluno</div>
+            <div style="font-size:12.5px;color:var(--text-muted);margin-top:4px">Preencha todos os campos obrigatórios</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+            <div style="grid-column:1/-1">
+              <label class="lbl">Nome Completo *</label>
+              <input type="text" id="f-nome" class="inp" placeholder="Nome completo do aluno" />
+            </div>
+            <div>
+              <label class="lbl">Matrícula *</label>
+              <input type="text" id="f-mat" class="inp" placeholder="Ex: 2025001" maxlength="7" oninput="onlyDigits(this, 7)" />
+            </div>
+            <div>
+              <label class="lbl">CPF *</label>
+              <input type="text" id="f-cpf" class="inp" placeholder="000.000.000-00" oninput="mCPF(this)" maxlength="14" />
+            </div>
+            <div>
+              <label class="lbl">Data de Nascimento *</label>
+              <input type="date" id="f-nasc" class="inp" />
+            </div>
+            <div>
+              <label class="lbl">Sexo *</label>
+              <select id="f-sexo" class="inp">
+                <option value="">Selecionar</option>
+                <option>Masculino</option><option>Feminino</option>
+                <option>Outro / Prefiro não informar</option>
+              </select>
+            </div>
+            <div>
+              <label class="lbl">Turma *</label>
+              <select id="f-turma" class="inp">
+                <option value="">Selecionar</option>
+                <option value="1 Ano">1º Ano</option>
+                <option value="2 Ano">2º Ano</option>
+                <option value="3 Ano">3º Ano</option>
+              </select>
+            </div>
+            <div>
+              <label class="lbl">Curso *</label>
+              <select id="f-curso" class="inp">
+                <option value="">Selecionar</option>
+                <option>Informática</option><option>Administração</option>
+                <option>Enfermagem</option><option>Meio ambiente</option><option>Edificação</option>
+              </select>
+            </div>
+            <div>
+              <label class="lbl">Diagnóstico *</label>
+              <select id="f-diag" class="inp">
+                <option value="">Selecionar</option>
+                <option>TEA</option><option>TDAH</option>
+                <option>Deficiência Física</option><option>Deficiência Visual</option>
+                <option>Deficiência Auditiva</option><option>Outro</option>
+              </select>
+            </div>
+            <div style="grid-column:1/-1">
+              <label class="lbl">Observações</label>
+              <textarea id="f-obs" class="inp" placeholder="Necessidades específicas, informações adicionais..."></textarea>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:22px">
+            <button onclick="clearF()" class="btn-g" style="flex:1;justify-content:center">
+              <i class="bi bi-arrow-counterclockwise"></i> Limpar
+            </button>
+            <button onclick="addStudent()" class="btn-p" style="flex:2.5;justify-content:center;font-size:14.5px">
+              <i class="bi bi-check-circle-fill"></i> Cadastrar Aluno
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============= PERFIL ALUNO ============= -->
+    <div class="page" id="page-aluno">
+      <button onclick="go('perfis')" class="btn-g" style="margin-bottom:18px;font-size:12.5px">
+        <i class="bi bi-arrow-left"></i> Voltar para Perfis
+      </button>
+      <div style="display:grid;grid-template-columns:270px 1fr;gap:18px">
+        <!-- Informaçoes -->
+        <div>
+          <div class="card" style="padding:22px;text-align:center;margin-bottom:12px">
+            <div class="av" id="a-av" style="width:70px;height:70px;font-size:26px;margin:0 auto 14px;box-shadow:0 0 0 3px rgba(255,215,0,0.28),0 0 0 6px rgba(255,215,0,0.08)">?</div>
+            <div style="font-size:17px;font-weight:700;margin-bottom:5px" id="a-nome">—</div>
+            <span class="tag" id="a-diag-tag">—</span>
+            <hr style="border:none;border-top:1px solid var(--border);margin:14px 0" />
+            <div style="text-align:left;font-size:12.5px">
+              <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">
+                <span style="color:var(--text-muted)">Matrícula</span><span style="font-weight:600" id="a-mat">—</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">
+                <span style="color:var(--text-muted)">Turma</span><span style="font-weight:600" id="a-turma">—</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">
+                <span style="color:var(--text-muted)">Curso</span><span style="font-weight:600" id="a-curso">—</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">
+                <span style="color:var(--text-muted)">Sexo</span><span style="font-weight:600" id="a-sexo">—</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:8px 0">
+                <span style="color:var(--text-muted)">Nascimento</span><span style="font-weight:600" id="a-nasc">—</span>
+              </div>
+            </div>
+          </div>
+          <button onclick="openDelModal()" style="width:100%;padding:9px;border-radius:10px;background:rgba(220,38,38,0.1);border:1px solid rgba(220,38,38,0.22);color:#f87171;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;font-size:13px;display:flex;align-items:center;justify-content:center;gap:7px;transition:all 0.18s" onmouseenter="this.style.background='rgba(220,38,38,0.18)'" onmouseleave="this.style.background='rgba(220,38,38,0.1)'">
+            <i class="bi bi-trash3"></i> Remover Aluno
+          </button>
+        </div>
+
+        <!-- Conteúdo dos acompanhantes -->
+        <div class="card" style="overflow:hidden">
+          <div style="display:flex;gap:4px;padding:10px;border-bottom:1px solid var(--border);background:rgba(255,255,255,0.02);flex-wrap:wrap">
+            <button class="tab-btn active" id="tb-rel" onclick="swTab('rel',this)"><i class="bi bi-clipboard2-pulse"></i> Relatório</button>
+            <button class="tab-btn" id="tb-pei" onclick="swTab('pei',this)"><i class="bi bi-journal-text"></i> PEI</button>
+            <button class="tab-btn" id="tb-paee" onclick="swTab('paee',this)"><i class="bi bi-person-workspace"></i> PAEE</button>
+            <button class="tab-btn" id="tb-lau" onclick="swTab('lau',this)"><i class="bi bi-file-earmark-medical"></i> Laudo</button>
+          </div>
+
+          <!-- Relatório -->
+          <div id="tc-rel" style="padding:18px">
+            <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.55);margin-bottom:14px">Relatório de acompanhamento</div>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px">
+              <div>
+                <label class="lbl">Data do atendimento</label>
+                <input type="date" id="rel-data" class="inp" />
+              </div>
+              <div>
+                <label class="lbl">Responsável pelo registro</label>
+                <input type="text" id="rel-responsavel" class="inp" placeholder="Nome do profissional" />
+              </div>
+              <div style="grid-column:1/-1">
+                <label class="lbl">Desenvolvimento observado</label>
+                <textarea id="rel-desenvolvimento" class="inp" rows="4" placeholder="Descreva o desenvolvimento observado..."></textarea>
+              </div>
+              <div style="grid-column:1/-1">
+                <label class="lbl">Dificuldades observadas</label>
+                <textarea id="rel-dificuldades" class="inp" rows="4" placeholder="Descreva as dificuldades observadas..."></textarea>
+              </div>
+              <div style="grid-column:1/-1">
+                <label class="lbl">Potencialidades</label>
+                <textarea id="rel-potencialidades" class="inp" rows="4" placeholder="Descreva as potencialidades..."></textarea>
+              </div>
+              <div style="grid-column:1/-1">
+                <label class="lbl">Recomendações</label>
+                <textarea id="rel-recomendacoes" class="inp" rows="4" placeholder="Descreva as recomendações..."></textarea>
+              </div>
+              <div style="grid-column:1/-1">
+                <label class="lbl">Conclusão</label>
+                <textarea id="rel-conclusao" class="inp" rows="4" placeholder="Escreva a conclusão do atendimento..."></textarea>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:16px">
+              <button onclick="saveRelatorio()" class="btn-p" style="flex:1;justify-content:center;font-size:13px">
+                <i class="bi bi-save2"></i> Salvar Relatório
+              </button>
+              <button onclick="exportarRelatorio()" class="btn-g" style="flex:1;justify-content:center;font-size:13px">
+                <i class="bi bi-download"></i> Exportar
+              </button>
+            </div>
+          </div>
+
+          <!-- PEI -->
+          <div id="tc-pei" style="padding:18px;display:none">
+            <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.55);margin-bottom:14px">PEI - Plano Educacional Individualizado</div>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px">
+              <div>
+                <label class="lbl">Data de elaboração</label>
+                <input type="date" id="pei-data" class="inp" />
+              </div>
+              <div>
+                <label class="lbl">Responsável pelo preenchimento</label>
+                <input type="text" id="pei-responsavel" class="inp" placeholder="Nome do responsável" />
+              </div>
+              <div style="grid-column:1/-1">
+                <label class="lbl">Objetivos pedagógicos</label>
+                <textarea id="pei-objetivos" class="inp" rows="4" placeholder="Descreva os objetivos pedagógicos..."></textarea>
+              </div>
+              <div style="grid-column:1/-1">
+                <label class="lbl">Habilidades a desenvolver</label>
+                <textarea id="pei-habilidades" class="inp" rows="4" placeholder="Descreva as habilidades..."></textarea>
+              </div>
+              <div style="grid-column:1/-1">
+                <label class="lbl">Estratégias de ensino</label>
+                <textarea id="pei-estrategias" class="inp" rows="4" placeholder="Descreva as estratégias..."></textarea>
+              </div>
+              <div style="grid-column:1/-1">
+                <label class="lbl">Recursos de acessibilidade</label>
+                <textarea id="pei-recursos" class="inp" rows="4" placeholder="Liste os recursos de acessibilidade..."></textarea>
+              </div>
+              <div style="grid-column:1/-1">
+                <label class="lbl">Adaptações curriculares</label>
+                <textarea id="pei-adaptacoes" class="inp" rows="4" placeholder="Descreva as adaptações..."></textarea>
+              </div>
+              <div style="grid-column:1/-1">
+                <label class="lbl">Critérios de avaliação</label>
+                <textarea id="pei-avaliacao" class="inp" rows="4" placeholder="Defina os critérios de avaliação..."></textarea>
+              </div>
+              <div style="grid-column:1/-1">
+                <label class="lbl">Observações</label>
+                <textarea id="pei-observacoes" class="inp" rows="4" placeholder="Observações adicionais..."></textarea>
+              </div>
+            </div>
+            <button onclick="savePEI()" class="btn-p" style="width:100%;justify-content:center;font-size:13px;margin-top:16px">
+              <i class="bi bi-save2"></i> Salvar PEI
+            </button>
+          </div>
+
+          <!-- PAEE -->
+          <div id="tc-paee" style="padding:18px;display:none">
+            <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.55);margin-bottom:14px">PAEE - Plano de Atendimento Educacional Especializado</div>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px">
+              <div>
+                <label class="lbl">Data do atendimento</label>
+                <input type="date" id="paee-data" class="inp" />
+              </div>
+              <div>
+                <label class="lbl">Profissional responsável</label>
+                <input type="text" id="paee-responsavel" class="inp" placeholder="Nome do profissional" />
+              </div>
+              <div style="grid-column:1/-1">
+                <label class="lbl">Necessidades identificadas</label>
+                <textarea id="paee-necessidades" class="inp" rows="4" placeholder="Descreva as necessidades..."></textarea>
+              </div>
+              <div style="grid-column:1/-1">
+                <label class="lbl">Objetivos do atendimento</label>
+                <textarea id="paee-objetivos" class="inp" rows="4" placeholder="Descreva os objetivos..."></textarea>
+              </div>
+              <div style="grid-column:1/-1">
+                <label class="lbl">Recursos utilizados</label>
+                <textarea id="paee-recursos" class="inp" rows="4" placeholder="Liste os recursos utilizados..."></textarea>
+              </div>
+              <div style="grid-column:1/-1">
+                <label class="lbl">Estratégias aplicadas</label>
+                <textarea id="paee-estrategias" class="inp" rows="4" placeholder="Descreva as estratégias..."></textarea>
+              </div>
+              <div style="grid-column:1/-1">
+                <label class="lbl">Tecnologias assistivas</label>
+                <textarea id="paee-tecnologias" class="inp" rows="4" placeholder="Liste as tecnologias..."></textarea>
+              </div>
+              <div style="grid-column:1/-1">
+                <label class="lbl">Resultados observados</label>
+                <textarea id="paee-resultados" class="inp" rows="4" placeholder="Descreva os resultados..."></textarea>
+              </div>
+              <div style="grid-column:1/-1">
+                <label class="lbl">Encaminhamentos</label>
+                <textarea id="paee-encaminhamentos" class="inp" rows="4" placeholder="Descreva os encaminhamentos..."></textarea>
+              </div>
+              <div style="grid-column:1/-1">
+                <label class="lbl">Observações gerais</label>
+                <textarea id="paee-observacoes" class="inp" rows="4" placeholder="Observações gerais..."></textarea>
+              </div>
+            </div>
+            <button onclick="savePAEE()" class="btn-p" style="width:100%;justify-content:center;font-size:13px;margin-top:16px">
+              <i class="bi bi-save2"></i> Salvar PAEE
+            </button>
+          </div>
+
+          <!-- Laudo -->
+          <div id="tc-lau" style="padding:18px;display:none">
+            <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.55);margin-bottom:14px">Laudo externo</div>
+            <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:15px">
+              <label class="lbl">Selecionar arquivo PDF</label>
+              <input type="file" id="lau-file" accept="application/pdf" class="inp" />
+              <button onclick="handleLaudoUpload()" class="btn-p" style="width:100%;justify-content:center;font-size:13px;margin-top:12px">
+                <i class="bi bi-upload"></i> Enviar arquivo
+              </button>
+            </div>
+            <div style="font-size:12.5px;font-weight:600;color:rgba(255,255,255,0.5);margin:16px 0 8px">Laudos enviados</div>
+            <div id="lau-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- ============= MODAL EVENTO ============= -->
+<div class="modal-bg" id="ev-modal" onclick="if(event.target===this)closeM('ev-modal')">
+  <div class="modal-box">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+      <div>
+        <div style="font-size:16px;font-weight:700">Novo Evento</div>
+        <div style="font-size:11.5px;color:var(--text-muted)">Adicione à agenda</div>
+      </div>
+      <button onclick="closeM('ev-modal')" style="width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,0.06);border:none;cursor:pointer;color:rgba(255,255,255,0.48);font-size:15px;display:flex;align-items:center;justify-content:center">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div><label class="lbl">Título *</label><input type="text" id="ev-tit" class="inp" placeholder="Ex: Reunião de Pais" /></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div><label class="lbl">Data *</label><input type="date" id="ev-dat" class="inp" /></div>
+        <div><label class="lbl">Horário</label><input type="time" id="ev-hor" class="inp" /></div>
+      </div>
+      <div><label class="lbl">Descrição</label><textarea id="ev-desc" class="inp" rows="2" placeholder="Opcional..."></textarea></div>
+    </div>
+    <div style="display:flex;gap:9px;margin-top:18px">
+      <button onclick="closeM('ev-modal')" class="btn-g" style="flex:1;justify-content:center">Cancelar</button>
+      <button onclick="saveEv()" class="btn-p" style="flex:2;justify-content:center">
+        <i class="bi bi-check-circle-fill"></i> Salvar Evento
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============= MODAL DELETE ============= -->
+<div class="modal-bg" id="del-modal" onclick="if(event.target===this)closeM('del-modal')">
+  <div class="modal-box" style="max-width:370px;text-align:center">
+    <div style="width:54px;height:54px;border-radius:50%;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.22);display:flex;align-items:center;justify-content:center;margin:0 auto 14px">
+      <i class="bi bi-trash3-fill" style="font-size:20px;color:#f87171"></i>
+    </div>
+    <div style="font-size:16px;font-weight:700;margin-bottom:6px">Remover Aluno</div>
+    <div style="font-size:12.5px;color:var(--text-muted);margin-bottom:20px">Tem certeza que deseja remover <strong id="del-nm" style="color:#fff"></strong>? Esta ação não pode ser desfeita.</div>
+    <div style="display:flex;gap:9px">
+      <button onclick="closeM('del-modal')" class="btn-g" style="flex:1;justify-content:center">Cancelar</button>
+      <button onclick="confirmDel()" style="flex:1;padding:9px;border-radius:10px;background:rgba(220,38,38,0.8);border:none;color:#fff;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;font-size:13.5px;transition:all 0.18s" onmouseenter="this.style.background='#dc2626'" onmouseleave="this.style.background='rgba(220,38,38,0.8)'">
+        Sim, remover
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast-el">
+  <i class="bi bi-check-circle-fill" id="toast-ic" style="font-size:16px;color:var(--c3);flex-shrink:0"></i>
+  <span id="toast-tx">Operação realizada!</span>
+</div>
+
+
+<script src="js/app.js">
+
+</script>
+</body>
+</html>
