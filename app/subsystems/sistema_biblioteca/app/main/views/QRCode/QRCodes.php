@@ -56,7 +56,7 @@ class qrCode1 extends connect
                 // Diferenciar o ambiente de desenvolvimento (localhost) do ambiente de produção para a URL do QR code
                 $host = $_SERVER['HTTP_HOST'];
                 if (strpos($host, 'localhost') !== false) {
-                    $dados = "http://localhost/app/subsystems/sistema_biblioteca/app/main/index.php?qr_livro=" . urlencode($cod_livro['id'] . "_" . $edicao . "_" . $i . "_" . $estante . "_" . $prateleira);
+                    $dados = "http://localhost/app/subsystems/biblioteca/app/main/index.php?qr_livro=" . urlencode($cod_livro['id'] . "_" . $edicao . "_" . $i . "_" . $estante . "_" . $prateleira);
                 } else {
                     $dados = "https://salaberga.com/salaberga/portalsalaberga/app/subsystems/biblioteca/app/main/index.php?qr_livro=" . urlencode($cod_livro['id'] . "_" . $edicao . "_" . $i . "_" . $estante . "_" . $prateleira);
                 }

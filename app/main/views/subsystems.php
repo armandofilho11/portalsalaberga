@@ -1363,7 +1363,7 @@ $temSistemasPermitidos = count(array_intersect($sistemasDisponiveis, $sistemasPe
                 <?php } ?>
                 <!-- Card 3: Controle de biblioteca -->
                 <?php if (in_array('Biblioteca', $sistemasPermitidos, true)) { ?>
-                    <a href="../../subsystems/biblioteca/default.php" class="app-card-link">
+                    <a href="../../subsystems/sistema_biblioteca/default.php" class="app-card-link">
                         <div class="app-card w-{100px} h-full">
                             <div class="icon-wrapper">
                                 <img src="../assets/img/logos_sistemas/biblioteca-card.png" alt="Ícone Controle de Estoque" class="app-icon">
