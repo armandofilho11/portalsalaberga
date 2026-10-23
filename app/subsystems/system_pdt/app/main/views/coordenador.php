@@ -471,7 +471,13 @@ $csrfToken = $_SESSION['csrf_token'] ?? gerarCsrfToken();
 
     async function carregarCalendarioEventos() {
         const response = await fetchJson(`../controllers/relatorio_controller.php?action=calendario_eventos&ano=${state.calendarYear}&mes=${state.calendarMonth + 1}`);
-        state.events = response.sucesso ? response.dados : [];
+        if (!response.sucesso) {
+            state.events = [];
+            const events = document.getElementById('coordCalendarioEventos');
+            if (events) events.textContent = response.erro || 'Não foi possível carregar o calendário.';
+            return;
+        }
+        state.events = response.dados || [];
         renderCalendar();
     }
 
@@ -513,8 +519,11 @@ $csrfToken = $_SESSION['csrf_token'] ?? gerarCsrfToken();
                     <span class="text-white font-semibold">${day}</span>
                     ${events.length ? `<span class="rounded-full bg-emerald-600 px-2 py-1 text-[11px] text-white">${events.length}</span>` : ''}
                 </div>
-                <p class="mt-2 text-xs text-slate-400">${events.length ? events[0].titulo : ''}</p>
             `;
+            const title = document.createElement('p');
+            title.className = 'mt-2 text-xs text-slate-400';
+            title.textContent = events[0]?.titulo || '';
+            cell.appendChild(title);
             cell.addEventListener('click', () => renderCalendarEvents(dateKey));
             grid.appendChild(cell);
         }
@@ -530,18 +539,33 @@ $csrfToken = $_SESSION['csrf_token'] ?? gerarCsrfToken();
             list.innerHTML = '<div class="rounded-3xl border border-slate-800 bg-slate-900 p-5 text-slate-500">Nenhum evento disponível.</div>';
             return;
         }
-        list.innerHTML = filtered.map(item => `
-            <div class="rounded-3xl border border-slate-800 bg-slate-900 p-5">
-                <div class="flex items-center justify-between gap-3">
-                    <div>
-                        <p class="text-slate-400 text-xs">${item.evento_data}</p>
-                        <h4 class="text-white text-lg font-semibold mt-2">${item.titulo}</h4>
-                    </div>
-                    <span class="rounded-full bg-emerald-600 px-3 py-1 text-xs text-white">${item.tipo}</span>
-                </div>
-                ${item.descricao ? `<p class="mt-3 text-slate-400 text-sm">${item.descricao}</p>` : ''}
-            </div>
-        `).join('');
+        list.replaceChildren();
+        filtered.forEach(item => {
+            const card = document.createElement('article');
+            card.className = 'rounded-3xl border border-slate-800 bg-slate-900 p-5';
+            const header = document.createElement('div');
+            header.className = 'flex items-center justify-between gap-3';
+            const details = document.createElement('div');
+            const date = document.createElement('p');
+            date.className = 'text-slate-400 text-xs';
+            date.textContent = item.evento_data || '';
+            const title = document.createElement('h4');
+            title.className = 'text-white text-lg font-semibold mt-2';
+            title.textContent = item.titulo || '';
+            details.append(date, title);
+            const type = document.createElement('span');
+            type.className = 'rounded-full bg-emerald-600 px-3 py-1 text-xs text-white';
+            type.textContent = item.tipo || '';
+            header.append(details, type);
+            card.append(header);
+            if (item.descricao) {
+                const description = document.createElement('p');
+                description.className = 'mt-3 text-slate-400 text-sm';
+                description.textContent = item.descricao;
+                card.append(description);
+            }
+            list.append(card);
+        });
     }
 
     async function carregarNotificacoes() {
