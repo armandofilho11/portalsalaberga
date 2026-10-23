@@ -1,20 +1,19 @@
 <?php
-require_once ('../models/main_model.php');
-print_r($_POST);
+
+require_once('../models/main_model.php');
 
 /*controller para excluir livro*/
 if (isset($_POST['excluir_livro']) && !empty($_POST['excluir_livro'])) {
     $id_livro = $_POST['excluir_livro'];
-    print_r($id_livro);
     $model = new main_model();
     $result = $model->excluir_livro($id_livro);
 
     switch ($result) {
         case 1:
-            header('location:../views/excluir_livro.php?true');
+            header('Location: ../index.php?section=excluir_livro&true');
             break;
         case 2:
-            header('location:../views/excluir_livro.php?error');
+            header('Location: ../index.php?section=excluir_livro&error');
             break;
     }
     /*controller para editar livro*/
@@ -53,10 +52,10 @@ if (isset($_POST['excluir_livro']) && !empty($_POST['excluir_livro'])) {
 
     switch ($result) {
         case 1:
-            header('location:../views/editar_livro.php?true');
+            header('Location: ../index.php?section=editar_livro&true');
             break;
         case 2:
-            header('location:../views/editar_livro.php?error');
+            header('Location: ../index.php?section=editar_livro&error');
             break;
     }
     /*controller para editar autor*/
@@ -72,10 +71,10 @@ if (isset($_POST['excluir_livro']) && !empty($_POST['excluir_livro'])) {
 
     switch ($result) {
         case 1:
-            header('location:../views/editar_autor.php?true');
+            header('Location: ../index.php?section=editar_autor&true');
             break;
         case 2:
-            header('location:../views/editar_autor.php?error');
+            header('Location: ../index.php?section=editar_autor&error');
             break;
     }
     /*controller para editar categoria */
@@ -91,10 +90,10 @@ if (isset($_POST['excluir_livro']) && !empty($_POST['excluir_livro'])) {
 
     switch ($result) {
         case 1:
-            header('location:../views/editar_categoria.php?true');
+            header('Location: ../index.php?section=editar_categoria&true');
             break;
         case 2:
-            header('location:../views/editar_categoria.php?error');
+            header('Location: ../index.php?section=editar_categoria&error');
             break;
     }
     /*controller para editar gênero */
@@ -110,10 +109,10 @@ if (isset($_POST['excluir_livro']) && !empty($_POST['excluir_livro'])) {
 
     switch ($result) {
         case 1:
-            header('location:../views/editar_genero.php?true');
+            header('Location: ../index.php?section=editar_genero&true');
             break;
         case 2:
-            header('location:../views/editar_genero.php?error');
+            header('Location: ../index.php?section=editar_genero&error');
             break;
     }
     /*controller para editar subgênero */
@@ -129,14 +128,14 @@ if (isset($_POST['excluir_livro']) && !empty($_POST['excluir_livro'])) {
 
     switch ($result) {
         case 1:
-            header('location:../views/editar_subgenero.php?true');
+            header('Location: ../index.php?section=editar_subgenero&true');
             break;
         case 2:
-            header('location:../views/editar_subgenero.php?error');
+            header('Location: ../index.php?section=editar_subgenero&error');
             break;
     }
 } else{
 
-    header('location:../index.php');
+    header('Location: ../index.php?section=dashboard');
     exit();
 }

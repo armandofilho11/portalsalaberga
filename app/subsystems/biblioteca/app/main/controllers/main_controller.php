@@ -8,15 +8,15 @@ if (isset($_POST['relatorio'])) {
     switch ($relatorio) {
         case 'acervo':
 
-            header('Location: ../views/relatorios/relatorio_acervo.php');
+            header('Location: ../index.php?section=relatorio_acervo');
             exit;
         case '':
 
-            header('Location: ../views/relatorios/relatorios.php?erro=1');
+            header('Location: ../index.php?section=relatorios&erro=1');
             exit;
         default:
 
-            header('Location: ../views/relatorios/relatorios.php?erro=2');
+            header('Location: ../index.php?section=relatorios&erro=2');
             exit;
     }
 } else if (isset($_POST['estante']) && isset($_POST['prateleira'])) {
@@ -24,7 +24,10 @@ if (isset($_POST['relatorio'])) {
     $estante = $_POST['estante'];
     $prateleira = $_POST['prateleira'];
 
-    header('Location: ../views/relatorios/relatorio_pra_est.php?estante=' . $estante . '&prateleira=p' . $prateleira);
+    header('Location: ../index.php?section=relatorio_pra_est&' . http_build_query([
+        'estante' => $estante,
+        'prateleira' => 'p' . $prateleira
+    ]));
     exit();
 }
 
@@ -76,16 +79,16 @@ else if (
 
     switch ($result) {
         case 1:
-            header('location:../views/cadastrar_livro.php?true');
+            header('Location: ../index.php?section=cadastrar_livro&true');
             exit();
         case 2:
-            header('location:../views/cadastrar_livro.php?false');
+            header('Location: ../index.php?section=cadastrar_livro&false');
             exit();
         case 3:
-            header('location:../views/cadastrar_livro.php?ja_cadastrado');
+            header('Location: ../index.php?section=cadastrar_livro&ja_cadastrado');
             exit();
         default:
-            header('location:../index.php');
+            header('Location: ../index.php?section=dashboard');
             exit();
     }
 }
@@ -97,16 +100,16 @@ else if (isset($_POST['nova_categoria']) && !empty($_POST['nova_categoria'])) {
 
     switch ($result) {
         case 1:
-            header('location:../views/cadastrar_categoria.php?true');
+            header('Location: ../index.php?section=cadastrar_categoria&true');
             break;
             case 2:
-            header('location:../views/cadastrar_categoria.php?false');
+            header('Location: ../index.php?section=cadastrar_categoria&false');
             break;
         case 3:
-            header('location:../views/cadastrar_categoria.php?ja_cadastrado');
+            header('Location: ../index.php?section=cadastrar_categoria&ja_cadastrado');
             break;
         default:
-            header('location:../index.php');
+            header('Location: ../index.php?section=dashboard');
             exit();
     }
 }
@@ -120,16 +123,16 @@ else if (isset($_POST['categoria']) && !empty($_POST['categoria']) && isset($_PO
 
     switch ($result) {
         case 1:
-            header('location:../views/cadastrar_genero.php?true');
+            header('Location: ../index.php?section=cadastrar_genero&true');
             break;
         case 2:
-            header('location:../views/cadastrar_genero.php?false');
+            header('Location: ../index.php?section=cadastrar_genero&false');
             break;
         case 3:
-            header('location:../views/cadastrar_genero.php?ja_cadastrado');
+            header('Location: ../index.php?section=cadastrar_genero&ja_cadastrado');
             break;
         default:
-            header('location:../index.php');
+            header('Location: ../index.php?section=dashboard');
             exit();
     }
 }
@@ -143,20 +146,20 @@ else if (isset($_POST['genero']) && !empty($_POST['genero']) && isset($_POST['su
 
     switch ($result) {
         case 1:
-            header('location:../views/cadastrar_subgenero.php?true');
+            header('Location: ../index.php?section=cadastrar_subgenero&true');
             break;
         case 2:
-            header('location:../views/cadastrar_subgenero.php?false');
+            header('Location: ../index.php?section=cadastrar_subgenero&false');
             break;
         case 3:
-            header('location:../views/cadastrar_subgenero.php?ja_cadastrado');
+            header('Location: ../index.php?section=cadastrar_subgenero&ja_cadastrado');
             break;
         default:
-            header('location:../index.php');
+            header('Location: ../index.php?section=dashboard');
             exit();
     }
 } else {
 
-    header('location:../index.php');
+    header('Location: ../index.php?section=dashboard');
     exit();
 }

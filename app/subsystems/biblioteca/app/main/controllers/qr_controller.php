@@ -5,7 +5,10 @@ if (isset($_POST['estante']) && isset($_POST['prateleira']) && !empty($_POST['es
     $estante = $_POST['estante'];
     $prateleira = $_POST['prateleira'];
 
-    header('Location: ../views/QRCode/QRCodes.php?estante=' . $estante . '&prateleira=p' . $prateleira);
+    header('Location: ../index.php?section=qrcode_geral&' . http_build_query([
+        'estante' => $estante,
+        'prateleira' => 'p' . $prateleira
+    ]));
 } 
 //redirecionamento para os qrcodes especificos 
 else if (isset($_POST['titulo']) && !empty($_POST['titulo'])) {
@@ -16,6 +19,6 @@ else if (isset($_POST['titulo']) && !empty($_POST['titulo'])) {
     ];
 
     $http = http_build_query($dados);
-    header('location:../views/QRCode/QRCodes_especifico.php?' . $http);
+    header('Location: ../index.php?section=qrcode_especifico&gerar=1&' . $http);
     exit();
 }

@@ -22,19 +22,19 @@ if (isset($_POST['livro']) && !empty($_POST['livro']) && isset($_POST['data_empr
                 if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
                     echo json_encode(['success' => true]);
                 } else {
-                    header('Location: ../index.php?true');
+                    header('Location: ../index.php?section=emprestimo_livro&true');
                 }
         } else {
                 error_log('Erro ao registrar empréstimo para o aluno ID: ' . $id_aluno);
                 if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
                     echo json_encode(['success' => false, 'error' => 'registro_falha']);
                 } else {
-                    header('Location: ../index.php?false');
+                    header('Location: ../index.php?section=emprestimo_livro&false');
                 }
         }
     } else {
         error_log('Dados incompletos no envio do formulário.');
-        header('Location: ../index.php?erro_dados_incompletos');
+        header('Location: ../index.php?section=emprestimo_livro&erro_dados_incompletos');
     }
 
     exit;
@@ -46,7 +46,12 @@ if (isset($_POST['livro']) && !empty($_POST['livro']) && isset($_POST['data_empr
     if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
         echo json_encode(['info' => $info]);
     } else {
-        header('Location: ../views/emprestimo/emprestimo_livro.php?nome=' . urlencode($info['nome']) . '&turma=' . urlencode($info['turma']) . '&curso=' . urlencode($info['curso']) . '&id_aluno=' . urlencode($info['id_aluno']));
+        header('Location: ../index.php?section=emprestimo_livro&' . http_build_query([
+            'nome' => $info['nome'],
+            'turma' => $info['turma'],
+            'curso' => $info['curso'],
+            'id_aluno' => $info['id_aluno']
+        ]));
     }
 } else {
     //header('Location: ../../views/emprestimo/index.php?action=erro_dados_incompletos');

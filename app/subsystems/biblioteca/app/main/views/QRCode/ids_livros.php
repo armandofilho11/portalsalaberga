@@ -5,7 +5,7 @@ if (isset($_POST['titulo2']) && !empty($_POST['titulo2'])) {
     $select = new select_model();
     $result = $select->select_livro_especifico($titulo2);
 } else {
-    header('location:gerador_especifico_livro.php');
+    header('Location: geradorQR_especifico_livro.php', true, 303);
     exit();
 }
 ?>
@@ -81,7 +81,7 @@ if (isset($_POST['titulo2']) && !empty($_POST['titulo2'])) {
             <h1 class="text-4xl font-bold mb-3 tracking-tight gradient-text">Selecionar Livros para QR Code</h1>
             <p class="text-gray-600 text-lg">Escolha os livros para gerar os QR Codes</p>
         </div>
-        <form action="./QRCode_especifico_livro.php" method="post" class="space-y-6">
+        <form action="../../index.php?section=qrcode_especifico_livro&gerar=1" method="post" class="space-y-6">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <?php foreach ($result as $dados): ?>
                     <?php foreach ($dados as $dado): ?>

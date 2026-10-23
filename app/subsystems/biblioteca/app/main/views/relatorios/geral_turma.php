@@ -65,8 +65,6 @@
     }
   </style>
 
-  <!-- Scripts Externos -->
-  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body class="p-2 sm:p-4 md:p-6 lg:p-8">
 
@@ -88,7 +86,7 @@
         <p class="text-gray-600 text-xs sm:text-sm md:text-base">Relatório Geral de Turma</p>
       </div>
 
-      <form class="space-y-4 sm:space-y-6" action="relatorio_geral_turma.php" method="get">
+      <form class="space-y-4 sm:space-y-6" action="../../index.php?section=relatorio_geral_turma" method="get">
         <div class="text-left">
           <label for="turma" class="block text-xs sm:text-sm md:text-base font-medium text-gray-700 mb-1 sm:mb-2">
             Selecione a turma

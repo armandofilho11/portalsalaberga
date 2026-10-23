@@ -22,9 +22,9 @@ if (isset($_POST['livro_emprestimo']) && !empty($_POST['livro_emprestimo']) && i
         }
     } else {
         if ($sucesso) {
-            header('Location: ../index.php?action=devolucao_sucesso');
+            header('Location: ../index.php?section=devolucao_livro&action=devolucao_sucesso');
         } else {
-            header('Location: ../index.php?action=devolucao_falha&erro=registro');
+            header('Location: ../index.php?section=devolucao_livro&action=devolucao_falha&erro=registro');
         }
     }
     exit;
@@ -36,14 +36,19 @@ if (isset($_POST['livro_emprestimo']) && !empty($_POST['livro_emprestimo']) && i
             header('Content-Type: application/json; charset=utf-8');
             echo json_encode(['info' => $info]);
         } else {
-            header('Location: ../views/emprestimo/devolucao_livro.php?nome=' . urlencode($info['nome']) . '&turma=' . urlencode($info['turma']) . '&curso=' . urlencode($info['curso']) . '&id_aluno=' . urlencode($info['id_aluno']));
+            header('Location: ../index.php?section=devolucao_livro&' . http_build_query([
+                'nome' => $info['nome'],
+                'turma' => $info['turma'],
+                'curso' => $info['curso'],
+                'id_aluno' => $info['id_aluno']
+            ]));
         }
     } else {
         if ($isAjax) {
             header('Content-Type: application/json; charset=utf-8');
             echo json_encode(['success' => false, 'error' => 'dados_incompletos']);
         } else {
-            header('Location: ../index.php?action=erro_dados_incompletos');
+            header('Location: ../index.php?section=devolucao_livro&action=erro_dados_incompletos');
         }
     }
     exit;
@@ -53,7 +58,7 @@ if (isset($_POST['livro_emprestimo']) && !empty($_POST['livro_emprestimo']) && i
         echo json_encode(['success' => false, 'error' => 'dados_incompletos']);
     } else {
         error_log('Nenhum dado POST recebido');
-        header('Location: ../index.php?action=erro_dados_incompletos');
+        header('Location: ../index.php?section=devolucao_livro&action=erro_dados_incompletos');
     }
     exit;
 }
