@@ -4,6 +4,7 @@ $select_model = new select_model();
 
 // Inicializa as variáveis
 $id_aluno_selecionado = $_POST['aluno'] ?? null;
+$id_livro_selecionado = $_GET['id_livro'] ?? null;
 $turma = null;
 $curso = null;
 
@@ -63,72 +64,76 @@ $dados_aluno = $select_model->select_aluno();
 
 <body class="min-h-screen flex items-center justify-center p-4">
 
-  <form method="POST" action="../../controllers/emprestimo_controller.php" class="bg-white/90 backdrop-blur-md p-6 rounded-2xl shadow-xl w-full max-w-md space-y-4">
+  <form id="emprestimoForm" method="POST" action="../../controllers/emprestimo_controller.php" class="bg-white/90 backdrop-blur-md p-6 rounded-2xl shadow-xl w-full max-w-md space-y-4">
     <h2 class="text-xl font-bold text-center text-ceara-green-dark">Registro de Empréstimo</h2>
 
-      <div class="space-y-4">
-        <h3 class="text-lg font-semibold text-ceara-green-dark text-center">Informações do Aluno</h3>
-
-
-        <div>
-          <label for="aluno" class="block text-sm font-medium text-gray-700">Selecione o Aluno:</label>
-          <select name="aluno" id="aluno" onchange="this.form.submit()" class="mt-1 w-full p-2 border border-gray-300 rounded">
+    
+    <div class="space-y-4">
+      <h3 class="text-lg font-semibold text-ceara-green-dark text-center">Informações do Aluno</h3>
+      
+      
+      <div>
+        <label for="aluno" class="block text-sm font-medium text-gray-700">Selecione o Aluno:</label>
+        <select name="aluno" id="aluno" class="mt-1 w-full p-2 border border-gray-300 rounded">
             <option value="">-- Selecione --</option>
             <?php
             if(isset($_GET['nome'])){
               echo '<option value="'.$_GET['id_aluno'].'" selected>'.$_GET['nome'].'</option>';
-            }
-            foreach ($dados_aluno as $aluno): ?>
+              }
+              foreach ($dados_aluno as $aluno): ?>
               <option value="<?= $aluno['id_aluno']?>" <?= $id_aluno_selecionado == $aluno['id_aluno'] ? 'selected' : '' ?>>
                 <?= htmlspecialchars($aluno['nome']) ?>
               </option>
-            <?php endforeach; ?>
-          </select>
-        </div>
-
-        <div>
-          <label for="turma" class="block text-sm font-medium text-gray-700">Turma:</label>
+              <?php endforeach; ?>
+            </select>
+          </div>
+          
+          <div>
+            <label for="turma" class="block text-sm font-medium text-gray-700">Turma:</label>
           <select name="turma" id="turma" disabled class="mt-1 w-full p-2 border border-gray-300 rounded">
             <option value="">
               <?= $turma = !empty($_GET['turma']) ? htmlspecialchars($_GET['turma']) : '-- Selecione --' ?>
             </option>
           </select>
         </div>
-
+        
         <div>
           <label for="curso" class="block text-sm font-medium text-gray-700">Curso:</label>
           <select name="curso" id="curso" disabled class="mt-1 w-full p-2 border border-gray-300 rounded">
             <option value="">
-            <?= $curso = !empty($_GET['curso']) ? htmlspecialchars($_GET['curso']) : '-- Selecione --' ?>
-              </option>
+              <?= $curso = !empty($_GET['curso']) ? htmlspecialchars($_GET['curso']) : '-- Selecione --' ?>
+            </option>
           </select>
         </div>
-
+        
       </div>
-    <div class="space-y-4">
-      <h3 class="text-lg font-semibold text-ceara-green-dark text-center">Livro e Datas</h3>
-
-      <div>
-        <label for="livro" class="block text-sm font-medium text-gray-700">Selecione o Livro:</label>
-        <select name="livro" id="livro" class="mt-1 w-full p-2 border border-gray-300 rounded">
-          <?php
+      <div class="space-y-4">
+        <h3 class="text-lg font-semibold text-ceara-green-dark text-center">Livro e Datas</h3>
+        
+        <div>
+          <label for="livro" class="block text-sm font-medium text-gray-700">Selecione o Livro:</label>
+          <select name="livro" id="livro" class="mt-1 w-full p-2 border border-gray-300 rounded">
+            <?php
           foreach ($livros as $livro): ?>
-            <option value="<?= $livro['id'] ?>">
+            <option value="<?= $livro['id'] ?>" <?= $id_livro_selecionado == $livro['id'] ? 'selected' : '' ?>>
               <?= htmlspecialchars($livro['titulo_livro']) ?>
             </option>
-          <?php endforeach; ?>
-        </select>
-      </div>
-
-      <div>
-        <label for="data_emprestimo" class="block text-sm font-medium text-gray-700">Data de Empréstimo:</label>
-        <input type="date" name="data_emprestimo" value="<?php echo date('Y-m-d'); ?>" required class="mt-1 w-full p-2 border border-gray-300 rounded">
-      </div>
-
-      <div>
-        <label for="data_devolucao_estipulada" class="block text-sm font-medium text-gray-700">Data de Devolução:</label>
-        <input type="date" name="data_devolucao_estipulada" required class="mt-1 w-full p-2 border border-gray-300 rounded">
-      </div>
+            <?php endforeach; ?>
+          </select>
+        </div>
+        
+        <div>
+          <label for="data_emprestimo" class="block text-sm font-medium text-gray-700">Data de Empréstimo:</label>
+          <input type="date" name="data_emprestimo" value="<?php echo date('Y-m-d'); ?>" required class="mt-1 w-full p-2 border border-gray-300 rounded">
+        </div>
+        
+        <div>
+          <label for="data_devolucao_estipulada" class="block text-sm font-medium text-gray-700">Data de Devolução:</label>
+          <input type="date" name="data_devolucao_estipulada" required class="mt-1 w-full p-2 border border-gray-300 rounded">
+        </div>
+        
+      <div id="emprestimoMessage"></div>
+      
 
       <div class="flex justify-between">
         <button type="submit" class="bg-ceara-green text-white font-semibold py-2 px-4 rounded hover:bg-ceara-green-dark transition">
@@ -148,9 +153,86 @@ $dados_aluno = $select_model->select_aluno();
         placeholder: "-- Selecione --",
         allowClear: true
       });
+
+      // When the selected student changes, request student info via AJAX
+      $('#aluno').on('change', function() {
+        var alunoId = $(this).val();
+        if (!alunoId) {
+          $('#turma').html('<option>-- Selecione --</option>');
+          $('#curso').html('<option>-- Selecione --</option>');
+          return;
+        }
+
+        $.ajax({
+          type: 'POST',
+          url: '../../controllers/emprestimo_controller.php',
+          data: { aluno: alunoId },
+          success: function(response) {
+            var data = response;
+            if (typeof response === 'string') {
+              try { data = JSON.parse(response); } catch (err) { data = {}; }
+            }
+            if (data.info) {
+              var info = data.info;
+              $('#turma').html('<option value="">' + (info.turma ? info.turma : '-- Selecione --') + '</option>');
+              $('#curso').html('<option value="">' + (info.curso ? info.curso : '-- Selecione --') + '</option>');
+            }
+          }
+        });
+      });
+
+      $('#emprestimoForm').on('submit', function(e) {
+        e.preventDefault();
+        var form = $(this);
+
+        $.ajax({
+          type: form.attr('method'),
+          url: form.attr('action'),
+          data: form.serialize(),
+          success: function(response) {
+            var data = response;
+            if (typeof response === 'string') {
+              try {
+                data = JSON.parse(response);
+              } catch (err) {
+                data = {};
+              }
+            }
+
+            if (data.info) {
+              // Preencher turma e curso quando o retorno for infos do aluno
+              var info = data.info;
+              $('#turma').html('<option value="">' + (info.turma ? info.turma : '-- Selecione --') + '</option>');
+              $('#curso').html('<option value="">' + (info.curso ? info.curso : '-- Selecione --') + '</option>');
+            } else if (data.success) {
+              // Registro concluído com sucesso: limpar formulário e exibir mensagem
+              $('#emprestimoMessage').html('<div class="flex items-center p-4 mb-4 text-green-800 border-l-4 border-green-500 bg-green-50 rounded-md" role="alert"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-6 h-6 mr-3 flex-shrink-0" fill="currentColor" aria-hidden="true"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm121.9 176.6L233.4 329.1c-4.7 4.7-12.3 4.7-17 0l-82.3-82.3c-4.7-4.7-4.7-12.3 0-17l28.3-28.3c4.7-4.7 12.3-4.7 17 0l45.5 45.5 107.6-107.6c4.7-4.7 12.3-4.7 17 0l28.3 28.3c4.8 4.7 4.8 12.3.1 16.9z"/></svg><span class="text-sm font-medium">Empréstimo registrado com sucesso!</span></div>');
+              form[0].reset();
+              $('#aluno').val(null).trigger('change');  
+              $('#livro').val(null).trigger('change');
+            } else if (data.error) {
+              $('#emprestimoMessage').html('<div class="flex items-center p-4 mb-4 text-red-800 border-l-4 border-red-500 bg-red-50 rounded-md" role="alert"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="w-6 h-6 mr-3 flex-shrink-0" fill="none" aria-hidden="true"><circle cx="50" cy="50" r="42" stroke="currentColor" stroke-width="4"/><line x1="50" y1="28" x2="50" y2="58" stroke="currentColor" stroke-width="6"/><rect x="47" y="64" width="6" height="6" fill="currentColor"/></svg><span class="text-sm font-medium">ERRO ao registrar empréstimo!</span></div>');
+            }
+          }
+        });
+      });
     });
   </script>
-
+  <script>
+        (function(){
+            const params = new URLSearchParams(window.location.search);
+            if (params.has('true') || params.has('false') || params.has('erro') || params.has('error')) {
+                setTimeout(function(){
+                    try {
+                        if (window.parent && typeof window.parent.alternarSecaoEfetiva === 'function') {
+                            window.parent.alternarSecaoEfetiva('dashboard');
+                        }
+                    } catch(e){}
+                    const f = document.querySelector('form'); if (f) f.reset();
+                }, 3000);
+            }
+        })();
+    </script>
 </body>
 
 </html>

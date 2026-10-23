@@ -44,11 +44,6 @@
 <body class="min-h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center p-4 sm:p-6 md:p-8 select-none"
     style="background-image: url('../../assets/img/layout.png'); background-opacity: 0.3;">
 
-    <a href="../../index.php" class="fixed top-5 left-5 z-50 group flex items-center space-x-2 bg-white/80 rounded-full px-4 py-2 shadow-lg hover:bg-ceara-green transition-all duration-300">
-        <i class="fa-solid fa-arrow-left text-ceara-green group-hover:text-white"></i>
-        <span class="text-ceara-green group-hover:text-white font-medium">Voltar</span>
-    </a>
-
     <div class="bg-white bg-opacity-90 rounded-xl shadow-2xl p-8 w-full max-w-md transform transition-all duration-300">
         <div class="text-center mb-10">
             <h1 class="text-4xl font-bold text-black-500 mb-3 tracking-tight gradient-text">Sistema Biblioteca</h1>
@@ -83,10 +78,10 @@
         </div>
 
         <div class="mt-10 pt-6 border-t border-gray-200 text-center">
-            <p class="text-gray-500 text-sm font-medium">Sistema Biblioteca © 2025</p>
+            <p class="text-gray-500 text-sm font-medium">Sistema Biblioteca © 2026</p>
         </div>
     </div>
 
 </body>
 
-</html>,
+</html>

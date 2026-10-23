@@ -2,6 +2,7 @@
 require_once('../models/select_model.php');
 $select_model = new select_model();
 $livros = $select_model->select_nome_livro();
+$categorias = $select_model->select_categoria();
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -141,17 +142,20 @@ $livros = $select_model->select_nome_livro();
     </style>
 </head>
 
-<body class="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-4 sm:p-6 md:p-8 lg:p-12 select-none"
+<body class="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 flex items-center justify-center p-4 sm:p-6 md:p-8 lg:p-12 select-none"
     style="background-image: url('../assets/img/layout.png'); background-size: cover; background-attachment: fixed;">
-    <a href="decisão.php"
-        class="fixed top-5 left-5 z-50 group flex items-center space-x-2 bg-white/80 rounded-full px-4 py-2 shadow-lg hover:bg-ceara-green transition-all duration-300">
-        <i class="fa-solid fa-arrow-left text-ceara-green group-hover:text-white"></i>
-        <span class="text-ceara-green group-hover:text-white font-medium">Voltar</span>
-    </a>
-    <div class="max-w-4xl mx-auto">
-        <img src="../assets/img/logo1.png"
+    
+    <?php if (isset($_GET['from']) && $_GET['from'] === 'gerenciar_acervo'): ?>
+        <a href="gerenciar_acervo.php" class="fixed top-5 left-12 z-50 group flex items-center space-x-2 bg-white/80 rounded-full px-4 py-2 shadow-lg hover:bg-ceara-green transition-all duration-300">
+            <i class="fa-solid fa-arrow-left text-ceara-green group-hover:text-white"></i>
+            <span class="text-ceara-green group-hover:text-white font-medium">Voltar</span>
+        </a>
+    <?php endif; ?>
+    
+    <div class="w-full max-w-4xl">
+        <!-- <img src="../assets/img/logo1.png"
             class="w-[200px] sm:w-[250px] md:w-[300px] mx-auto mb-8 drop-shadow-xl hover:scale-105 transition-transform duration-300"
-            alt="Logo">
+            alt="Logo"> -->
         <div class="bg-white rounded-xl shadow-custom overflow-hidden border border-gray-100 transition-all duration-300 hover:shadow-lg">
             <div class="bg-gradient-ceara p-6 sm:p-8">
                 <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-white text-center tracking-wide">
@@ -194,6 +198,7 @@ $livros = $select_model->select_nome_livro();
                                             data-subgenero="<?= htmlspecialchars($livro['subgenero']) ?>"
                                             data-ano_publicacao="<?= htmlspecialchars($livro['ano_publicacao']) ?>"
                                             data-corredor="<?= htmlspecialchars($livro['corredor']) ?>"
+                                            data-categoria="<?= htmlspecialchars($livro['categoria']) ?>"
                                             data-ficcao="<?= htmlspecialchars($livro['ficcao']) ?>"
                                             data-brasileira="<?= htmlspecialchars($livro['brasileira']) ?>"
                                             data-cativo="<?= htmlspecialchars($livro['cativo']) ?>">
@@ -287,6 +292,19 @@ $livros = $select_model->select_nome_livro();
                                         <label for="editCorredor" class="block text-base font-medium text-gray-700 mb-2">Corredor</label>
                                         <input type="text" id="editCorredor" name="corredor" class="w-full px-5 py-3 bg-white border-2 border-gray-200 rounded-lg focus:border-ceara-green focus:ring-2 focus:ring-ceara-green/20 focus:outline-none hover:border-gray-300 text-gray-700 placeholder-gray-400 transition-all duration-200 text-lg" required>
                                     </div>
+                                    <div>
+                                        <label for="editCategoria" class="block text-base font-medium text-gray-700 mb-2">Categoria</label>
+                                        <select id="editCategoria" name="categoria" class="w-full px-5 py-3 bg-white border-2 border-gray-200 rounded-lg focus:border-ceara-green focus:ring-2 focus:ring-ceara-green/20 focus:outline-none hover:border-gray-300 text-gray-700 transition-all duration-200 text-lg" required>
+                                            <option value="">Selecione a categoria</option>
+                                            <?php foreach ($categorias as $categoria) { ?>
+                                                <option value="<?= htmlspecialchars($categoria['categorias'], ENT_QUOTES, 'UTF-8') ?>">
+                                                    <?= htmlspecialchars($categoria['categorias'], ENT_QUOTES, 'UTF-8') ?>
+                                                </option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                                     <div class="grid grid-cols-3 gap-4">
                                         <div class="flex items-center">
                                             <input type="radio" id="editFiccaoTrue" name="ficcao" value="1" class="w-5 h-5 text-ceara-green border-gray-300 rounded focus:ring-ceara-green" required>
@@ -382,6 +400,7 @@ $livros = $select_model->select_nome_livro();
                     document.getElementById('editQuantidade').value = selectedOption.dataset.quantidade || '';
                     document.getElementById('editAnoPublicacao').value = selectedOption.dataset.ano_publicacao || '';
                     document.getElementById('editCorredor').value = selectedOption.dataset.corredor || '';
+                    document.getElementById('editCategoria').value = selectedOption.dataset.categoria || '';
 
                     const generoSelect = document.getElementById('editGenero');
                     const generoOptions = Array.from(generoSelect.options);
@@ -436,6 +455,21 @@ $livros = $select_model->select_nome_livro();
                 }
             });
         });
+    </script>
+    <script>
+        (function(){
+            const params = new URLSearchParams(window.location.search);
+            if (params.has('true') || params.has('false') || params.has('erro') || params.has('error') || params.has('ja_cadastrado')) {
+                setTimeout(function(){
+                    try {
+                        if (window.parent && typeof window.parent.alternarSecaoEfetiva === 'function') {
+                            window.parent.alternarSecaoEfetiva('dashboard');
+                        }
+                    } catch(e){}
+                    const f = document.getElementById('editBookForm'); if (f) f.reset();
+                }, 3000);
+            }
+        })();
     </script>
 </body>
 

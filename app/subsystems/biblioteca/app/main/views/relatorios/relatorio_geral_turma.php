@@ -38,6 +38,8 @@ class Relatorio_geral_turma extends connect {
             throw new Exception("Turma não encontrada");
         }
 
+        $this->nome_turma = $this->formatarNomeTurma($this->nome_turma);
+
         $this->aluno_destaque = $select_model->get_aluno_destaque($this->id_turma, $this->mes);
         if (empty($this->aluno_destaque)) {
             $this->aluno_destaque = 'Nenhum aluno encontrado para este mês';
@@ -47,10 +49,10 @@ class Relatorio_geral_turma extends connect {
     }
 
     private function loadLivrosData() {
-        $stmt_livros_por_aluno = $this->connect->prepare("
+        $stmt_livros_por_aluno = $this->connect_biblioteca->prepare("
             SELECT a.nome AS student_name, COUNT(e.id) AS book_count
             FROM emprestimo e
-            JOIN aluno a ON e.id_aluno = a.id_aluno
+            JOIN " . $this->connect_alunos . ".alunos a ON e.id_aluno = a.id_aluno
             WHERE a.id_turma = :id_turma
               AND MONTH(e.data_emprestimo) = :mes
               AND YEAR(e.data_emprestimo) = YEAR(CURDATE())
@@ -87,6 +89,57 @@ class Relatorio_geral_turma extends connect {
             12 => 'Dezembro'
         ];
         return $meses[$mes];
+    }
+
+    /**
+     * Formata o nome da turma para exibição no formato "1° ano A".
+     */
+    private function formatarNomeTurma($nome) {
+        if (is_array($nome)) {
+            // tenta diferentes chaves comuns antes de usar reset()
+            if (isset($nome['nome'])) {
+                $nome = $nome['nome'];
+            } elseif (isset($nome['turma'])) {
+                $nome = $nome['turma'];
+            } else {
+                $nome = reset($nome);
+            }
+        }
+
+        $nome = (string) $nome;
+        $nome = trim(preg_replace('/\s+/', ' ', $nome));
+
+        // tenta extrair primeiro número (ano) e possível sufixo (letra/nível)
+        $ano = null;
+        $sufixo = null;
+
+        if (preg_match('/(\d{1,2})/u', $nome, $m)) {
+            $ano = $m[1];
+        }
+
+        // busca uma letra ou grupo alfanumérico no final (ex: "A", "B", "I", "1")
+        if (preg_match('/([A-Za-z0-9]+)\s*$/u', $nome, $m2)) {
+            // evita interpretar palavras como "ano" como sufixo
+            $cand = mb_strtolower($m2[1], 'UTF-8');
+            if ($cand !== 'ano' && !preg_match('/^ano$/iu', $cand)) {
+                $sufixo = mb_strtoupper($m2[1], 'UTF-8');
+            }
+        }
+
+        if ($ano !== null) {
+            $resultado = $ano . '° ano';
+            if ($sufixo) {
+                $resultado .= ' ' . $sufixo;
+            }
+            return $resultado;
+        }
+
+        // fallback: capitaliza palavras caso não seja possível formar "X° ano Y"
+        $parts = explode(' ', mb_strtolower($nome, 'UTF-8'));
+        $parts = array_map(function($p){
+            return mb_strtoupper(mb_substr($p,0,1, 'UTF-8'), 'UTF-8') . mb_substr($p,1, mb_strlen($p,'UTF-8')-1, 'UTF-8');
+        }, $parts);
+        return implode(' ', $parts);
     }
 
     public function getChartLabels() {

@@ -7,9 +7,7 @@ class PDF extends connect
     public function __construct()
     {
         parent::__construct();
-        $this->header();
         $this->main();
-        $this->footer();
     }
 
     public function header()
@@ -51,12 +49,11 @@ class PDF extends connect
         $fpdf->AliasNbPages();
         $fpdf->AddPage();
 
-        $acervo = $this->connect->prepare(
+        $acervo = $this->connect_biblioteca->prepare(
             "SELECT 
                         c.id,
                         c.titulo_livro, 
                         a.nome_autor,
-                        a.sobrenome_autor,
                         c.edicao,
                         c.editora,
                         c.quantidade,
@@ -89,8 +86,7 @@ class PDF extends connect
                 ];
             }
             $livros[$chave]['autores'][] = [
-                'nome_autor' => $row['nome_autor'],
-                'sobrenome_autor' => $row['sobrenome_autor']
+                'nome_autor' => $row['nome_autor']
             ];
         }
 
@@ -148,9 +144,7 @@ class PDF extends connect
 
             $autores = [];
             foreach ($livro['autores'] as $autor) {
-                $nomeAutor = utf8_decode(mb_strtoupper($autor['nome_autor'] ?? 'N/A', 'UTF-8'));
-                $sobrenome = utf8_decode(mb_strtoupper($autor['sobrenome_autor'] ?? 'N/A', 'UTF-8'));
-                $autores[] = $nomeAutor . " " . $sobrenome;
+                $autores[] = utf8_decode(mb_strtoupper($autor['nome_autor'] ?? 'N/A', 'UTF-8'));
             }
 
             $numAutores = count($autores);

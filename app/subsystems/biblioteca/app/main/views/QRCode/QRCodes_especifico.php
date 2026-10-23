@@ -44,7 +44,7 @@ class qrCode1 extends connect
         foreach ($titulos as $titulo) {
             $titulo_array = explode("_", $titulo);
             // Usar prepared statement para evitar SQL Injection
-            $select_dados_livro = $this->connect->prepare("SELECT id, titulo_livro, edicao, estantes, prateleiras, quantidade, cativo FROM catalogo WHERE titulo_livro = ? AND editora = ?");
+            $select_dados_livro = $this->connect_biblioteca->prepare("SELECT id, titulo_livro, edicao, estantes, prateleiras, quantidade, cativo FROM catalogo WHERE titulo_livro = ? AND editora = ?");
             $select_dados_livro->execute([$titulo_array[0], $titulo_array[1]]);
 
             $dados_livros = $select_dados_livro->fetchAll(PDO::FETCH_ASSOC);
@@ -57,8 +57,13 @@ class qrCode1 extends connect
                     // Determinar a edição para a URL
                     $edicao = ($cod_livro['edicao'] == 'ENI*' || empty($cod_livro['edicao'])) ? '0' : $cod_livro['edicao'];
 
-                    // Dados do QR Code
-                    $dados = "https://salaberga.com/salaberga/portalsalaberga/app/subsystems/biblioteca/app/main/views/emprestimo/decisao.php?id_livro=" . $cod_livro['id'] . "_" . $edicao . "_" . $i . "_" . $estante . "_" . $prateleira;
+                    // Diferenciar o ambiente de desenvolvimento (localhost) do ambiente de produção para a URL do QR code
+                    $host = $_SERVER['HTTP_HOST'];
+                    if (strpos($host, 'localhost') !== false) {
+                        $dados = "http://localhost/app/subsystems/biblioteca/app/main/index.php?qr_livro=" . urlencode($cod_livro['id'] . "_" . $edicao . "_" . $i . "_" . $estante . "_" . $prateleira);
+                    } else {
+                        $dados = "https://salaberga.com/salaberga/portalsalaberga/app/subsystems/biblioteca/app/main/index.php?qr_livro=" . urlencode($cod_livro['id'] . "_" . $edicao . "_" . $i . "_" . $estante . "_" . $prateleira);
+                    }
 
                     // Usar um nome de arquivo único para cada QR Code
                     $arquivo_qrcode = __DIR__ . "/qrcode_" . $cod_livro['id'] . "_" . $i . ".png";

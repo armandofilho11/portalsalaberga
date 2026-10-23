@@ -22,19 +22,19 @@ if (isset($_POST['livro']) && !empty($_POST['livro']) && isset($_POST['data_empr
                 if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
                     echo json_encode(['success' => true]);
                 } else {
-                    header('Location: ../index.php?action=emprestimo_sucesso');
+                    header('Location: ../index.php?true');
                 }
         } else {
                 error_log('Erro ao registrar empréstimo para o aluno ID: ' . $id_aluno);
                 if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
                     echo json_encode(['success' => false, 'error' => 'registro_falha']);
                 } else {
-                    header('Location: ../index.php?action=emprestimo_falha');
+                    header('Location: ../index.php?false');
                 }
         }
     } else {
         error_log('Dados incompletos no envio do formulário.');
-        header('Location: ../index.php?action=erro_dados_incompletos');
+        header('Location: ../index.php?erro_dados_incompletos');
     }
 
     exit;

@@ -59,10 +59,12 @@
 <body class="min-h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center p-4 sm:p-6 md:p-8 select-none"
     style="background-image: url('../../assets/img/layout.png');">
 
-    <a href="../../index.php" class=" fixed top-5 left-5 z-50 group flex items-center space-x-2 bg-white/80 rounded-full px-4 py-2 shadow-lg hover:bg-ceara-green transition-all duration-300">
-        <i class="fa-solid fa-arrow-left text-ceara-green group-hover:text-white"></i>
-        <span class="text-ceara-green group-hover:text-white font-medium">Voltar</span>
-    </a>
+    <?php if (isset($_GET['from']) && $_GET['from'] === 'decisao'): ?>
+        <a href="decisao.php" class="fixed top-5 left-12 z-50 group flex items-center space-x-2 bg-white/80 rounded-full px-4 py-2 shadow-lg hover:bg-ceara-green transition-all duration-300">
+            <i class="fa-solid fa-arrow-left text-ceara-green group-hover:text-white"></i>
+            <span class="text-ceara-green group-hover:text-white font-medium">Voltar</span>
+        </a>
+    <?php endif; ?>
 
     <div class="glass-effect rounded-2xl shadow-2xl p-8 w-full max-w-lg transform transition-all duration-300 card-hover">
         <div class="text-center mb-10">
@@ -77,25 +79,10 @@
             </p>
         </div>
 
-        <!-- Mensagens de erro -->
-        <?php if (isset($_GET['erro']) && $_GET['erro'] == 1): ?>
-            <div class="flex items-center p-4 mb-4 text-red-800 border-l-4 border-red-500 bg-red-50 rounded-md" role="alert">
-                <i class="fas fa-exclamation-circle text-xl mr-3"></i>
-                <span class="text-sm font-medium">Por favor, selecione um tipo de relatório!</span>
-            </div>
-        <?php endif; ?>
-
-        <?php if (isset($_GET['erro']) && $_GET['erro'] == 2): ?>
-            <div class="flex items-center p-4 mb-4 text-red-800 border-l-4 border-red-500 bg-red-50 rounded-md" role="alert">
-                <i class="fas fa-exclamation-circle text-xl mr-3"></i>
-                <span class="text-sm font-medium">Tipo de relatório inválido!</span>
-            </div>
-        <?php endif; ?>
-
         <form action="../../controllers/main_controller.php" method="post" class="space-y-5">
             <div class="grid grid-cols-1 gap-4">
                 <div class="relative">
-                    <select id="estanteSelect" name="estante" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ceara-green focus:border-ceara-green appearance-none bg-white text-gray-700 cursor-pointer shadow-sm transition-all duration-300">
+                    <select id="estanteSelect" name="estante" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ceara-green focus:border-ceara-green appearance-none bg-white text-gray-700 cursor-pointer shadow-sm transition-all duration-300" required>
                         <option value="" disabled selected>Selecione a estante</option>
                         <?php for ($i = 1; $i <= 32; $i++) { ?>
                             <option value="<?= $i ?>">Estante <?= $i ?></option>
@@ -107,7 +94,7 @@
                 </div>
 
                 <div class="relative">
-                    <select id="prateleiraSelect" name="prateleira" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ceara-green focus:border-ceara-green appearance-none bg-white text-gray-700 cursor-pointer shadow-sm transition-all duration-300">
+                    <select id="prateleiraSelect" name="prateleira" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ceara-green focus:border-ceara-green appearance-none bg-white text-gray-700 cursor-pointer shadow-sm transition-all duration-300" required>
                         <option value="" disabled selected>Selecione a prateleira</option>
                         <?php for ($i = 1; $i <= 5; $i++) { ?>
                             <option value="<?= $i ?>">Prateleira <?= $i ?></option>

@@ -7,6 +7,7 @@
   
   <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
   
   <!-- Configuração do Tailwind -->
   <script>
@@ -69,11 +70,12 @@
 </head>
 <body class="p-2 sm:p-4 md:p-6 lg:p-8">
 
-<a href="../relatorios/relatorios.php" class="fixed top-5 left-5 z-50 group flex items-center space-x-2 bg-white/80 rounded-full px-4 py-2 shadow-lg hover:bg-ceara-green transition-all duration-300">
-    <i class="fa-solid fa-arrow-left text-ceara-green group-hover:text-white">
-    </i>
-    <span class="text-ceara-green group-hover:text-white font-medium">Voltar</span>
-</a>
+<?php if (isset($_GET['from']) && $_GET['from'] === 'decisao'): ?>
+    <a href="decisao.php" class="fixed top-5 left-12 z-50 group flex items-center space-x-2 bg-white/80 rounded-full px-4 py-2 shadow-lg hover:bg-ceara-green transition-all duration-300">
+        <i class="fa-solid fa-arrow-left text-ceara-green group-hover:text-white"></i>
+        <span class="text-ceara-green group-hover:text-white font-medium">Voltar</span>
+    </a>
+<?php endif; ?>
 
 <div class="container mx-auto px-2 sm:px-4">
   <div class="max-w-[95%] sm:max-w-[85%] md:max-w-[75%] lg:max-w-lg mx-auto mt-12 sm:mt-16 md:mt-20 lg:mt-24">
@@ -91,7 +93,7 @@
           <label for="turma" class="block text-xs sm:text-sm md:text-base font-medium text-gray-700 mb-1 sm:mb-2">
             Selecione a turma
           </label>
-          <select id="turma" name="turma" class="w-full px-3 py-2 sm:px-4 sm:py-3 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors duration-300 text-xs sm:text-sm md:text-base">
+          <select id="turma" name="turma" class="w-full px-3 py-2 sm:px-4 sm:py-3 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors duration-300 text-xs sm:text-sm md:text-base" required>
             <option value="" selected disabled>Selecione a turma</option>
             <?php
             require_once('../../models/select_model.php');
@@ -99,7 +101,15 @@
             $turmas = $select_model->select_turmas();
             if ($turmas) {
                 foreach ($turmas as $turma) {
-                    echo '<option value="' . $turma['id_turma'] . '">' . $turma['nome_turma'] . '</option>';
+                    $label = $turma['nome_exibicao'] ?? null;
+                    if (!$label) {
+                        if (!empty($turma['serie_turma']) || !empty($turma['nome_turma'])) {
+                            $label = trim((string)($turma['serie_turma'] ?? '') . 'º ' . (string)($turma['nome_turma'] ?? ''));
+                        } elseif (!empty($turma['ano']) && !empty($turma['turma'])) {
+                            $label = trim((string)$turma['ano'] . ' ' . (string)$turma['turma']);
+                        }
+                    }
+                    echo '<option value="' . $turma['id_turma'] . '">' . htmlspecialchars($label ?: 'Turma ' . $turma['id_turma']) . '</option>';
                 }
             }
             ?>
@@ -110,7 +120,7 @@
           <label for="mes" class="block text-xs sm:text-sm md:text-base font-medium text-gray-700 mb-1 sm:mb-2">
             Selecione o mês
           </label>
-          <select id="mes" name="mes" class="w-full px-3 py-2 sm:px-4 sm:py-3 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors duration-300 text-xs sm:text-sm md:text-base">
+          <select id="mes" name="mes" class="w-full px-3 py-2 sm:px-4 sm:py-3 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors duration-300 text-xs sm:text-sm md:text-base" required>
             <option value="" selected disabled>Selecione o mês</option>
             <?php
             $meses = [

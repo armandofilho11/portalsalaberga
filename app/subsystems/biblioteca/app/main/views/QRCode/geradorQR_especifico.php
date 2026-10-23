@@ -158,10 +158,7 @@ $select = new select_model;
     }
 </script>
 <body class="min-h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center p-6 sm:p-8 md:p-12 select-none" style="background-image: url('../../assets/img/layout.png');">
-    <a href="decisao.php" class="fixed top-5 left-5 z-50 group flex items-center space-x-2 bg-white/80 rounded-full px-4 py-2 shadow-lg hover:bg-ceara-green transition-all duration-300">
-        <i class="fa-solid fa-arrow-left text-ceara-green group-hover:text-white"></i>
-        <span class="text-ceara-green group-hover:text-white font-medium">Voltar</span>
-    </a>
+    
     <div class="glass-effect rounded-2xl shadow-2xl p-10 w-full max-w-lg transform transition-all duration-300 card-hover">
         <div class="text-center mb-10">
             <div class="mb-6">
@@ -173,7 +170,7 @@ $select = new select_model;
         <form action="../../controllers/qr_controller.php" method="post" class="space-y-6">
             <div class="space-y-4">
                 <div class="relative">
-                    <select id="titulos" class="js-example-basic-multiple" name="titulo[]" multiple="multiple">
+                    <select id="titulos" class="js-example-basic-multiple" name="titulo[]" multiple="multiple" required>
                         <?php
                         $titulos = $select->select_nome_livro();
                         foreach ($titulos as $titulo) {
