@@ -11283,11 +11283,8 @@ function normalizeStudentSearch(value) {
         if (!canvas || !context) return null;
 
         const colors = ['#fff176', '#ff4d8d', '#72f1ff', '#ffffff', '#a7ff83', '#ff9f43'];
-        const rockets = [];
         const particles = [];
         const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
-        const startedAt = performance.now();
-        let nextLaunchAt = 0;
         let animationFrame = null;
         let stopped = false;
         let width = 0;
@@ -11302,11 +11299,11 @@ function normalizeStudentSearch(value) {
         };
 
         const burst = (x, y, color) => {
-            const particleCount = 90;
+            const particleCount = 120;
             for (let index = 0; index < particleCount; index += 1) {
-                const angle = (Math.PI * 2 * index) / particleCount + Math.random() * 0.12;
-                const speed = 1.5 + Math.random() * 4.5;
-                const life = 55 + Math.floor(Math.random() * 35);
+                const angle = (Math.PI * 2 * index) / particleCount + Math.random() * 0.08;
+                const speed = 2 + Math.random() * 6.5;
+                const life = 45 + Math.floor(Math.random() * 35);
                 particles.push({
                     x,
                     y,
@@ -11317,26 +11314,9 @@ function normalizeStudentSearch(value) {
                     color: Math.random() < 0.72 ? color : colors[Math.floor(Math.random() * colors.length)],
                     life,
                     maxLife: life,
-                    size: 1.2 + Math.random() * 2
+                    size: 1.5 + Math.random() * 2
                 });
             }
-        };
-
-        const launch = () => {
-            const onLeftSide = Math.random() < 0.5;
-            const x = width * (onLeftSide
-                ? 0.07 + Math.random() * 0.2
-                : 0.73 + Math.random() * 0.2);
-            rockets.push({
-                x,
-                y: height + 10,
-                previousX: x,
-                previousY: height + 10,
-                velocityX: (Math.random() - 0.5) * 1.5,
-                velocityY: -(7 + Math.random() * 2.5),
-                targetY: height * (0.08 + Math.random() * 0.15),
-                color: colors[Math.floor(Math.random() * colors.length)]
-            });
         };
 
         const stop = () => {
@@ -11347,40 +11327,9 @@ function normalizeStudentSearch(value) {
             context.clearRect(0, 0, width, height);
         };
 
-        const animate = now => {
+        const animate = () => {
             if (stopped) return;
-            const elapsed = now - startedAt;
             context.clearRect(0, 0, width, height);
-
-            if (elapsed < 3600 && now >= nextLaunchAt) {
-                launch();
-                if (Math.random() > 0.55) launch();
-                nextLaunchAt = now + 300 + Math.random() * 180;
-            }
-
-            for (let index = rockets.length - 1; index >= 0; index -= 1) {
-                const rocket = rockets[index];
-                rocket.previousX = rocket.x;
-                rocket.previousY = rocket.y;
-                rocket.x += rocket.velocityX;
-                rocket.y += rocket.velocityY;
-                rocket.velocityY += 0.035;
-
-                context.beginPath();
-                context.moveTo(rocket.previousX, rocket.previousY);
-                context.lineTo(rocket.x, rocket.y);
-                context.strokeStyle = rocket.color;
-                context.lineWidth = 2.5;
-                context.shadowBlur = 12;
-                context.shadowColor = rocket.color;
-                context.stroke();
-                context.shadowBlur = 0;
-
-                if (rocket.y <= rocket.targetY || rocket.velocityY >= -1) {
-                    burst(rocket.x, rocket.y, rocket.color);
-                    rockets.splice(index, 1);
-                }
-            }
 
             for (let index = particles.length - 1; index >= 0; index -= 1) {
                 const particle = particles[index];
@@ -11410,7 +11359,7 @@ function normalizeStudentSearch(value) {
 
             context.globalAlpha = 1;
             context.shadowBlur = 0;
-            if (elapsed < 5000 || rockets.length || particles.length) {
+            if (particles.length) {
                 animationFrame = window.requestAnimationFrame(animate);
             } else {
                 stop();
@@ -11419,6 +11368,10 @@ function normalizeStudentSearch(value) {
 
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
+        burst(width * 0.16, height * 0.2, '#ff9f43');
+        burst(width * 0.84, height * 0.2, '#ff4d8d');
+        burst(width * 0.2, height * 0.72, '#fff176');
+        burst(width * 0.8, height * 0.72, '#72f1ff');
         animationFrame = window.requestAnimationFrame(animate);
         return stop;
     }
@@ -11497,7 +11450,7 @@ function normalizeStudentSearch(value) {
                 exitConfirmationHideTimeout = null;
             }, 220);
             exitConfirmationTimeout = null;
-        }, isKauanSuccessfulExit && stopStageFireworks ? 7000 : 1500);
+        }, 1500);
     }
 
     function abrirConfirmacaoExclusao(saida) {
