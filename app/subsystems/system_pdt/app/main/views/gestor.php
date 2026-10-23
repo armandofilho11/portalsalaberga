@@ -236,6 +236,14 @@
             filter: brightness(1.06);
         }
 
+        @media (max-width: 1023px){
+            .pdt-sidebar.mobile-open{
+                display:flex !important;
+                z-index:60;
+                width:min(85vw, 320px);
+            }
+        }
+
         @keyframes fade {
             from{
                 opacity: 0;
@@ -268,26 +276,22 @@
             </div>
 
             <nav>
-                <button class="menu-item active flex items-center gap-3 px-4 py-3 rounded-xl transition effect-bar effect-bar-select">
+                <button type="button" data-section="sec-inicio-gestor" class="menu-item active flex items-center gap-3 px-4 py-3 rounded-xl transition effect-bar effect-bar-select">
                     <i class="bi bi-house-door"></i>
                     <span>Início</span>
                 </button>
-                <button class="menu-item flex items-center gap-3 px-4 py-3 rounded-xl transition effect-bar">
+                <button type="button" data-section="sec-turmas-gestor" class="menu-item flex items-center gap-3 px-4 py-3 rounded-xl transition effect-bar">
                     <i class="bi bi-journal-bookmark"></i>
                     <span>Turmas</span>
                 </button>
-                <button class="menu-item flex items-center gap-3 px-4 py-3 rounded-xl transition effect-bar">
+                <button type="button" data-section="sec-ocorrencias-gestor" class="menu-item flex items-center gap-3 px-4 py-3 rounded-xl transition effect-bar">
                     <i class="bi bi-exclamation-triangle"></i>
                     <span>Ocorrências</span>
                 </button>
-                <!-- <button class="menu-item flex items-center gap-3 px-4 py-3 rounded-xl transition text-gray-600">
+                <button type="button" data-section="sec-relatorios-gestor" class="menu-item flex items-center gap-3 px-4 py-3 rounded-xl transition effect-bar">
                     <i class="bi bi-bar-chart"></i>
-                    <span>Relatórios</span>
-                </button> -->
-                <!-- <button class="menu-item flex items-center gap-3 px-4 py-3 rounded-xl transition text-gray-600">
-                    <i class="bi bi-calendar-event"></i>
-                    <span>Calendário</span>
-                </button> -->
+                    <span>Indicadores</span>
+                </button>
                 <!-- <button class="menu-item flex items-center gap-3 px-4 py-3 rounded-xl transition text-gray-600">
                     <i class="bi bi-gear"></i>
                     <span>Configurações</span>
@@ -320,13 +324,14 @@
             <div class="flex items-center gap-6 relative">
                 <button id="btnNotificacoes" class="relative" type="button" aria-label="Notificações">
                     <i class="bi bi-bell"></i>
+                    <span id="contadorNotificacoes" class="absolute -right-2 -top-2 hidden min-w-5 rounded-full bg-red-600 px-1 text-xs text-white"></span>
                 </button>
                 <div id="notificacoesPanel" class="hidden absolute right-0 top-full mt-3 w-80 rounded-3xl border border-slate-700 bg-slate-950 p-4 shadow-2xl text-slate-200 z-50">
                     <div class="flex items-center justify-between mb-3">
                         <span class="text-sm font-semibold">Notificações</span>
                         <button id="fecharNotificacoes" class="text-slate-400 hover:text-white text-sm">Fechar</button>
                     </div>
-                    <div class="space-y-3 text-sm text-slate-300">
+                    <div id="listaNotificacoes" class="max-h-96 space-y-3 overflow-y-auto text-sm text-slate-300">
                         <p>Nenhuma notificação no momento.</p>
                     </div>
                 </div>
@@ -346,34 +351,57 @@
         <main class="pdt-content p-8 main-shell">
 
             <!-- SEÇÃO INÍCIO -->
-            <div class="secs">
+            <section id="sec-inicio-gestor" class="secs gestor-section">
                 <div class="mb-8">
                     <h1 class="text-3xl font-bold text-gray-800 mb-2">
-                        Bem-vindo(a), <?= $_SESSION['nome'] ?>
+                        Bem-vindo(a), <?= htmlspecialchars((string) $_SESSION['nome'], ENT_QUOTES, 'UTF-8') ?>
                     </h1>
                     <p class="text-gray-500">
-                        Aqui está um resumo completo da sua turma.
+                        Visão geral da gestão escolar e atalhos para as atividades do sistema.
                     </p>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
                     <div class="card-dashboard">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-gray-500 text-sm mb-2">Turmas</p>
-                                <h2 id="contadorAlunos" class="text-4xl font-bold text-gray-800">0</h2>
-                                <span class="text-gray-400 text-sm">Turmas criadas</span>
-                            </div>
-                            <div class="w-14 h-14 rounded-2xl bg-green-100 text-green-700 flex items-center justify-center text-2xl">
-                                <i class="bi bi-journal-bookmark-fill"></i>
-                            </div>
-                        </div>
+                        <p class="text-gray-500 text-sm mb-2">Turmas</p>
+                        <h2 id="contadorAlunos" class="text-4xl font-bold text-gray-800">0</h2>
+                        <span class="text-gray-400 text-sm">Cadastradas</span>
+                    </div>
+                    <div class="card-dashboard">
+                        <p class="text-gray-500 text-sm mb-2">Alunos</p>
+                        <h2 id="gestorTotalAlunos" class="text-4xl font-bold text-gray-800">0</h2>
+                        <span class="text-gray-400 text-sm">Matriculados nas turmas</span>
+                    </div>
+                    <div class="card-dashboard">
+                        <p class="text-gray-500 text-sm mb-2">Ocorrências</p>
+                        <h2 id="gestorTotalOcorrencias" class="text-4xl font-bold text-gray-800">0</h2>
+                        <span class="text-gray-400 text-sm">No período selecionado</span>
+                    </div>
+                    <div class="card-dashboard">
+                        <p class="text-gray-500 text-sm mb-2">Frequência média</p>
+                        <h2 id="gestorMediaFrequencia" class="text-4xl font-bold text-gray-800">0%</h2>
+                        <span class="text-gray-400 text-sm">No período selecionado</span>
                     </div>
                 </div>
-            </div>
+                <div class="grid gap-6 xl:grid-cols-2">
+                    <article class="card-dashboard">
+                        <h2 class="mb-2 text-xl font-bold text-gray-800">Atenção pedagógica</h2>
+                        <p class="text-gray-500">Acompanhamentos em aberto: <strong id="gestorAcompanhamentosAbertos" class="text-gray-800">0</strong></p>
+                        <p class="mt-2 text-gray-500">Conselhos registrados no período: <strong id="gestorTotalConselhos" class="text-gray-800">0</strong></p>
+                    </article>
+                    <article class="card-dashboard">
+                        <h2 class="mb-2 text-xl font-bold text-gray-800">Acesso rápido</h2>
+                        <p class="text-gray-500">Gerencie turmas, consulte ocorrências de toda a escola e acompanhe os indicadores gerais.</p>
+                        <div class="mt-4 flex flex-wrap gap-3">
+                            <button type="button" data-go-section="sec-turmas-gestor" class="rounded-xl bg-green-700 px-4 py-2 font-medium text-white">Gerenciar turmas</button>
+                            <button type="button" data-go-section="sec-ocorrencias-gestor" class="rounded-xl border border-gray-200 px-4 py-2 font-medium text-gray-800">Ver ocorrências</button>
+                        </div>
+                    </article>
+                </div>
+            </section>
 
             <!-- SEÇÃO TURMAS -->
-            <div class="secs hidden">
+            <section id="sec-turmas-gestor" class="secs gestor-section hidden">
 
                 <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
                     <div>
@@ -614,13 +642,69 @@
                     </div>
                 </div>
 
-            </div>
+            </section>
 
-            <!-- SEÇÕES VAZIAS -->
-            <div class="secs hidden"></div>
-            <div class="secs hidden"></div>
-            <div class="secs hidden"></div>
-            <div class="secs hidden"></div>
+            <section id="sec-ocorrencias-gestor" class="secs gestor-section hidden">
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold text-gray-800">Ocorrências da escola</h1>
+                    <p class="mt-1 text-gray-500">Consulte ocorrências ativas registradas pelos professores em todas as turmas.</p>
+                </div>
+                <div class="mb-6 flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-5 lg:flex-row lg:items-center lg:justify-between">
+                    <label class="sr-only" for="buscarOcorrenciasGestor">Buscar ocorrência</label>
+                    <input id="buscarOcorrenciasGestor" type="search" placeholder="Buscar por aluno, turma, professor ou tipo" class="h-12 w-full rounded-xl border border-gray-200 px-4 outline-none lg:max-w-xl">
+                    <div class="flex gap-3">
+                        <label class="sr-only" for="periodoOcorrenciasGestor">Período</label>
+                        <select id="periodoOcorrenciasGestor" class="h-12 rounded-xl border border-gray-200 px-4">
+                            <option value="mes">Este mês</option>
+                            <option value="trimestre">Este trimestre</option>
+                            <option value="semestre">Este semestre</option>
+                            <option value="ano">Este ano</option>
+                        </select>
+                        <button id="atualizarOcorrenciasGestor" type="button" class="h-12 rounded-xl bg-green-700 px-4 font-medium text-white" aria-label="Atualizar ocorrências">
+                            <i class="bi bi-arrow-clockwise" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+                <p id="totalOcorrenciasGestor" class="mb-4 text-sm text-gray-500" aria-live="polite"></p>
+                <div id="listaOcorrenciasGestor" class="grid grid-cols-1 gap-4 xl:grid-cols-2" aria-live="polite">
+                    <p class="text-gray-500">Carregando ocorrências...</p>
+                </div>
+            </section>
+
+            <section id="sec-relatorios-gestor" class="secs gestor-section hidden">
+                <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-800">Indicadores gerais</h1>
+                        <p class="mt-1 text-gray-500">Resumo escolar e distribuição das ocorrências no período.</p>
+                    </div>
+                    <div class="flex gap-3">
+                        <label class="sr-only" for="periodoRelatoriosGestor">Período</label>
+                        <select id="periodoRelatoriosGestor" class="h-12 rounded-xl border border-gray-200 px-4">
+                            <option value="mes">Este mês</option>
+                            <option value="trimestre">Últimos 3 meses</option>
+                            <option value="semestre">Últimos 6 meses</option>
+                            <option value="ano">Este ano</option>
+                        </select>
+                        <button id="atualizarRelatoriosGestor" type="button" class="h-12 rounded-xl bg-green-700 px-4 font-medium text-white">Atualizar</button>
+                    </div>
+                </div>
+                <div class="mb-4 text-sm text-gray-500">Período: <span id="periodoResumoGestor">Este mês</span></div>
+                <div class="mb-8 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+                    <article class="card-dashboard"><p class="text-sm text-gray-500">Turmas</p><strong id="relatorioTurmasGestor" class="mt-2 block text-3xl text-gray-800">0</strong></article>
+                    <article class="card-dashboard"><p class="text-sm text-gray-500">Alunos</p><strong id="relatorioAlunosGestor" class="mt-2 block text-3xl text-gray-800">0</strong></article>
+                    <article class="card-dashboard"><p class="text-sm text-gray-500">Ocorrências no período</p><strong id="relatorioOcorrenciasGestor" class="mt-2 block text-3xl text-gray-800">0</strong></article>
+                    <article class="card-dashboard"><p class="text-sm text-gray-500">Frequência média</p><strong id="relatorioFrequenciaGestor" class="mt-2 block text-3xl text-gray-800">0%</strong></article>
+                    <article class="card-dashboard"><p class="text-sm text-gray-500">Acompanhamentos</p><strong id="relatorioAcompanhamentosGestor" class="mt-2 block text-3xl text-gray-800">0</strong></article>
+                    <article class="card-dashboard"><p class="text-sm text-gray-500">Acompanhamentos em aberto</p><strong id="relatorioAbertosGestor" class="mt-2 block text-3xl text-gray-800">0</strong></article>
+                    <article class="card-dashboard"><p class="text-sm text-gray-500">Conselhos</p><strong id="relatorioConselhosGestor" class="mt-2 block text-3xl text-gray-800">0</strong></article>
+                </div>
+                <article class="rounded-2xl border border-gray-200 bg-white p-6">
+                    <h2 class="mb-4 text-xl font-bold text-gray-800">Ocorrências por tipo</h2>
+                    <div id="ocorrenciasPorTipoGestor" class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3" aria-live="polite">
+                        <p class="text-gray-500">Carregando indicadores...</p>
+                    </div>
+                </article>
+            </section>
 
         </main>
 
@@ -666,13 +750,29 @@ async function carregarNotificacoes() {
             contador.textContent = total > 0 ? total : '';
             contador.classList.toggle('hidden', total <= 0);
         }
-        lista.innerHTML = itens.length ? itens.map((item) => `
-            <div class="rounded-2xl border ${item.lida ? 'border-slate-800 bg-slate-900/70' : 'border-emerald-500/30 bg-emerald-500/10'} p-3">
-                <p class="font-semibold text-white">${item.titulo}</p>
-                <p class="mt-1 text-slate-300">${item.mensagem}</p>
-                <p class="mt-2 text-[11px] text-slate-500">${item.criado_em || ''}</p>
-            </div>
-        `).join('') : '<div class="text-slate-400">Nenhuma notificação</div>';
+        lista.replaceChildren();
+        if (!itens.length) {
+            const vazio = document.createElement('p');
+            vazio.className = 'text-slate-400';
+            vazio.textContent = 'Nenhuma notificação';
+            lista.append(vazio);
+            return;
+        }
+        itens.forEach(item => {
+            const card = document.createElement('article');
+            card.className = `rounded-2xl border ${item.lida ? 'border-slate-800 bg-slate-900/70' : 'border-emerald-500/30 bg-emerald-500/10'} p-3`;
+            const titulo = document.createElement('p');
+            titulo.className = 'font-semibold text-white';
+            titulo.textContent = item.titulo || '';
+            const mensagem = document.createElement('p');
+            mensagem.className = 'mt-1 text-slate-300';
+            mensagem.textContent = item.mensagem || '';
+            const data = document.createElement('p');
+            data.className = 'mt-2 text-[11px] text-slate-500';
+            data.textContent = item.criado_em || '';
+            card.append(titulo, mensagem, data);
+            lista.append(card);
+        });
     } catch (e) {
         console.error('Erro ao carregar notificações:', e);
     }
@@ -683,20 +783,182 @@ document.addEventListener("DOMContentLoaded", function() {
     // ================================
     // MENU E NAVEGAÇÃO
     // ================================
-    const btnOptionsPdt = document.querySelectorAll(".menu-item");
-    const secsPdt = document.querySelectorAll(".secs");
-    
-    btnOptionsPdt.forEach((btn, index) => {
-        btn.addEventListener("click", () => {
-            btnOptionsPdt.forEach(item => item.classList.remove("active"));
-            btn.classList.add("active");
-            secsPdt.forEach(sec => sec.classList.add("hidden"));
-            if (secsPdt[index]) secsPdt[index].classList.remove("hidden");
-        });
-    });
+    const btnOptionsPdt = document.querySelectorAll(".menu-item[data-section]");
+    const secoesGestor = document.querySelectorAll(".gestor-section");
+    const sidebarGestor = document.querySelector(".pdt-sidebar");
+    const menuMobileGestor = document.getElementById("openMenuBtn");
 
-    secsPdt.forEach((sec, index) => {
-        if(index !== 0) sec.classList.add("hidden");
+    function abrirSecaoGestor(sectionId) {
+        const secao = document.getElementById(sectionId);
+        if (!secao) return;
+        secoesGestor.forEach(item => item.classList.toggle("hidden", item !== secao));
+        btnOptionsPdt.forEach(item => {
+            const ativo = item.dataset.section === sectionId;
+            item.classList.toggle("active", ativo);
+            item.classList.toggle("effect-bar-select", ativo);
+        });
+        sidebarGestor?.classList.remove("mobile-open");
+        if (sectionId === "sec-ocorrencias-gestor") carregarOcorrenciasGestor();
+        if (sectionId === "sec-relatorios-gestor") carregarRelatoriosGestor();
+    }
+
+    function elementoTextoGestor(tag, className, text) {
+        const elemento = document.createElement(tag);
+        elemento.className = className;
+        elemento.textContent = text ?? "";
+        return elemento;
+    }
+
+    async function carregarOcorrenciasGestor() {
+        const lista = document.getElementById("listaOcorrenciasGestor");
+        const total = document.getElementById("totalOcorrenciasGestor");
+        const filtro = document.getElementById("periodoOcorrenciasGestor")?.value || "mes";
+        if (!lista) return;
+        lista.replaceChildren(elementoTextoGestor("p", "text-gray-500", "Carregando ocorrências..."));
+
+        try {
+            const resposta = await fetch(`../controllers/ocorrencia_controller.php?action=listar_ocorrencias&filtro=${encodeURIComponent(filtro)}`);
+            const resultado = await resposta.json();
+            if (!resposta.ok || !resultado.sucesso) {
+                throw new Error(resultado.erro || "Não foi possível carregar as ocorrências.");
+            }
+
+            const ocorrencias = Array.isArray(resultado.dados) ? resultado.dados : [];
+            const busca = (document.getElementById("buscarOcorrenciasGestor")?.value || "").trim().toLocaleLowerCase("pt-BR");
+            const filtradas = ocorrencias.filter(ocorrencia => [
+                ocorrencia.tipo_ocorrencia,
+                ocorrencia.nome_aluno,
+                ocorrencia.matricula,
+                ocorrencia.nome_turma,
+                ocorrencia.professor_nome,
+                ocorrencia.descricao
+            ].some(valor => String(valor ?? "").toLocaleLowerCase("pt-BR").includes(busca)));
+
+            if (total) {
+                total.textContent = ocorrencias.length
+                    ? `Exibindo ${filtradas.length} de ${ocorrencias.length} ocorrências mais recentes.`
+                    : "Nenhuma ocorrência registrada neste período.";
+            }
+            lista.replaceChildren();
+            if (!filtradas.length) {
+                lista.append(elementoTexto(
+                    "p",
+                    "col-span-full rounded-2xl border border-gray-200 bg-white p-6 text-gray-500",
+                    busca ? "Nenhuma ocorrência corresponde à busca." : "Nenhuma ocorrência registrada neste período."
+                ));
+                return;
+            }
+
+            filtradas.forEach(ocorrencia => {
+                const card = document.createElement("article");
+                card.className = "rounded-2xl border border-gray-200 bg-white p-5";
+                const topo = document.createElement("div");
+                topo.className = "flex flex-wrap items-start justify-between gap-3";
+                topo.append(
+                    elementoTextoGestor("h2", "text-lg font-semibold text-gray-800", ocorrencia.tipo_ocorrencia || "Ocorrência"),
+                    elementoTextoGestor("time", "text-sm text-gray-500", ocorrencia.data_ocorrencia || "Data não informada")
+                );
+                card.append(
+                    topo,
+                    elementoTextoGestor("p", "mt-3 font-medium text-gray-800", ocorrencia.nome_aluno || "Aluno não informado"),
+                    elementoTextoGestor("p", "mt-1 text-sm text-gray-500", `Turma: ${ocorrencia.serie_turma || ""}º ${ocorrencia.nome_turma || "não informada"} · Matrícula: ${ocorrencia.matricula || "—"}`),
+                    elementoTextoGestor("p", "mt-1 text-sm text-gray-500", `Registrada por: ${ocorrencia.professor_nome || "não informado"}`),
+                    elementoTextoGestor("p", "mt-3 whitespace-pre-wrap text-sm text-gray-600", ocorrencia.descricao || "Sem descrição.")
+                );
+                lista.append(card);
+            });
+        } catch (error) {
+            console.error("Erro ao carregar ocorrências do gestor:", error);
+            if (total) total.textContent = "Falha ao consultar ocorrências.";
+            lista.replaceChildren(elementoTextoGestor("p", "col-span-full rounded-2xl border border-red-200 bg-red-50 p-6 text-red-700", error.message));
+        }
+    }
+
+    async function carregarRelatoriosGestor() {
+        const periodo = document.getElementById("periodoRelatoriosGestor")?.value || "mes";
+        const listaTipos = document.getElementById("ocorrenciasPorTipoGestor");
+        const resumoPeriodo = document.getElementById("periodoResumoGestor");
+        if (resumoPeriodo) {
+            resumoPeriodo.textContent = document.getElementById("periodoRelatoriosGestor")?.selectedOptions?.[0]?.textContent || "Este mês";
+        }
+        if (listaTipos) listaTipos.replaceChildren(elementoTextoGestor("p", "text-gray-500", "Carregando indicadores..."));
+
+        try {
+            const resposta = await fetch(`../controllers/relatorio_controller.php?action=resumo_geral&periodo=${encodeURIComponent(periodo)}`);
+            const dados = await resposta.json();
+            if (!resposta.ok || !dados.sucesso) {
+                throw new Error(dados.erro || "Não foi possível carregar os indicadores.");
+            }
+
+            const valores = {
+                gestorTotalAlunos: dados.total_alunos ?? 0,
+                gestorTotalOcorrencias: dados.total_ocorrencias_periodo ?? 0,
+                gestorMediaFrequencia: `${dados.media_frequencia_periodo ?? 0}%`,
+                gestorAcompanhamentosAbertos: dados.acompanhamentos_abertos ?? 0,
+                gestorTotalConselhos: dados.conselhos_periodo ?? 0,
+                relatorioTurmasGestor: dados.total_turmas ?? 0,
+                relatorioAlunosGestor: dados.total_alunos ?? 0,
+                relatorioOcorrenciasGestor: dados.total_ocorrencias_periodo ?? 0,
+                relatorioFrequenciaGestor: `${dados.media_frequencia_periodo ?? 0}%`,
+                relatorioAcompanhamentosGestor: dados.acompanhamentos_periodo ?? 0,
+                relatorioAbertosGestor: dados.acompanhamentos_abertos ?? 0,
+                relatorioConselhosGestor: dados.conselhos_periodo ?? 0
+            };
+            Object.entries(valores).forEach(([id, valor]) => {
+                const elemento = document.getElementById(id);
+                if (elemento) elemento.textContent = String(valor);
+            });
+
+            if (!listaTipos) return;
+            listaTipos.replaceChildren();
+            const tipos = Array.isArray(dados.ocorrencias_por_tipo) ? dados.ocorrencias_por_tipo : [];
+            if (!tipos.length) {
+                listaTipos.append(elementoTextoGestor("p", "text-gray-500", "Sem ocorrências para exibir neste período."));
+                return;
+            }
+            const maximo = Math.max(...tipos.map(item => Number(item.total) || 0), 1);
+            tipos.forEach(item => {
+                const card = document.createElement("div");
+                card.className = "rounded-xl border border-gray-200 p-4";
+                card.append(
+                    elementoTextoGestor("div", "mb-2 flex justify-between gap-3 text-sm text-gray-700", `${item.tipo_ocorrencia} · ${item.total}`),
+                    elementoTextoGestor("div", "sr-only", `${item.total} ocorrências`)
+                );
+                const trilha = document.createElement("div");
+                trilha.className = "h-2 overflow-hidden rounded-full bg-gray-100";
+                const barra = document.createElement("div");
+                barra.className = "h-full rounded-full bg-green-600";
+                barra.style.width = `${Math.min(100, ((Number(item.total) || 0) / maximo) * 100)}%`;
+                trilha.append(barra);
+                card.append(trilha);
+                listaTipos.append(card);
+            });
+        } catch (error) {
+            console.error("Erro ao carregar indicadores do gestor:", error);
+            if (listaTipos) listaTipos.replaceChildren(elementoTextoGestor("p", "text-red-600", error.message));
+        }
+    }
+
+    btnOptionsPdt.forEach(btn => {
+        btn.addEventListener("click", () => abrirSecaoGestor(btn.dataset.section));
+    });
+    document.getElementById("periodoOcorrenciasGestor")?.addEventListener("change", carregarOcorrenciasGestor);
+    document.getElementById("atualizarOcorrenciasGestor")?.addEventListener("click", carregarOcorrenciasGestor);
+    document.getElementById("buscarOcorrenciasGestor")?.addEventListener("input", carregarOcorrenciasGestor);
+    document.getElementById("periodoRelatoriosGestor")?.addEventListener("change", carregarRelatoriosGestor);
+    document.getElementById("atualizarRelatoriosGestor")?.addEventListener("click", carregarRelatoriosGestor);
+    document.querySelectorAll("[data-go-section]").forEach(btn => {
+        btn.addEventListener("click", () => abrirSecaoGestor(btn.dataset.goSection));
+    });
+    menuMobileGestor?.addEventListener("click", () => sidebarGestor?.classList.toggle("mobile-open"));
+    document.addEventListener("click", event => {
+        if (
+            sidebarGestor?.classList.contains("mobile-open")
+            && !sidebarGestor.contains(event.target)
+            && !menuMobileGestor?.contains(event.target)
+        ) {
+            sidebarGestor.classList.remove("mobile-open");
+        }
     });
 
     // ================================
@@ -1207,6 +1469,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // ================================
     carregarCursos();
     carregarTurmas();
+    carregarRelatoriosGestor();
 });
 </script>
 
