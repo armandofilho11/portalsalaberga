@@ -5012,6 +5012,29 @@ unset($category);
             gap: 16px;
         }
 
+        .dashboard-bottom-grid {
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 32rem), 1fr));
+            align-items: stretch;
+        }
+
+        .dashboard-bottom-grid > .painel-principal {
+            min-width: 0;
+            height: auto;
+            min-height: 15rem;
+        }
+
+        .dashboard-resource-grid {
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 6rem), 1fr));
+            align-content: start;
+            gap: clamp(0.5rem, 1.2vw, 1rem);
+        }
+
+        .dashboard-resource-link {
+            min-width: 0;
+            aspect-ratio: 1;
+            padding: 0.5rem;
+        }
+
         @media (max-width: 1024px) {
             .dashboard-row {
                 grid-template-columns: 1fr;
@@ -5492,18 +5515,18 @@ unset($category);
         </div>
 
 
-        <div class="lg:col-span-3 grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
+        <div class="dashboard-bottom-grid lg:col-span-3 grid grid-cols-1 gap-6 mb-12">
 
             <!-- CARD RECURSOS -->
-            <div class="painel-principal animate-panel lg:w-full xl:w-[675px] 2xl:w-[850px] h-[240px] relative">
+            <div class="painel-principal animate-panel relative">
                 <div class="painel-title">
                     <span>Recursos Principais</span>
                 </div>
 
                 <!-- Desktop: Grid Layout -->
-                <div class="hidden lg:flex xl:flex-row 2xl:flex-wrap xl:justify-between gap-4 2xl:gap-6 transition-all duration-300">
+                <div class="dashboard-resource-grid hidden lg:grid transition-all duration-300">
 
-                    <a href="cadastrar_livro.php?from=gerenciar_acervo" class="w-[140px] h-[140px] border border-gray-200 bg-gray-50 rounded-lg transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-lg flex items-center justify-center text-center no-underline">
+                    <a href="cadastrar_livro.php?from=gerenciar_acervo" class="dashboard-resource-link border border-gray-200 bg-gray-50 rounded-lg transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-lg flex items-center justify-center text-center no-underline">
                         <div class="flex flex-col items-center justify-center h-full gap-2">
                             <i class="fas fa-book-open text-ceara-green text-3xl"></i>
                             <span class="text-center text-gray-700 font-semibold">
@@ -5512,7 +5535,7 @@ unset($category);
                         </div>
                     </a>
 
-                    <a href="consultar_livro.php?from=gerenciar_acervo" class="w-[140px] h-[140px] border border-gray-200 bg-gray-50 rounded-lg transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-lg flex items-center justify-center text-center no-underline">
+                    <a href="consultar_livro.php?from=gerenciar_acervo" class="dashboard-resource-link border border-gray-200 bg-gray-50 rounded-lg transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-lg flex items-center justify-center text-center no-underline">
                         <div class="flex flex-col items-center justify-center h-full gap-2">
                             <i class="fas fa-search text-ceara-green text-3xl"></i>
                             <span class="text-center text-gray-700 font-semibold">
@@ -5521,7 +5544,7 @@ unset($category);
                         </div>
                     </a>
 
-                    <a href="editar_livro.php?from=gerenciar_acervo" class="w-[140px] h-[140px] border border-gray-200 bg-gray-50 rounded-lg transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-lg flex items-center justify-center text-center no-underline">
+                    <a href="editar_livro.php?from=gerenciar_acervo" class="dashboard-resource-link border border-gray-200 bg-gray-50 rounded-lg transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-lg flex items-center justify-center text-center no-underline">
                         <div class="flex flex-col items-center justify-center h-full gap-2">
                             <i class="fas fa-edit text-ceara-green text-3xl"></i>
                             <span class="text-center text-gray-700 font-semibold">
@@ -5530,7 +5553,7 @@ unset($category);
                         </div>
                     </a>
 
-                    <a href="excluir_livro.php?from=gerenciar_acervo" class="w-[140px] h-[140px] border border-gray-200 bg-gray-50 rounded-lg transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-lg flex items-center justify-center text-center no-underline">
+                    <a href="excluir_livro.php?from=gerenciar_acervo" class="dashboard-resource-link border border-gray-200 bg-gray-50 rounded-lg transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-lg flex items-center justify-center text-center no-underline">
                         <div class="flex flex-col items-center justify-center h-full gap-2">
                             <i class="fas fa-trash-alt text-ceara-green text-3xl"></i>
                             <span class="text-center text-gray-700 font-semibold text-sm">
@@ -5539,7 +5562,7 @@ unset($category);
                         </div>
                     </a>
 
-                    <a href="relatorios/decisao.php?from=gerenciar_acervo" class="w-[140px] h-[140px] border border-gray-200 bg-gray-50 rounded-lg transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-lg flex items-center justify-center text-center no-underline">
+                    <a href="relatorios/decisao.php?from=gerenciar_acervo" class="dashboard-resource-link border border-gray-200 bg-gray-50 rounded-lg transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-lg flex items-center justify-center text-center no-underline">
                         <div class="flex flex-col items-center justify-center h-full gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"
                                 fill="currentColor" class="w-10 h-10 text-ceara-green">
@@ -5630,7 +5653,7 @@ unset($category);
             </div>
 
             <!-- CARD RANK TOP 10 ALUNOS -->
-            <div class="painel-principal animate-panel lg:w-full xl:w-[540px] 2xl:w-[690px] h-[220px] lg:h-[240px] relative xl:ml-auto">
+            <div class="painel-principal animate-panel relative">
                 <div class="painel-title">
                     <span>Top 10 Alunos Leitores</span>
                 </div>
@@ -6227,6 +6250,21 @@ $totalStudents = $selectModel->count_alunos_total();
     <link rel="shortcut icon" href="<?= htmlspecialchars($mainUrl . 'assets/img/icon.png', ENT_QUOTES, 'UTF-8') ?>" type="image/x-icon">
     <title>Sistema Biblioteca</title>
     <script>
+        (() => {
+            let theme = 'light';
+            try {
+                const storedTheme = localStorage.getItem('biblioteca-theme');
+                theme = storedTheme === 'dark'
+                    ? 'dark'
+                    : (storedTheme === null && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            } catch (error) {
+                console.warn('Não foi possível carregar a preferência do tema:', error);
+            }
+            document.documentElement.setAttribute('data-theme', theme);
+            document.documentElement.style.colorScheme = theme;
+        })();
+    </script>
+    <script>
         tailwind.config = {
             theme: {
                 extend: {
@@ -6336,6 +6374,261 @@ $totalStudents = $selectModel->count_alunos_total();
             padding-left: 2.5rem;
         }
 
+        @media (min-width: 1024px) {
+            body {
+                grid-template-columns: 256px minmax(0, 1fr);
+                transition: grid-template-columns 220ms cubic-bezier(0.2, 0.75, 0.3, 1);
+            }
+
+            #sidebar {
+                display: flex;
+                width: 256px;
+                height: 100vh;
+                min-height: 100vh;
+                max-height: none;
+                flex-direction: column;
+                padding: 22px 16px 18px;
+                overflow: hidden;
+                background: #064c2b;
+                color: #f5fff8;
+                border-right: 1px solid rgba(209, 231, 219, 0.18);
+                scrollbar-color: #3c7254 transparent;
+                scrollbar-width: thin;
+                transition: transform 220ms cubic-bezier(0.2, 0.75, 0.3, 1);
+            }
+
+            body > .flex-1.flex.flex-col.min-h-screen {
+                grid-column: 2;
+                min-width: 0;
+            }
+
+            #main-content {
+                width: 100% !important;
+                margin-left: 0 !important;
+            }
+
+            #sidebar > div:first-child {
+                justify-content: flex-start;
+                margin: 2px 7px 24px;
+                padding: 0;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+                padding-bottom: 18px;
+            }
+
+            #sidebar > div:first-child > div:first-child {
+                gap: 11px;
+            }
+
+            #sidebar > div:first-child img {
+                width: 40px;
+                height: 40px;
+                border: 1px solid rgba(255, 255, 255, 0.33);
+                border-radius: 11px;
+                padding: 4px;
+            }
+
+            #sidebar > div:first-child h1 {
+                margin: 0;
+                color: #fff;
+                font-size: 15px;
+                letter-spacing: 0;
+            }
+
+            #sidebar > div:first-child > .h-0\.5 {
+                display: none;
+            }
+
+            #sidebar > nav {
+                flex: 1;
+                min-height: 0;
+                padding: 0 8px 0 0;
+                overflow-y: auto;
+                overscroll-behavior: contain;
+                scrollbar-gutter: stable;
+            }
+
+            #sidebar .menu-group {
+                margin-bottom: 16px;
+            }
+
+            #sidebar .menu-toggle {
+                position: relative;
+                min-height: 40px;
+                margin: 3px 0;
+                padding: 0 11px;
+                border-radius: 7px;
+                color: #e1f0e6;
+                text-align: left;
+                font-size: 13px;
+                font-weight: 600;
+                transition: background-color 180ms ease, color 180ms ease, transform 180ms ease;
+            }
+
+            #sidebar .menu-toggle i {
+                color: #c5dfce;
+            }
+
+            #sidebar .menu-toggle:hover {
+                transform: none;
+                background: rgba(255, 255, 255, 0.1);
+                color: #fff;
+            }
+
+            #sidebar .menu-toggle.active,
+            #sidebar .menu-toggle.active:hover {
+                background: #276448;
+                color: #ffc04d;
+            }
+
+            #sidebar .menu-toggle.active::before {
+                position: absolute;
+                inset: 8px auto 8px 0;
+                width: 3px;
+                border-radius: 0 3px 3px 0;
+                background: #f3a11a;
+                content: "";
+            }
+
+            #sidebar .menu-toggle.active i {
+                color: #ffc04d;
+            }
+
+            #sidebar .menu-item {
+                min-height: 38px;
+                margin: 2px 0;
+                padding-top: 8px;
+                padding-bottom: 8px;
+                border-radius: 7px;
+                color: #e1f0e6;
+                font-size: 12px;
+                font-weight: 600;
+                transition: background-color 180ms ease, color 180ms ease;
+            }
+
+            #sidebar .menu-item:hover {
+                transform: none;
+                background: rgba(255, 255, 255, 0.1);
+                color: #fff;
+            }
+
+            #sidebar .menu-item.active,
+            #sidebar .menu-item.active:hover {
+                position: relative;
+                background: #276448;
+                color: #ffc04d;
+            }
+
+            #sidebar .menu-item.active::before {
+                position: absolute;
+                inset: 8px auto 8px 0;
+                width: 3px;
+                border-radius: 0 3px 3px 0;
+                background: #f3a11a;
+                content: "";
+            }
+
+            #sidebar .menu-item i {
+                color: #c5dfce;
+            }
+
+            #sidebar .menu-item.active i {
+                color: #ffc04d;
+            }
+
+            #sidebar .submenu .menu-item {
+                padding-left: 2rem;
+            }
+
+            body.library-sidebar-collapsed {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            body.library-sidebar-collapsed > .flex-1.flex.flex-col.min-h-screen {
+                grid-column: 1;
+            }
+
+            body.library-sidebar-collapsed #sidebar {
+                transform: translateX(-100%);
+            }
+
+            body.library-sidebar-collapsed #sidebar-collapse-toggle {
+                left: 0;
+            }
+        }
+
+        #sidebar-collapse-toggle {
+            position: fixed;
+            top: 50%;
+            left: 255px;
+            z-index: 50;
+            display: grid;
+            width: 30px;
+            height: 72px;
+            place-items: center;
+            padding: 0;
+            border: 1px solid rgba(255, 255, 255, 0.33);
+            border-left: 0;
+            border-radius: 0 10px 10px 0;
+            background: linear-gradient(145deg, #0b7042, #064c2b);
+            color: #ffd06a;
+            box-shadow: 4px 0 12px rgba(5, 45, 27, 0.25), inset -1px 0 rgba(255, 255, 255, 0.33);
+            transform: translateY(-50%);
+            cursor: pointer;
+            transition: left 220ms ease, width 180ms ease, background 180ms ease, box-shadow 180ms ease;
+        }
+
+        #sidebar-collapse-toggle::before {
+            position: absolute;
+            top: 8px;
+            bottom: 8px;
+            left: 3px;
+            width: 1px;
+            background: rgba(255, 255, 255, 0.29);
+            content: "";
+        }
+
+        #sidebar-collapse-toggle:hover {
+            width: 35px;
+            background: linear-gradient(145deg, #0d7a49, #075b34);
+            box-shadow: 5px 0 15px rgba(5, 45, 27, 0.33), inset -1px 0 rgba(255, 255, 255, 0.44);
+        }
+
+        #sidebar-collapse-toggle:focus-visible {
+            outline: 2px solid #f3a11a;
+            outline-offset: 2px;
+        }
+
+        #sidebar-collapse-toggle i {
+            transition: transform 220ms ease;
+        }
+
+        #sidebar-collapse-toggle:hover i,
+        body.library-sidebar-collapsed #sidebar-collapse-toggle i {
+            transform: rotate(180deg);
+        }
+
+        body.library-sidebar-collapsed #sidebar-collapse-toggle:hover i {
+            transform: rotate(0deg);
+        }
+
+        @media (max-width: 1023px) {
+            #sidebar-collapse-toggle {
+                display: none;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            body {
+                transition: grid-template-columns 0s;
+            }
+
+            #sidebar,
+            #sidebar-collapse-toggle,
+            #sidebar-collapse-toggle i {
+                transition: none;
+            }
+        }
+
         .library-back-button {
             left: calc(16vw + 1rem);
         }
@@ -6378,10 +6671,219 @@ $totalStudents = $selectModel->count_alunos_total();
             }
         }
 
+        html[data-theme="dark"] {
+            color-scheme: dark;
+            background: #0d1510;
+            color: #e5eee8;
+            --branco: #17231c;
+            --borda: #35483c;
+            --borda-clara: #3a5d47;
+            --sucesso-claro: #1b2921;
+            --texto-escuro: #e5eee8;
+            --texto-mutado: #9eafa3;
+            --azul-escuro: #e5eee8;
+        }
+
+        html[data-theme="dark"] body {
+            background: #0d1510 !important;
+            color: #e5eee8 !important;
+        }
+
+        html[data-theme="dark"] #main-content {
+            background-color: #0d1510;
+            color: #e5eee8;
+        }
+
+        html[data-theme="dark"] #main-content .library-section-content {
+            background: #0d1510 !important;
+            background-image: none !important;
+        }
+
+        html[data-theme="dark"] #main-content .painel-principal,
+        html[data-theme="dark"] #main-content .cards-section,
+        html[data-theme="dark"] #main-content .card-indicador,
+        html[data-theme="dark"] #main-content .card-hover,
+        html[data-theme="dark"] #main-content .hierarchy-card {
+            border-color: #304338 !important;
+            background-color: #17231c !important;
+            color: #e5eee8 !important;
+            box-shadow: 0 8px 22px rgba(0, 0, 0, .2);
+        }
+
+        html[data-theme="dark"] #main-content #features {
+            background: linear-gradient(180deg, #17251c 0%, #101a14 100%) !important;
+        }
+
+        html[data-theme="dark"] #main-content [class~="bg-white"],
+        html[data-theme="dark"] #main-content [class~="bg-gray-50"],
+        html[data-theme="dark"] #main-content [class~="bg-gray-100"],
+        html[data-theme="dark"] #main-content [class~="bg-gray-200"] {
+            border-color: #35483c !important;
+            background-color: #1b2921 !important;
+        }
+
+        html[data-theme="dark"] #main-content [class*="text-gray-"],
+        html[data-theme="dark"] #main-content [class*="text-slate-"] {
+            color: #cbd8cf !important;
+        }
+
+        html[data-theme="dark"] #main-content [class*="text-gray-400"],
+        html[data-theme="dark"] #main-content [class*="text-gray-500"],
+        html[data-theme="dark"] #main-content [class*="text-slate-400"],
+        html[data-theme="dark"] #main-content [class*="text-slate-500"] {
+            color: #9eafa3 !important;
+        }
+
+        html[data-theme="dark"] #main-content input:not([type="checkbox"]):not([type="radio"]),
+        html[data-theme="dark"] #main-content select,
+        html[data-theme="dark"] #main-content textarea {
+            border-color: #405449 !important;
+            background-color: #111b15 !important;
+            color: #e5eee8 !important;
+            color-scheme: dark;
+        }
+
+        html[data-theme="dark"] #main-content input::placeholder,
+        html[data-theme="dark"] #main-content textarea::placeholder {
+            color: #91a196 !important;
+        }
+
+        html[data-theme="dark"] #main-content table th,
+        html[data-theme="dark"] #main-content table td,
+        html[data-theme="dark"] #main-content hr {
+            border-color: #35483c !important;
+        }
+
+        html[data-theme="dark"] #main-content .painel-title,
+        html[data-theme="dark"] #main-content .painel-title span,
+        html[data-theme="dark"] #main-content h1:not(.gradient-text):not(.text-white),
+        html[data-theme="dark"] #main-content h2:not(.gradient-text):not(.text-white),
+        html[data-theme="dark"] #main-content h3:not(.gradient-text):not(.text-white) {
+            color: #e5eee8;
+        }
+
+        html[data-theme="dark"] #main-content .library-section-content .bg-gradient-ceara,
+        html[data-theme="dark"] #main-content .library-section-content [class~="bg-[#007A33]"] {
+            border-radius: .75rem .75rem 0 0;
+            color: #fff;
+        }
+
+        html[data-theme="dark"] #main-content .library-section-content .bg-gradient-ceara h1,
+        html[data-theme="dark"] #main-content .library-section-content .bg-gradient-ceara h2,
+        html[data-theme="dark"] #main-content .library-section-content .bg-gradient-ceara h3,
+        html[data-theme="dark"] #main-content .library-section-content [class~="bg-[#007A33]"] h1,
+        html[data-theme="dark"] #main-content .library-section-content [class~="bg-[#007A33]"] h2,
+        html[data-theme="dark"] #main-content .library-section-content [class~="bg-[#007A33]"] h3 {
+            color: #fff !important;
+        }
+
+        html[data-theme="dark"] #main-content .item-info h4,
+        html[data-theme="dark"] #main-content .item-info p {
+            color: #d3ded6;
+        }
+
+        html[data-theme="dark"] #main-content .badge-status {
+            border-color: #385541 !important;
+            background-color: #1c3a29 !important;
+            color: #a6deb9 !important;
+        }
+
+        html[data-theme="dark"] #main-content .select2-container--default .select2-selection--single,
+        html[data-theme="dark"] #main-content .select2-container--default .select2-selection--multiple {
+            border-color: #405449 !important;
+            background-color: #111b15 !important;
+            color: #e5eee8 !important;
+        }
+
+        html[data-theme="dark"] #main-content .select2-container--default .select2-selection--single .select2-selection__rendered,
+        html[data-theme="dark"] #main-content .select2-container--default .select2-selection--multiple .select2-selection__rendered,
+        html[data-theme="dark"] #main-content .select2-container--default .select2-selection__placeholder {
+            color: #cbd8cf !important;
+        }
+
+        html[data-theme="dark"] #main-content .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            border-color: #405449 !important;
+            background-color: #1b2921 !important;
+            color: #e5eee8 !important;
+        }
+
+        html[data-theme="dark"] .select2-dropdown {
+            border-color: #405449 !important;
+            background-color: #17231c !important;
+            color: #e5eee8 !important;
+        }
+
+        html[data-theme="dark"] .select2-container--default .select2-results__option {
+            background-color: #17231c;
+            color: #d3ded6;
+        }
+
+        html[data-theme="dark"] .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: #08723d !important;
+            color: #fff !important;
+        }
+
+        html[data-theme="dark"] .select2-container--default .select2-results__option[aria-selected="true"] {
+            background-color: #1c3a29;
+            color: #e5eee8;
+        }
+
+        html[data-theme="dark"] .select2-container--default .select2-search--dropdown .select2-search__field {
+            border-color: #405449 !important;
+            background-color: #111b15 !important;
+            color: #e5eee8 !important;
+        }
+
+        html[data-theme="dark"] .select2-container--default .select2-selection--single .select2-selection__arrow b {
+            border-color: #9eafa3 transparent transparent transparent;
+        }
+
+        #library-theme-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1.25rem;
+            z-index: 60;
+            display: grid;
+            width: 2.75rem;
+            height: 2.75rem;
+            place-items: center;
+            border: 1px solid rgba(8, 100, 57, .2);
+            border-radius: 9999px;
+            background: linear-gradient(135deg, #fff 0%, #f0faf3 100%);
+            color: #08723d;
+            box-shadow: 0 5px 16px rgba(15, 65, 39, .16);
+            cursor: pointer;
+            transition: transform .2s ease, background .2s ease, color .2s ease;
+        }
+
+        #library-theme-toggle:hover {
+            transform: translateY(-2px);
+        }
+
+        #library-theme-toggle:focus-visible {
+            outline: 3px solid #f3a11a;
+            outline-offset: 3px;
+        }
+
+        html[data-theme="dark"] #library-theme-toggle {
+            border-color: rgba(255, 255, 255, .14);
+            background: linear-gradient(135deg, #214b35 0%, #172d21 100%);
+            color: #ffd06a;
+        }
+
+        @media (max-width: 600px) {
+            #library-theme-toggle {
+                top: .75rem;
+                right: .75rem;
+                width: 2.5rem;
+                height: 2.5rem;
+            }
+        }
+
     </style>
 </head>
 
-<body class="bg-gradient-to-br from-ceara-white to-gray-100 text-gray-800 select-none flex flex-col relative items-center m-0 p-0 grid xl:grid-cols-[16vw_84vw]">
+<body class="bg-gradient-to-br from-ceara-white to-gray-100 text-gray-800 select-none flex flex-col relative items-center m-0 p-0 grid">
 
     <!-- MENU LATERAL -->
     <aside id="sidebar" class="sidebar w-full lg:w-[16vw] bg-[#075c2c] text-white shadow-lg fixed left-0 top-0 max-h-[100px]  lg:min-h-screen overflow-hidden lg:overflow-y-auto transition-[max-height] duration-500 ease-in-out z-40">
@@ -6395,7 +6897,7 @@ $totalStudents = $selectModel->count_alunos_total();
             <div class="h-0.5 bg-primary-500/20 rounded-full mt-1"></div>
             <!-- MENU BTN MOBILE -->
             <div class="block lg:hidden translate-x-[-12px]">
-                <button id="sidebar-toggle-mobile">
+                <button id="sidebar-toggle-mobile" type="button" aria-label="Abrir menu lateral" aria-expanded="false">
                     <i class="fa-solid fa-bars text-xl text-gray-400"></i>
                 </button>
             </div>
@@ -6413,7 +6915,7 @@ $totalStudents = $selectModel->count_alunos_total();
                             </div>
                         </button>
                     <?php else : ?>
-                        <button type="button" class="menu-toggle w-full flex items-center justify-between p-3 rounded-lg menu-item <?= $currentSection === ($group['section'] ?? null) ? 'active' : '' ?>" data-submenu="<?= $group['id'] ?>"<?= !empty($group['section']) ? ' data-section="' . $group['section'] . '"' : '' ?>>
+                        <button type="button" class="menu-toggle w-full flex items-center justify-between p-3 rounded-lg menu-item <?= $currentSection === ($group['section'] ?? null) ? 'active' : '' ?>" data-submenu="<?= $group['id'] ?>" aria-expanded="<?= ($currentSection === ($group['section'] ?? null) || in_array($currentSection, array_column($group['items'], 'section'), true)) ? 'true' : 'false' ?>"<?= !empty($group['section']) ? ' data-section="' . $group['section'] . '"' : '' ?>>
                             <div class="flex items-center space-x-3">
                                 <i class="<?= $group['icon'] ?> text-lg"></i>
                                 <span class="sidebar-text"><?= $group['title'] ?></span>
@@ -6424,7 +6926,7 @@ $totalStudents = $selectModel->count_alunos_total();
                             <?php foreach ($group['items'] as $subgroup) : ?>
                                 <?php if (!empty($subgroup['items'])) : ?>
                                     <div class="menu-subgroup">
-                                        <button type="button" class="menu-toggle w-full flex items-center justify-between p-3 rounded-lg menu-item" data-submenu="<?= $subgroup['id'] ?>">
+                                        <button type="button" class="menu-toggle w-full flex items-center justify-between p-3 rounded-lg menu-item" data-submenu="<?= $subgroup['id'] ?>" aria-expanded="false">
                                             <div class="flex items-center space-x-3">
                                                 <i class="<?= $subgroup['icon'] ?> text-sm"></i>
                                                 <span class="sidebar-text"><?= $subgroup['title'] ?></span>
@@ -6453,6 +6955,12 @@ $totalStudents = $selectModel->count_alunos_total();
             <?php endforeach; ?>
         </nav>
     </aside>
+    <button id="sidebar-collapse-toggle" type="button" aria-label="Ocultar menu lateral" aria-expanded="true" title="Ocultar menu lateral">
+        <i class="fas fa-chevron-left" aria-hidden="true"></i>
+    </button>
+    <button id="library-theme-toggle" type="button" aria-label="Mudar para o tema escuro" title="Mudar para o tema escuro">
+        <i class="fas fa-moon" aria-hidden="true"></i>
+    </button>
 
     <!-- CONTEÚDO PRINCIPAL -->
     <div class="flex-1 flex flex-col min-h-screen">
@@ -6650,9 +7158,10 @@ $totalStudents = $selectModel->count_alunos_total();
                 const chevron = button.querySelector('.fa-chevron-down');
 
                 if (submenu) {
-                    submenu.classList.toggle('active');
+                    const isExpanded = submenu.classList.toggle('active');
+                    button.setAttribute('aria-expanded', String(isExpanded));
                     if (chevron) {
-                        chevron.style.transform = submenu.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
+                        chevron.style.transform = isExpanded ? 'rotate(180deg)' : 'rotate(0deg)';
                     }
                 }
             });
@@ -6663,10 +7172,64 @@ $totalStudents = $selectModel->count_alunos_total();
         const sidebarText = document.querySelectorAll('.sidebar-text');
         const sidebarToggleMobile = document.getElementById('sidebar-toggle-mobile');
         const sidebarToggleMobileHeader = document.getElementById('sidebar-toggle-mobile-header');
+        const sidebarCollapseToggle = document.getElementById('sidebar-collapse-toggle');
+        const libraryThemeToggle = document.getElementById('library-theme-toggle');
+        const libraryThemeStorageKey = 'biblioteca-theme';
+        const updateLibraryThemeToggle = () => {
+            const darkTheme = document.documentElement.getAttribute('data-theme') === 'dark';
+            const label = darkTheme ? 'Mudar para o tema claro' : 'Mudar para o tema escuro';
+            libraryThemeToggle.setAttribute('aria-label', label);
+            libraryThemeToggle.title = label;
+            libraryThemeToggle.innerHTML = `<i class="fas ${darkTheme ? 'fa-sun' : 'fa-moon'}" aria-hidden="true"></i>`;
+        };
+        libraryThemeToggle.addEventListener('click', () => {
+            const nextTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', nextTheme);
+            document.documentElement.style.colorScheme = nextTheme;
+            try {
+                localStorage.setItem(libraryThemeStorageKey, nextTheme);
+            } catch (error) {
+                console.warn('Não foi possível salvar a preferência do tema:', error);
+            }
+            updateLibraryThemeToggle();
+        });
+        updateLibraryThemeToggle();
+        const desktopSidebarQuery = window.matchMedia('(min-width: 1024px)');
+        const sidebarCollapseStorageKey = 'biblioteca-sidebar-collapsed';
+        let sidebarCollapsedPreference = false;
+        try {
+            sidebarCollapsedPreference = localStorage.getItem(sidebarCollapseStorageKey) === 'true';
+        } catch (error) {
+            console.warn('Não foi possível carregar a preferência da barra lateral:', error);
+        }
 
+        const updateSidebarCollapse = () => {
+            const collapsed = desktopSidebarQuery.matches && sidebarCollapsedPreference;
+            document.body.classList.toggle('library-sidebar-collapsed', collapsed);
+            sidebar.setAttribute('aria-hidden', String(collapsed));
+            sidebar.inert = collapsed;
+            const label = collapsed ? 'Mostrar menu lateral' : 'Ocultar menu lateral';
+            sidebarCollapseToggle.setAttribute('aria-expanded', String(!collapsed));
+            sidebarCollapseToggle.setAttribute('aria-label', label);
+            sidebarCollapseToggle.title = label;
+        };
+
+        updateSidebarCollapse();
+        sidebarCollapseToggle.addEventListener('click', () => {
+            sidebarCollapsedPreference = !sidebarCollapsedPreference;
+            try {
+                localStorage.setItem(sidebarCollapseStorageKey, String(sidebarCollapsedPreference));
+            } catch (error) {
+                console.warn('Não foi possível salvar a preferência da barra lateral:', error);
+            }
+            updateSidebarCollapse();
+        });
+        desktopSidebarQuery.addEventListener('change', updateSidebarCollapse);
 
         sidebarToggleMobile?.addEventListener('click', () => {
-            sidebar.classList.toggle('max-h-screen');
+            const isExpanded = sidebar.classList.toggle('max-h-screen');
+            sidebarToggleMobile.setAttribute('aria-expanded', String(isExpanded));
+            sidebarToggleMobile.setAttribute('aria-label', isExpanded ? 'Fechar menu lateral' : 'Abrir menu lateral');
         });
 
         const librarySections = <?= json_encode(array_merge(['dashboard' => null], array_map(function ($section) { return $section['view']; }, $sectionContents)), JSON_UNESCAPED_SLASHES) ?>;
