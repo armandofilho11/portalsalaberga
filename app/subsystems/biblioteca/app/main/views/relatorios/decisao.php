@@ -69,7 +69,7 @@
         </div>
 
         <div class="space-y-5">
-            <a href="./relatorio_acervo.php?from=decisao"
+            <a href="./relatorio_acervo.php?from=decisao" target="_blank" rel="noopener noreferrer"
                 class="card-hover block w-full bg-gray-50 border border-gray-200 text-gray-700 font-semibold py-4 px-6 rounded-lg transition-all duration-300 flex items-center justify-between hover:bg-gray-100">
                 <span class="flex items-center">
                     <i class="fas fa-tags mr-4 text-xl text-ceara-green"></i>
@@ -77,7 +77,7 @@
                 </span>
                 <i class="fas fa-chevron-right text-gray-400"></i>
             </a>
-            <a href="./relatorio_emprestimo.php?from=decisao"
+            <a href="./relatorio_emprestimo.php?from=decisao" target="_blank" rel="noopener noreferrer"
                 class="card-hover block w-full bg-gray-50 border border-gray-200 text-gray-700 font-semibold py-4 px-6 rounded-lg transition-all duration-300 flex items-center justify-between hover:bg-gray-100">
                 <span class="flex items-center">
                     <i class="fas fa-tags mr-4 text-xl text-ceara-green"></i>
@@ -101,7 +101,7 @@
                 </span>
                 <i class="fas fa-chevron-right text-gray-400"></i>
             </a>
-            <a href="./relatorio_livros.php?from=decisao"
+            <a href="./relatorio_livros.php?from=decisao" target="_blank" rel="noopener noreferrer"
                 class="card-hover block w-full bg-gray-50 border border-gray-200 text-gray-700 font-semibold py-4 px-6 rounded-lg transition-all duration-300 flex items-center justify-between hover:bg-gray-100">
                 <span class="flex items-center">
                     <i class="fas fa-tags mr-4 text-xl text-ceara-green"></i>

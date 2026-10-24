@@ -92,7 +92,7 @@ if (isset($_POST['titulo2']) && !empty($_POST['titulo2'])) {
             <h1 class="text-4xl font-bold mb-3 tracking-tight gradient-text">Selecionar Livros para QR Code</h1>
             <p class="text-gray-600 text-lg">Escolha os livros para gerar os QR Codes</p>
         </div>
-        <form action="../../index.php?section=qrcode_especifico_livro&gerar=1" method="post" class="space-y-6">
+        <form action="../../index.php?section=qrcode_especifico_livro&gerar=1" method="post" target="_blank" rel="noopener" class="space-y-6">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <?php foreach ($result as $dados): ?>
                     <?php foreach ($dados as $dado): ?>

@@ -328,7 +328,7 @@ $relatorio = new Relatorio_geral_turma();
         </div>
 
         <div style="text-align: center; margin-top: 20px;">
-            <a href="relatorio_geral_turma_pdf.php?turma=<?php echo $relatorio->getIdTurma(); ?>&mes=<?php echo $relatorio->getMes(); ?>" class="btn-download-pdf">
+            <a href="relatorio_geral_turma_pdf.php?turma=<?php echo $relatorio->getIdTurma(); ?>&mes=<?php echo $relatorio->getMes(); ?>" target="_blank" rel="noopener noreferrer" class="btn-download-pdf">
                 Baixar Relatório em PDF
             </a>
         </div>
@@ -381,4 +381,3 @@ $relatorio = new Relatorio_geral_turma();
     </script>
 </body>
 </html>
-

@@ -50,9 +50,10 @@ if (
     $data_emprestimo = $_POST['data_emprestimo'];
     $data_devolucao_estipulada = $_POST['data_devolucao_estipulada'];
 
+    $livro = $select_model->id_livro_selecionado($id_catalogo);
     if (
-        !$select_model->id_livro_selecionado($id_catalogo)
-        || $select_model->count_emprestimos_ativos_por_catalogo($id_catalogo) > 0
+        !$livro
+        || $select_model->count_emprestimos_ativos_por_catalogo($id_catalogo) >= (int) $livro['quantidade']
     ) {
         error_log('Empréstimo não registrado: livro inexistente ou indisponível (ID ' . $id_catalogo . ').');
         if ($isAjax) {

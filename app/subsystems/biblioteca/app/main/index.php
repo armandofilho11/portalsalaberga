@@ -6619,7 +6619,9 @@ $totalStudents = $selectModel->count_alunos_total();
 
                     <div class="border-t border-gray-200 mt-8 pt-6">
                         <div class="flex flex-col md:flex-row justify-between items-center">
-                            <p class="text-gray-600 text-sm">© 2026 Sistema Biblioteca. Todos os direitos reservados.</p>
+                            <div class="flex flex-col sm:flex-row items-center gap-3">
+                                <p class="text-gray-600 text-sm">© 2026 Sistema Biblioteca. Todos os direitos reservados.</p>
+                            </div>
                             <div class="flex space-x-4 mt-4 md:mt-0">
                                 <a href="#" class="text-gray-600 hover:text-ceara-orange text-sm transition-colors">Termos</a>
                                 <span class="text-gray-400">•</span>

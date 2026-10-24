@@ -167,7 +167,7 @@ $select = new select_model;
             <h1 class="text-4xl font-bold mb-3 tracking-tight gradient-text">Gerar QRCode</h1>
             <p class="text-gray-600 text-lg">Sistema de Gerenciamento de QRCode</p>
         </div>
-        <form action="../../controllers/qr_controller.php" method="post" class="space-y-6">
+        <form action="../../controllers/qr_controller.php" method="post" target="_blank" rel="noopener" class="space-y-6">
             <div class="space-y-4">
                 <div class="relative">
                     <select id="titulos" class="js-example-basic-multiple" name="titulo[]" multiple="multiple" required>

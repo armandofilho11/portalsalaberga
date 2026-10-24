@@ -421,7 +421,15 @@ class select_model extends connect
     public function select_livros()
     {
 
-        $sql_livro = $this->connect_biblioteca->query('SELECT id, titulo_livro FROM catalogo WHERE id NOT IN (SELECT id_catalogo FROM emprestimo WHERE status = 1)');
+        $sql_livro = $this->connect_biblioteca->query(
+            'SELECT catalogo.id, catalogo.titulo_livro
+             FROM catalogo
+             WHERE catalogo.quantidade > (
+                 SELECT COUNT(*)
+                 FROM emprestimo
+                 WHERE emprestimo.id_catalogo = catalogo.id AND emprestimo.status = 1
+             )'
+        );
         $livros = $sql_livro->fetchAll(PDO::FETCH_ASSOC);
 
         return $livros;
