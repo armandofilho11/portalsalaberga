@@ -9,6 +9,17 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="shortcut icon" href="../assets/img/icon.png" type="image/x-icon">
     <style>
+        .library-back-button {
+            left: calc(16vw + 1rem);
+        }
+
+        @media (max-width: 1023px) {
+            .library-back-button {
+                left: 1rem;
+                top: 7rem;
+            }
+        }
+
         .card-hover {
             transition: all 0.2s ease-in-out;
         }
@@ -45,7 +56,7 @@
     style="background-image: url('../../assets/img/layout.png'); background-opacity: 0.3;">
 
     <?php if (isset($_GET['from']) && $_GET['from'] === 'gerenciar_acervo'): ?>
-        <a href="../gerenciar_acervo.php" class="fixed top-5 left-12 z-50 group flex items-center space-x-2 bg-white/80 rounded-full px-4 py-2 shadow-lg hover:bg-ceara-green transition-all duration-300">
+        <a href="../gerenciar_acervo.php" class="library-back-button fixed top-5 z-50 group flex items-center space-x-2 bg-white/80 rounded-full px-4 py-2 shadow-lg hover:bg-ceara-green transition-all duration-300">
             <i class="fa-solid fa-arrow-left text-ceara-green group-hover:text-white"></i>
             <span class="text-ceara-green group-hover:text-white font-medium">Voltar</span>
         </a>

@@ -19,6 +19,17 @@ if (isset($_POST['titulo2']) && !empty($_POST['titulo2'])) {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="shortcut icon" href="../assets/img/icon.png" type="image/x-icon">
     <style>
+        .library-back-button {
+            left: calc(16vw + 1rem);
+        }
+
+        @media (max-width: 1023px) {
+            .library-back-button {
+                left: 1rem;
+                top: 7rem;
+            }
+        }
+
         .glass-effect {
             backdrop-filter: blur(10px);
             background: rgba(255, 255, 255, 0.95);
@@ -69,7 +80,7 @@ if (isset($_POST['titulo2']) && !empty($_POST['titulo2'])) {
     </script>
 </head>
 <body class="min-h-screen flex items-center justify-center p-6 sm:p-8 md:p-12 select-none">
-    <a href="geradorQR_especifico_livro.php" class="fixed top-5 left-12 z-50 group flex items-center space-x-2 bg-white/80 rounded-full px-4 py-2 shadow-lg hover:bg-ceara-green transition-all duration-300">
+    <a href="geradorQR_especifico_livro.php" class="library-back-button fixed top-5 z-50 group flex items-center space-x-2 bg-white/80 rounded-full px-4 py-2 shadow-lg hover:bg-ceara-green transition-all duration-300">
         <i class="fa-solid fa-arrow-left text-ceara-green group-hover:text-white"></i>
         <span class="text-ceara-green group-hover:text-white font-medium">Voltar</span>
     </a>

@@ -76,9 +76,9 @@ $libraryPageDirectories = [
     'views/editar_genero.php' => __DIR__ . '/views',
     'views/editar_livro.php' => __DIR__ . '/views',
     'views/editar_subgenero.php' => __DIR__ . '/views',
-    'views/emprestimo/decisao.php' => __DIR__ . '/views/emprestimo',
-    'views/emprestimo/devolucao_livro.php' => __DIR__ . '/views/emprestimo',
-    'views/emprestimo/emprestimo_livro.php' => __DIR__ . '/views/emprestimo',
+    'views/emprestimo/decisao.php' => __DIR__ . '/views',
+    'views/emprestimo/devolucao_livro.php' => __DIR__ . '/views',
+    'views/emprestimo/emprestimo_livro.php' => __DIR__ . '/views',
     'views/excluir_livro.php' => __DIR__ . '/views',
     'views/gerenciar_acervo.php' => __DIR__ . '/views',
     'views/QRCode/decisao.php' => __DIR__ . '/views/QRCode',
@@ -134,7 +134,7 @@ $renderEmbeddedPage = static function ($embeddedPage, $embeddedDirectory, $pageS
     style="background-image: url('../assets/img/layout.png'); background-opacity: 0.3;">
 
     <?php if (isset($_GET['from']) && $_GET['from'] === 'classificacao'): ?>
-        <a href="classificacao.php" class="fixed top-5 left-12 z-50 group flex items-center space-x-2 bg-white/80 rounded-full px-4 py-2 shadow-lg hover:bg-ceara-green transition-all duration-300">
+        <a href="classificacao.php" class="library-back-button fixed top-5 z-50 group flex items-center space-x-2 bg-white/80 rounded-full px-4 py-2 shadow-lg hover:bg-ceara-green transition-all duration-300">
             <i class="fa-solid fa-arrow-left text-ceara-green group-hover:text-white"></i>
             <span class="text-ceara-green group-hover:text-white font-medium">Voltar</span>
         </a>
@@ -246,7 +246,7 @@ $select_model = new select_model();
     style="background-image: url('../assets/img/layout.png'); background-size: cover; background-attachment: fixed;">
 
     <?php if (isset($_GET['from']) && $_GET['from'] === 'classificacao'): ?>
-        <a href="classificacao.php" class="fixed top-5 left-12 z-50 group flex items-center space-x-2 bg-white/80 rounded-full px-4 py-2 shadow-lg hover:bg-ceara-green transition-all duration-300">
+        <a href="classificacao.php" class="library-back-button fixed top-5 z-50 group flex items-center space-x-2 bg-white/80 rounded-full px-4 py-2 shadow-lg hover:bg-ceara-green transition-all duration-300">
             <i class="fa-solid fa-arrow-left text-ceara-green group-hover:text-white"></i>
             <span class="text-ceara-green group-hover:text-white font-medium">Voltar</span>
         </a>
@@ -424,7 +424,7 @@ $categorias = $select_model->select_categoria();
     style="background-image: url('../assets/img/layout.png'); background-size: cover; background-attachment: fixed;">
 
     <?php if (isset($_GET['from']) && $_GET['from'] === 'gerenciar_acervo'): ?>
-        <a href="gerenciar_acervo.php" class="fixed top-5 left-12 z-50 group flex items-center space-x-2 bg-white/80 rounded-full px-4 py-2 shadow-lg hover:bg-ceara-green transition-all duration-300">
+        <a href="gerenciar_acervo.php" class="library-back-button fixed top-5 z-50 group flex items-center space-x-2 bg-white/80 rounded-full px-4 py-2 shadow-lg hover:bg-ceara-green transition-all duration-300">
             <i class="fa-solid fa-arrow-left text-ceara-green group-hover:text-white"></i>
             <span class="text-ceara-green group-hover:text-white font-medium">Voltar</span>
         </a>
@@ -1074,7 +1074,7 @@ $select_model = new select_model();
     style="background-image: url('../assets/img/layout.png'); background-opacity: 0.3;">
 
     <?php if (isset($_GET['from']) && $_GET['from'] === 'classificacao'): ?>
-        <a href="classificacao.php" class="fixed top-5 left-12 z-50 group flex items-center space-x-2 bg-white/80 rounded-full px-4 py-2 shadow-lg hover:bg-ceara-green transition-all duration-300">
+        <a href="classificacao.php" class="library-back-button fixed top-5 z-50 group flex items-center space-x-2 bg-white/80 rounded-full px-4 py-2 shadow-lg hover:bg-ceara-green transition-all duration-300">
             <i class="fa-solid fa-arrow-left text-ceara-green group-hover:text-white"></i>
             <span class="text-ceara-green group-hover:text-white font-medium">Voltar</span>
         </a>
@@ -1134,13 +1134,13 @@ $select_model = new select_model();
 
                 <div class="mt-2 space-y-2">
                     <?php if (isset($_GET['true'])) { ?>
-                        <p class="text-green-600 bg-green-100 border border-green-300 rounded-md p-2 text-center font-medium text-sm sm:text-base"> Gênero cadastrado com sucesso!</p>
+                        <p class="text-green-600 bg-green-100 border border-green-300 rounded-md p-2 text-center font-medium text-sm sm:text-base"> Subgênero cadastrado com sucesso!</p>
                     <?php } ?>
                     <?php if (isset($_GET['false'])) { ?>
-                        <p class="text-red-600 bg-red-100 border border-red-300 rounded-md p-2 text-center font-medium text-sm sm:text-base">Erro ao cadastrar!</p>
+                        <p class="text-red-600 bg-red-100 border border-red-300 rounded-md p-2 text-center font-medium text-sm sm:text-base">Erro ao cadastrar subgênero!</p>
                     <?php } ?>
                     <?php if (isset($_GET['ja_cadastrado'])) { ?>
-                        <p class="text-yellow-600 bg-yellow-100 border border-yellow-300 rounded-md p-2 text-center font-medium text-sm sm:text-base">Gênero já cadastrado!</p>
+                        <p class="text-yellow-600 bg-yellow-100 border border-yellow-300 rounded-md p-2 text-center font-medium text-sm sm:text-base">Subgênero já cadastrado!</p>
                     <?php } ?>
                 </div>
             </form>
@@ -1157,26 +1157,6 @@ $select_model = new select_model();
         }
     </style>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('genreForm');
-            const subgeneroInput = document.getElementById('subgenero');
-            const checkbox = document.getElementById('naoExisteSubgenero');
-
-            // Função para habilitar/desabilitar o campo de subgênero
-            checkbox.addEventListener('change', function() {
-                subgeneroInput.disabled = this.checked;
-                subgeneroInput.required = !this.checked;
-
-                if (this.checked) {
-                    subgeneroInput.value = 'Sem Subgênero'; // Define um valor padrão
-                } else {
-                    subgeneroInput.value = ''; // Limpa o campo
-                }
-            });
-
-        });
-    </script>
     <script>
         (function(){
             const params = new URLSearchParams(window.location.search);
@@ -2060,7 +2040,7 @@ $livros = $select->select_nome_livro();
   style="background-image: url('../assets/img/layout.png'); background-size: cover; background-attachment: fixed;">
 
   <?php if (isset($_GET['from']) && $_GET['from'] === 'gerenciar_acervo'): ?>
-    <a href="gerenciar_acervo.php" class="fixed top-5 left-12 z-50 group flex items-center space-x-2 bg-white/80 rounded-full px-4 py-2 shadow-lg hover:bg-ceara-green transition-all duration-300">
+    <a href="gerenciar_acervo.php" class="library-back-button fixed top-5 z-50 group flex items-center space-x-2 bg-white/80 rounded-full px-4 py-2 shadow-lg hover:bg-ceara-green transition-all duration-300">
         <i class="fa-solid fa-arrow-left text-ceara-green group-hover:text-white"></i>
         <span class="text-ceara-green group-hover:text-white font-medium">Voltar</span>
     </a>
@@ -2729,7 +2709,7 @@ $categorias = $select_model->select_categoria();
     style="background-image: url('../assets/img/layout.png'); background-size: cover; background-attachment: fixed;">
 
     <?php if (isset($_GET['from']) && $_GET['from'] === 'classificacao'): ?>
-        <a href="classificacao.php" class="fixed top-5 left-12 z-50 group flex items-center space-x-2 bg-white/80 rounded-full px-4 py-2 shadow-lg hover:bg-ceara-green transition-all duration-300">
+        <a href="classificacao.php" class="library-back-button fixed top-5 z-50 group flex items-center space-x-2 bg-white/80 rounded-full px-4 py-2 shadow-lg hover:bg-ceara-green transition-all duration-300">
             <i class="fa-solid fa-arrow-left text-ceara-green group-hover:text-white"></i>
             <span class="text-ceara-green group-hover:text-white font-medium">Voltar</span>
         </a>
@@ -3047,7 +3027,7 @@ $generos = $select_model->select_genero();
     style="background-image: url('../assets/img/layout.png'); background-size: cover; background-attachment: fixed;">
 
     <?php if (isset($_GET['from']) && $_GET['from'] === 'classificacao'): ?>
-        <a href="classificacao.php" class="fixed top-5 left-12 z-50 group flex items-center space-x-2 bg-white/80 rounded-full px-4 py-2 shadow-lg hover:bg-ceara-green transition-all duration-300">
+        <a href="classificacao.php" class="library-back-button fixed top-5 z-50 group flex items-center space-x-2 bg-white/80 rounded-full px-4 py-2 shadow-lg hover:bg-ceara-green transition-all duration-300">
             <i class="fa-solid fa-arrow-left text-ceara-green group-hover:text-white"></i>
             <span class="text-ceara-green group-hover:text-white font-medium">Voltar</span>
         </a>
@@ -3365,7 +3345,7 @@ $categorias = $select_model->select_categoria();
     style="background-image: url('../assets/img/layout.png'); background-size: cover; background-attachment: fixed;">
 
     <?php if (isset($_GET['from']) && $_GET['from'] === 'gerenciar_acervo'): ?>
-        <a href="gerenciar_acervo.php" class="fixed top-5 left-12 z-50 group flex items-center space-x-2 bg-white/80 rounded-full px-4 py-2 shadow-lg hover:bg-ceara-green transition-all duration-300">
+        <a href="gerenciar_acervo.php" class="library-back-button fixed top-5 z-50 group flex items-center space-x-2 bg-white/80 rounded-full px-4 py-2 shadow-lg hover:bg-ceara-green transition-all duration-300">
             <i class="fa-solid fa-arrow-left text-ceara-green group-hover:text-white"></i>
             <span class="text-ceara-green group-hover:text-white font-medium">Voltar</span>
         </a>
@@ -3839,7 +3819,7 @@ $subgeneros = $select_model->select_subgenero($genero = ''); // Passa uma string
     style="background-image: url('../assets/img/layout.png'); background-size: cover; background-attachment: fixed;">
 
     <?php if (isset($_GET['from']) && $_GET['from'] === 'classificacao'): ?>
-        <a href="classificacao.php" class="fixed top-5 left-12 z-50 group flex items-center space-x-2 bg-white/80 rounded-full px-4 py-2 shadow-lg hover:bg-ceara-green transition-all duration-300">
+        <a href="classificacao.php" class="library-back-button fixed top-5 z-50 group flex items-center space-x-2 bg-white/80 rounded-full px-4 py-2 shadow-lg hover:bg-ceara-green transition-all duration-300">
             <i class="fa-solid fa-arrow-left text-ceara-green group-hover:text-white"></i>
             <span class="text-ceara-green group-hover:text-white font-medium">Voltar</span>
         </a>
@@ -4010,7 +3990,7 @@ $subgeneros = $select_model->select_subgenero($genero = ''); // Passa uma string
                 break;
             case 'views/emprestimo/decisao.php':?>
 <?php
-require_once('../../models/select_model.php');
+require_once(__DIR__ . '/models/select_model.php');
 
 $select_model = new select_model();
 $param = $_GET['id_livro'] ?? '';
@@ -4057,7 +4037,7 @@ if (!empty($param)) {
                 break;
             case 'views/emprestimo/devolucao_livro.php':?>
 <?php
-require_once('../../models/select_model.php');
+require_once(__DIR__ . '/models/select_model.php');
 $select_model = new select_model();
 
 $livros_emprestados = $select_model->select_emprestimo();
@@ -4218,7 +4198,7 @@ if ($id_emprestimo_selecionado) {
                 break;
             case 'views/emprestimo/emprestimo_livro.php':?>
 <?php
-require_once('../../models/select_model.php');
+require_once(__DIR__ . '/models/select_model.php');
 $select_model = new select_model();
 
 // Inicializa as variáveis
@@ -4351,7 +4331,23 @@ $dados_aluno = $select_model->select_aluno();
           <input type="date" name="data_devolucao_estipulada" required class="mt-1 w-full p-2 border border-gray-300 rounded">
         </div>
 
-      <div id="emprestimoMessage"></div>
+      <div id="emprestimoMessage" aria-live="polite">
+        <?php if (isset($_GET['erro'])):
+          $loanErrors = [
+            'aluno_obrigatorio' => 'Selecione um aluno antes de registrar o empréstimo.',
+            'aluno_invalido' => 'O aluno selecionado não foi encontrado. Selecione-o novamente.',
+            'livro_invalido' => 'O livro selecionado é inválido. Selecione-o novamente.',
+            'livro_indisponivel' => 'Este livro não está disponível para empréstimo.',
+            'data_invalida' => 'Informe datas válidas e uma devolução no mesmo dia ou após o empréstimo.',
+            'dados_incompletos' => 'Preencha o aluno, o livro e as duas datas.',
+          ];
+          $loanErrorMessage = $loanErrors[(string) $_GET['erro']] ?? 'Não foi possível validar os dados do empréstimo.';
+        ?>
+          <div class="flex items-center p-4 mb-4 text-red-800 border-l-4 border-red-500 bg-red-50 rounded-md" role="alert">
+            <span class="text-sm font-medium"><?= htmlspecialchars($loanErrorMessage, ENT_QUOTES, 'UTF-8') ?></span>
+          </div>
+        <?php endif; ?>
+      </div>
 
 
       <div class="flex justify-between">
@@ -4403,6 +4399,16 @@ $dados_aluno = $select_model->select_aluno();
       $('#emprestimoForm').on('submit', function(e) {
         e.preventDefault();
         var form = $(this);
+        var alunoId = $('#aluno').val();
+        var message = $('#emprestimoMessage');
+
+        if (!alunoId) {
+          message.html('<div class="flex items-center p-4 mb-4 text-red-800 border-l-4 border-red-500 bg-red-50 rounded-md" role="alert"><span class="text-sm font-medium">Selecione um aluno antes de registrar o empréstimo.</span></div>');
+          $('#aluno').select2('open');
+          return;
+        }
+
+        message.empty();
 
         $.ajax({
           type: form.attr('method'),
@@ -4430,8 +4436,37 @@ $dados_aluno = $select_model->select_aluno();
               $('#aluno').val(null).trigger('change');
               $('#livro').val(null).trigger('change');
             } else if (data.error) {
-              $('#emprestimoMessage').html('<div class="flex items-center p-4 mb-4 text-red-800 border-l-4 border-red-500 bg-red-50 rounded-md" role="alert"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="w-6 h-6 mr-3 flex-shrink-0" fill="none" aria-hidden="true"><circle cx="50" cy="50" r="42" stroke="currentColor" stroke-width="4"/><line x1="50" y1="28" x2="50" y2="58" stroke="currentColor" stroke-width="6"/><rect x="47" y="64" width="6" height="6" fill="currentColor"/></svg><span class="text-sm font-medium">ERRO ao registrar empréstimo!</span></div>');
+              var errorMessage = 'ERRO ao registrar empréstimo!';
+              if (data.error === 'aluno_obrigatorio') {
+                errorMessage = 'Selecione um aluno antes de registrar o empréstimo.';
+              } else if (data.error === 'aluno_invalido') {
+                errorMessage = 'O aluno selecionado não foi encontrado. Selecione-o novamente.';
+              } else if (data.error === 'livro_invalido') {
+                errorMessage = 'O livro selecionado é inválido. Selecione-o novamente.';
+              } else if (data.error === 'livro_indisponivel') {
+                errorMessage = 'Este livro não está disponível para empréstimo.';
+              } else if (data.error === 'data_invalida') {
+                errorMessage = 'Informe datas válidas e uma devolução no mesmo dia ou após o empréstimo.';
+              } else if (data.error === 'dados_incompletos') {
+                errorMessage = 'Preencha o aluno, o livro e as duas datas.';
+              }
+              message.html('<div class="flex items-center p-4 mb-4 text-red-800 border-l-4 border-red-500 bg-red-50 rounded-md" role="alert"><span class="text-sm font-medium"></span></div>');
+              message.find('.text-sm').text(errorMessage);
             }
+          },
+          error: function(xhr) {
+            var data = xhr.responseJSON || {};
+            var messages = {
+              aluno_obrigatorio: 'Selecione um aluno antes de registrar o empréstimo.',
+              aluno_invalido: 'O aluno selecionado não foi encontrado. Selecione-o novamente.',
+              livro_invalido: 'O livro selecionado é inválido. Selecione-o novamente.',
+              livro_indisponivel: 'Este livro não está disponível para empréstimo.',
+              data_invalida: 'Informe datas válidas e uma devolução no mesmo dia ou após o empréstimo.',
+              dados_incompletos: 'Preencha o aluno, o livro e as duas datas.'
+            };
+            var errorMessage = messages[data.error] || 'Não foi possível registrar o empréstimo. Tente novamente.';
+            message.html('<div class="flex items-center p-4 mb-4 text-red-800 border-l-4 border-red-500 bg-red-50 rounded-md" role="alert"><span class="text-sm font-medium"></span></div>');
+            message.find('.text-sm').text(errorMessage);
           }
         });
       });
@@ -4610,7 +4645,7 @@ $select_model = new select_model();
     style="background-image: url('../assets/img/layout.png'); background-size: cover; background-attachment: fixed;">
 
     <?php if (isset($_GET['from']) && $_GET['from'] === 'gerenciar_acervo'): ?>
-        <a href="gerenciar_acervo.php" class="fixed top-5 left-12 z-50 group flex items-center space-x-2 bg-white/80 rounded-full px-4 py-2 shadow-lg hover:bg-ceara-green transition-all duration-300">
+        <a href="gerenciar_acervo.php" class="library-back-button fixed top-5 z-50 group flex items-center space-x-2 bg-white/80 rounded-full px-4 py-2 shadow-lg hover:bg-ceara-green transition-all duration-300">
             <i class="fa-solid fa-arrow-left text-ceara-green group-hover:text-white"></i>
             <span class="text-ceara-green group-hover:text-white font-medium">Voltar</span>
         </a>
@@ -6301,6 +6336,17 @@ $totalStudents = $selectModel->count_alunos_total();
             padding-left: 2.5rem;
         }
 
+        .library-back-button {
+            left: calc(16vw + 1rem);
+        }
+
+        @media (max-width: 1023px) {
+            .library-back-button {
+                left: 1rem;
+                top: 7rem;
+            }
+        }
+
         .menu-section:not(.active) {
             display: none;
         }
@@ -6630,7 +6676,43 @@ $totalStudents = $selectModel->count_alunos_total();
                 content
             ])
         );
+        const suspendedSectionContent = new Map();
         let sectionLoadSequence = 0;
+
+        const suspendSectionContent = section => {
+            const sectionId = section.id.replace('section-', '');
+            const content = sectionContentById.get(sectionId);
+            if (!content || !content.childNodes.length) {
+                return;
+            }
+
+            const fragment = document.createDocumentFragment();
+            while (content.firstChild) {
+                fragment.appendChild(content.firstChild);
+            }
+            suspendedSectionContent.set(sectionId, fragment);
+        };
+
+        const restoreSectionContent = (sectionId, content) => {
+            const fragment = suspendedSectionContent.get(sectionId);
+            if (!fragment) {
+                return;
+            }
+
+            content.replaceChildren(fragment);
+            suspendedSectionContent.delete(sectionId);
+        };
+
+        const deactivateActiveSections = keepSectionId => {
+            document.querySelectorAll('.menu-section.active').forEach(section => {
+                if (section.id === keepSectionId) {
+                    return;
+                }
+
+                suspendSectionContent(section);
+                section.classList.remove('active');
+            });
+        };
 
         const executeSectionScripts = async container => {
             const callbacks = [];
@@ -6691,12 +6773,13 @@ $totalStudents = $selectModel->count_alunos_total();
             const loadSequence = ++sectionLoadSequence;
             const targetSection = document.getElementById(`section-${sectionId}`);
             const content = sectionContentById.get(sectionId);
+            const previousActiveSection = document.querySelector('.menu-section.active');
             if (!targetSection || !Object.prototype.hasOwnProperty.call(librarySections, sectionId)) {
                 return;
             }
 
             if (sectionId === 'dashboard') {
-                document.querySelectorAll('.menu-section.active').forEach(section => section.classList.remove('active'));
+                deactivateActiveSections(targetSection.id);
                 targetSection.classList.add('active');
                 document.getElementById('footer')?.classList.remove('hidden');
                 document.querySelectorAll('.menu-item.active').forEach(item => item.classList.remove('active'));
@@ -6748,11 +6831,19 @@ $totalStudents = $selectModel->count_alunos_total();
                     if (!response.ok) {
                         throw new Error(`Falha ao carregar a seção (${response.status}).`);
                     }
-                    content.innerHTML = await response.text();
+                    const sectionHtml = await response.text();
+                    if (loadSequence !== sectionLoadSequence) {
+                        return;
+                    }
+
+                    deactivateActiveSections(targetSection.id);
+                    suspendedSectionContent.delete(sectionId);
+                    content.innerHTML = sectionHtml;
                     content.dataset.loaded = 'true';
                     content.dataset.query = query;
                     await executeSectionScripts(content);
                     if (loadSequence !== sectionLoadSequence) {
+                        suspendSectionContent(targetSection);
                         return;
                     }
                 } catch (error) {
@@ -6760,9 +6851,17 @@ $totalStudents = $selectModel->count_alunos_total();
                     content.innerHTML = '<div role="alert" class="m-6 rounded-lg border border-red-300 bg-red-50 p-4 text-red-800">Não foi possível carregar esta seção. Tente novamente.</div>';
                     content.dataset.loaded = 'false';
                     content.removeAttribute('aria-busy');
+                    if (previousActiveSection && previousActiveSection !== targetSection) {
+                        const previousSectionId = previousActiveSection.id.replace('section-', '');
+                        restoreSectionContent(previousSectionId, sectionContentById.get(previousSectionId));
+                        previousActiveSection.classList.add('active');
+                    }
                     return;
                 }
                 content.removeAttribute('aria-busy');
+            } else {
+                deactivateActiveSections(targetSection.id);
+                restoreSectionContent(sectionId, content);
             }
 
             document.querySelectorAll('.menu-section.active').forEach(section => section.classList.remove('active'));
