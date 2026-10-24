@@ -1,4 +1,16 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+$portalSessionActive = isset($_SESSION['id'], $_SESSION['email'], $_SESSION['nome'])
+    && trim((string) $_SESSION['id']) !== ''
+    && trim((string) $_SESSION['email']) !== ''
+    && trim((string) $_SESSION['nome']) !== '';
+if (session_status() === PHP_SESSION_ACTIVE) {
+    session_write_close();
+}
+
 $sidebarMenu = [
     ['title' => 'Dashboard', 'icon' => 'fas fa-home', 'id' => 'dashboard', 'items' => []],
     ['title' => 'Classificação', 'icon' => 'fas fa-tags', 'section' => 'classificacao', 'id' => 'classificacao', 'items' => [
@@ -5768,6 +5780,13 @@ unset($category);
         let donutChart = null;
         let activeDonutMode = 'category';
         let donutResizeObserver = null;
+        let donutThemeObserver = null;
+
+        function getDonutBorderColor() {
+            return document.documentElement.getAttribute('data-theme') === 'dark'
+                ? '#17231c'
+                : '#ffffff';
+        }
 
         function formatNumber(value) {
             return Number(value).toLocaleString('pt-BR');
@@ -5897,7 +5916,7 @@ unset($category);
                     datasets: [{
                         data: data,
                         backgroundColor: backgroundColors,
-                        borderColor: '#fff',
+                        borderColor: getDonutBorderColor(),
                         borderWidth: 2
                     }]
                 },
@@ -5920,6 +5939,21 @@ unset($category);
                     }
                 },
                 plugins: [centerTextPlugin]
+            });
+        }
+
+        function observeDonutThemeChanges() {
+            donutThemeObserver?.disconnect();
+            donutThemeObserver = new MutationObserver((mutations) => {
+                const themeChanged = mutations.some((mutation) => mutation.attributeName === 'data-theme');
+                if (!themeChanged || !donutChart) return;
+
+                donutChart.data.datasets[0].borderColor = getDonutBorderColor();
+                donutChart.update();
+            });
+            donutThemeObserver.observe(document.documentElement, {
+                attributes: true,
+                attributeFilter: ['data-theme']
             });
         }
 
@@ -6056,6 +6090,7 @@ unset($category);
             revealPanels();
             animateCounters();
             initGenreChart();
+            observeDonutThemeChanges();
             renderBarChart('month');
             initCarousel();
 
@@ -6145,6 +6180,8 @@ $renderSectionContent = static function ($sectionId, $pageScope) use ($sectionCo
     return '<div class="library-section-content ' . $bodyClass . '" style="' . $bodyStyle . '">' . $content . '</div>';
 };
 $mainUrl = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '')), '/') . '/';
+$portalMainUrl = dirname(dirname(dirname(dirname(rtrim($mainUrl, '/'))))) . '/main/';
+$portalExitUrl = $portalMainUrl . 'views/' . ($portalSessionActive ? 'subsystems.php' : 'autenticacao/login.php');
 $pageRoute = $_GET['page'] ?? null;
 if ($pageRoute !== null) {
     if (!is_string($pageRoute) || !isset($libraryPageDirectories[$pageRoute])) {
@@ -6319,6 +6356,47 @@ $totalStudents = $selectModel->count_alunos_total();
             transition: transform 0.3s ease, width 0.3s ease;
         }
 
+        #sidebar .sidebar-bottom {
+            margin-top: auto;
+            padding: 12px 8px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.14);
+        }
+
+        #sidebar .sidebar-logout {
+            display: flex;
+            min-height: 40px;
+            align-items: center;
+            gap: 12px;
+            padding: 0 11px;
+            border-radius: 7px;
+            color: #f0d5ce;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background-color 180ms ease, color 180ms ease;
+        }
+
+        #sidebar .sidebar-logout i {
+            width: 16px;
+            color: #f1aa91;
+            text-align: center;
+        }
+
+        #sidebar .sidebar-logout:hover,
+        #sidebar .sidebar-logout:focus-visible {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        #sidebar .sidebar-logout:focus-visible {
+            outline: 2px solid #ffc04d;
+            outline-offset: 2px;
+        }
+
+        #sidebar .sidebar-logout:hover i,
+        #sidebar .sidebar-logout:focus-visible i {
+            color: #ffc04d;
+        }
 
         .sidebar.-translate-x-full {
             transform: translateX(-100%);
@@ -6378,6 +6456,10 @@ $totalStudents = $selectModel->count_alunos_total();
             body {
                 grid-template-columns: 256px minmax(0, 1fr);
                 transition: grid-template-columns 220ms cubic-bezier(0.2, 0.75, 0.3, 1);
+            }
+
+            #footer {
+                left: 256px;
             }
 
             #sidebar {
@@ -6554,6 +6636,10 @@ $totalStudents = $selectModel->count_alunos_total();
             body.library-sidebar-collapsed #sidebar-collapse-toggle {
                 left: 0;
             }
+
+            body.library-sidebar-collapsed #footer {
+                left: 0;
+            }
         }
 
         #sidebar-collapse-toggle {
@@ -6615,6 +6701,11 @@ $totalStudents = $selectModel->count_alunos_total();
             #sidebar-collapse-toggle {
                 display: none;
             }
+
+            #sidebar.max-h-screen {
+                overflow-y: auto;
+                padding-bottom: 4.25rem;
+            }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -6649,8 +6740,89 @@ $totalStudents = $selectModel->count_alunos_total();
             animation: section-enter 180ms ease-out both;
         }
 
+        #section-dashboard {
+            background: linear-gradient(to bottom right, #fff, #f3f4f6);
+        }
+
+        #section-gerenciar_acervo {
+            background: transparent;
+        }
+
         #section-dashboard.menu-section.active {
             display: flex;
+            justify-content: center;
+        }
+
+        #main-content {
+            height: 100vh;
+            min-height: 0;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            padding-bottom: 3.25rem;
+            scrollbar-gutter: stable;
+            background-color: #f8fafc;
+            background-image: url("<?= htmlspecialchars($mainUrl . 'assets/img/layout.png', ENT_QUOTES, 'UTF-8') ?>");
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        body > .flex-1.flex.flex-col.min-h-screen {
+            height: 100vh;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        #main-content .library-section-content {
+            box-sizing: border-box;
+            min-height: calc(100vh - 3.25rem) !important;
+            background-color: transparent !important;
+            background-image: none !important;
+        }
+
+        #main-content .library-section-content.p-4 {
+            padding-top: 1rem !important;
+            padding-bottom: 1rem !important;
+        }
+
+        @media (min-width: 1536px) and (min-height: 900px) {
+            #section-gerenciar_acervo .library-section-content {
+                padding-top: 0 !important;
+            }
+
+            #section-gerenciar_acervo .dashboard-header {
+                margin-bottom: 1.5rem;
+            }
+        }
+
+        #main-content .library-section-content .bg-gradient-ceara {
+            background: linear-gradient(135deg, #008c45, #006b35) !important;
+            color: #fff !important;
+        }
+
+        #main-content .library-section-content [class~="bg-[#007A33]"] {
+            background-color: #007a33 !important;
+            color: #fff !important;
+        }
+
+        #main-content .library-section-content .bg-gradient-ceara h1,
+        #main-content .library-section-content .bg-gradient-ceara h2,
+        #main-content .library-section-content .bg-gradient-ceara h3,
+        #main-content .library-section-content [class~="bg-[#007A33]"] h1,
+        #main-content .library-section-content [class~="bg-[#007A33]"] h2,
+        #main-content .library-section-content [class~="bg-[#007A33]"] h3 {
+            color: #fff !important;
         }
 
         @keyframes section-enter {
@@ -6691,12 +6863,39 @@ $totalStudents = $selectModel->count_alunos_total();
 
         html[data-theme="dark"] #main-content {
             background-color: #0d1510;
+            background-image: url("<?= htmlspecialchars($mainUrl . 'assets/img/layout_dark.png', ENT_QUOTES, 'UTF-8') ?>");
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
             color: #e5eee8;
         }
 
+        html[data-theme="dark"] #section-dashboard {
+            background: #0d1510;
+        }
+
+        html[data-theme="dark"] #section-gerenciar_acervo {
+            background: transparent;
+        }
+
         html[data-theme="dark"] #main-content .library-section-content {
-            background: #0d1510 !important;
+            background-color: transparent !important;
             background-image: none !important;
+        }
+
+        html[data-theme="dark"] #sidebar {
+            background: #07110b !important;
+            border-right-color: #26382c;
+        }
+
+        html[data-theme="dark"] #sidebar .sidebar-bottom {
+            border-top-color: #26382c;
+        }
+
+        html[data-theme="dark"] #sidebar .menu-item.active,
+        html[data-theme="dark"] #sidebar .menu-toggle.active {
+            background-color: #173c27;
         }
 
         html[data-theme="dark"] #main-content .painel-principal,
@@ -6708,6 +6907,29 @@ $totalStudents = $selectModel->count_alunos_total();
             background-color: #17231c !important;
             color: #e5eee8 !important;
             box-shadow: 0 8px 22px rgba(0, 0, 0, .2);
+        }
+
+        html[data-theme="dark"] #main-content .hierarchy-card-header,
+        html[data-theme="dark"] #main-content .genero-item,
+        html[data-theme="dark"] #main-content .genero-item:hover {
+            border-color: #35483c !important;
+            background-color: #1b2921 !important;
+            color: #e5eee8 !important;
+        }
+
+        html[data-theme="dark"] #main-content .hierarchy-card-header:hover {
+            border-color: #4b7659 !important;
+            background-color: #22352a !important;
+        }
+
+        html[data-theme="dark"] #main-content .categoria-name,
+        html[data-theme="dark"] #main-content .genero-name {
+            color: #e5eee8 !important;
+        }
+
+        html[data-theme="dark"] #main-content .categoria-label,
+        html[data-theme="dark"] #main-content .genero-label {
+            color: #9eafa3 !important;
         }
 
         html[data-theme="dark"] #main-content #features {
@@ -6840,7 +7062,7 @@ $totalStudents = $selectModel->count_alunos_total();
 
         #library-theme-toggle {
             position: fixed;
-            top: 1rem;
+            bottom: 4.25rem;
             right: 1.25rem;
             z-index: 60;
             display: grid;
@@ -6873,11 +7095,71 @@ $totalStudents = $selectModel->count_alunos_total();
 
         @media (max-width: 600px) {
             #library-theme-toggle {
-                top: .75rem;
+                bottom: 5rem;
                 right: .75rem;
                 width: 2.5rem;
                 height: 2.5rem;
             }
+        }
+
+        .library-footer {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 45;
+            display: flex;
+            min-height: 3.25rem;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: .35rem .65rem;
+            width: auto !important;
+            margin: 0;
+            padding: .75rem 1rem;
+            background: #fff;
+            color: #64748b;
+            box-shadow: 0 -4px 18px rgba(0, 0, 0, .08);
+            font-size: .8rem;
+        }
+
+        .library-footer::before {
+            position: absolute;
+            inset: 0 0 auto;
+            height: 3px;
+            background: linear-gradient(90deg, #008c45, #f6c400 48%, #ed8500 70%, #008c45);
+            content: "";
+        }
+
+        .library-footer a {
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
+            color: #1e293b;
+            font-weight: 600;
+            text-decoration: none;
+            transition: color .2s ease, transform .2s ease;
+        }
+
+        .library-footer a:hover,
+        .library-footer a:focus-visible {
+            color: #008c45;
+            transform: translateY(-2px);
+        }
+
+        html[data-theme="dark"] .library-footer {
+            background: #111b15;
+            color: #cbd8cf;
+            box-shadow: 0 -4px 18px rgba(0, 0, 0, .3);
+        }
+
+        html[data-theme="dark"] .library-footer a {
+            color: #e5eee8;
+        }
+
+        html[data-theme="dark"] .library-footer a:hover,
+        html[data-theme="dark"] .library-footer a:focus-visible {
+            color: #76d89e;
         }
 
     </style>
@@ -6954,6 +7236,12 @@ $totalStudents = $selectModel->count_alunos_total();
                 </div>
             <?php endforeach; ?>
         </nav>
+        <div class="sidebar-bottom">
+            <a class="sidebar-logout" href="<?= htmlspecialchars($portalExitUrl, ENT_QUOTES, 'UTF-8') ?>" aria-label="Sair da biblioteca">
+                <i class="fas fa-right-from-bracket" aria-hidden="true"></i>
+                <span class="sidebar-text">Sair</span>
+            </a>
+        </div>
     </aside>
     <button id="sidebar-collapse-toggle" type="button" aria-label="Ocultar menu lateral" aria-expanded="true" title="Ocultar menu lateral">
         <i class="fas fa-chevron-left" aria-hidden="true"></i>
@@ -7112,33 +7400,12 @@ $totalStudents = $selectModel->count_alunos_total();
                 </section>
             <?php endforeach; ?>
 
-            <footer id="footer" class="bg-ceara-white py-12 mt-auto w-full <?= $currentSection === 'dashboard' ? '' : 'hidden' ?>">
-                <div class="max-w-7xl mx-auto px-4">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div class="flex flex-col items-center md:items-start space-y-4">
-                            <h1 class="text-3xl font-bold gradient-text" style="font-family: 'Anton', serif;">
-                                Biblioteca
-                            </h1>
-                            <p class="text-gray-600 text-sm max-w-xs text-center md:text-left leading-relaxed">
-                                Simplificando a gestão de bibliotecas com ferramentas eficientes.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="border-t border-gray-200 mt-8 pt-6">
-                        <div class="flex flex-col md:flex-row justify-between items-center">
-                            <div class="flex flex-col sm:flex-row items-center gap-3">
-                                <p class="text-gray-600 text-sm">© 2026 Sistema Biblioteca. Todos os direitos reservados.</p>
-                            </div>
-                            <div class="flex space-x-4 mt-4 md:mt-0">
-                                <a href="#" class="text-gray-600 hover:text-ceara-orange text-sm transition-colors">Termos</a>
-                                <span class="text-gray-400">•</span>
-                                <a href="#"
-                                    class="text-gray-600 hover:text-ceara-orange text-sm transition-colors">Privacidade</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <footer id="footer" class="library-footer w-full" aria-label="Desenvolvedor do sistema">
+                <span>Desenvolvido por</span>
+                <a href="https://www.instagram.com/cassioholanda_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram de Cassio Holanda">
+                    <i class="fa-brands fa-instagram" aria-hidden="true"></i>
+                    <span>Cassio Holanda</span>
+                </a>
             </footer>
         </main>
     </div>
@@ -7346,8 +7613,8 @@ $totalStudents = $selectModel->count_alunos_total();
             if (sectionId === 'dashboard') {
                 deactivateActiveSections(targetSection.id);
                 targetSection.classList.add('active');
-                document.getElementById('footer')?.classList.remove('hidden');
                 document.querySelectorAll('.menu-item.active').forEach(item => item.classList.remove('active'));
+                document.querySelectorAll(`[data-section="${CSS.escape(sectionId)}"]`).forEach(item => item.classList.add('active'));
                 document.querySelector('base').href = libraryMainUrl.href;
 
                 if (options.pushState !== false) {
@@ -7431,7 +7698,6 @@ $totalStudents = $selectModel->count_alunos_total();
 
             document.querySelectorAll('.menu-section.active').forEach(section => section.classList.remove('active'));
             targetSection.classList.add('active');
-            document.getElementById('footer')?.classList.toggle('hidden', sectionId !== 'dashboard');
             document.querySelectorAll('.menu-item.active').forEach(item => item.classList.remove('active'));
             document.querySelectorAll(`[data-section="${CSS.escape(sectionId)}"]`).forEach(item => item.classList.add('active'));
 
