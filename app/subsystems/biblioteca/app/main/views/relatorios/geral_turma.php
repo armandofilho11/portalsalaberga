@@ -75,6 +75,8 @@
       text-combine-upright: none;
     }
   </style>
+  <link rel="stylesheet" href="../../assets/css/library-navigation.css">
+  <script src="../../assets/js/library-navigation.js"></script>
 
 </head>
 <body class="p-2 sm:p-4 md:p-6 lg:p-8">

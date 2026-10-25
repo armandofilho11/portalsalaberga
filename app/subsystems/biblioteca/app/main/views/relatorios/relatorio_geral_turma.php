@@ -247,7 +247,6 @@ $relatorio = new Relatorio_geral_turma();
             display: inline-flex;
             align-items: center;
             padding: 10px 20px;
-            margin: 20px;
             background-color: #ffffff;
             color: #007a33;
             text-decoration: none;
@@ -257,20 +256,6 @@ $relatorio = new Relatorio_geral_turma();
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
             transition: background-color 0.3s ease, color 0.3s ease;
             border: 1px solid #ddd;
-        }
-
-        .back-button:hover {
-            background-color: #007a33;
-            color: white;
-        }
-
-        .back-button svg {
-            transition: stroke 0.3s ease;
-            margin-right: 8px;
-        }
-
-        .back-button:hover svg {
-            stroke: white;
         }
 
         .btn-download-pdf {
@@ -291,7 +276,7 @@ $relatorio = new Relatorio_geral_turma();
         @media (max-width: 768px) {
             h1 { font-size: 1.6rem; }
             h2 { font-size: 1.2rem; }
-            .back-button, .btn-download-pdf {
+            .btn-download-pdf {
                 width: 100%;
                 text-align: center;
                 justify-content: center;
@@ -301,9 +286,11 @@ $relatorio = new Relatorio_geral_turma();
             }
         }
     </style>
+    <link rel="stylesheet" href="../../assets/css/library-navigation.css">
+    <script src="../../assets/js/library-navigation.js"></script>
 </head>
 <body>
-    <a href="../relatorios/geral_turma.php" class="back-button">
+    <a href="../relatorios/geral_turma.php" class="back-button library-back-button fixed top-5 z-50 group flex items-center space-x-2 rounded-full px-4 py-2 shadow-lg transition-all duration-300">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" height="20" viewBox="0 0 24 24" width="20" stroke="#007a33" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
         </svg>

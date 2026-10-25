@@ -2,6 +2,7 @@
 require_once('../../models/select_model.php');
 require_once('../../assets/fpdf/fpdf.php');
 require_once('../../config/connect.php');
+require_once __DIR__ . '/_layout_pdf.php';
 
 class Relatorio_geral_turma_pdf extends connect
 {
@@ -163,12 +164,7 @@ class Relatorio_geral_turma_pdf extends connect
                 // Criar o PDF
                 $pdf = new FPDF();
                 $pdf->AddPage();
-                $pdf->SetFont('Arial', 'B', 16);
-                $pdf->SetTextColor(0, 122, 51); // Cor verde para o título principal
-                $pdf->Cell(0, 10, utf8_decode('RELATÓRIO GERAL DE TURMA'), 0, 1, 'C');
-                $pdf->SetTextColor(255, 165, 0); // Cor laranja para o subtítulo
-                $pdf->Cell(0, 10, utf8_decode('BIBLIOTECA STGM'), 0, 1, 'C');
-                $pdf->Ln(10);
+                aplicarCabecalhoRelatorioBiblioteca($pdf, 'RELATÓRIO GERAL DE TURMA');
 
                 $pdf->SetFont('Arial', '', 12);
                 $pdf->Cell(0, 10, utf8_decode('Aluno(a) destaque: ') . utf8_decode($aluno_destaque), 0, 1);
@@ -215,12 +211,7 @@ class Relatorio_geral_turma_pdf extends connect
                 // Se não houver dados, criar PDF com mensagem
                 $pdf = new FPDF();
                 $pdf->AddPage();
-                $pdf->SetFont('Arial', 'B', 16);
-                $pdf->SetTextColor(0, 122, 51); // Cor verde para o título principal
-                $pdf->Cell(0, 10, utf8_decode('RELATÓRIO GERAL DE TURMA'), 0, 1, 'C');
-                $pdf->SetTextColor(255, 165, 0); // Cor laranja para o subtítulo
-                $pdf->Cell(0, 10, utf8_decode('BIBLIOTECA STGM'), 0, 1, 'C');
-                $pdf->Ln(10);
+                aplicarCabecalhoRelatorioBiblioteca($pdf, 'RELATÓRIO GERAL DE TURMA');
                 $pdf->SetFont('Arial', '', 12);
                 $pdf->Cell(0, 10, utf8_decode('Nenhum dado disponível para o período selecionado.'), 0, 1);
                 $pdf->Output('I', 'relatorio_turma.pdf');

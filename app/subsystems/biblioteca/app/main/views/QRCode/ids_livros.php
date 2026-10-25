@@ -78,6 +78,8 @@ if (isset($_POST['titulo2']) && !empty($_POST['titulo2'])) {
             }
         }
     </script>
+    <link rel="stylesheet" href="../../assets/css/library-navigation.css">
+    <script src="../../assets/js/library-navigation.js"></script>
 </head>
 <body class="min-h-screen flex items-center justify-center p-6 sm:p-8 md:p-12 select-none">
     <a href="geradorQR_especifico_livro.php" class="library-back-button fixed top-5 z-50 group flex items-center space-x-2 bg-white/80 rounded-full px-4 py-2 shadow-lg hover:bg-ceara-green transition-all duration-300">

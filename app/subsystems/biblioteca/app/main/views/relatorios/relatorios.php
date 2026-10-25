@@ -50,6 +50,8 @@
             box-shadow: 0 8px 16px rgba(0, 140, 69, 0.3);
         }
     </style>
+    <link rel="stylesheet" href="../../assets/css/library-navigation.css">
+    <script src="../../assets/js/library-navigation.js"></script>
 </head>
 <script>
     tailwind.config = {

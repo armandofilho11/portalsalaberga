@@ -1,6 +1,7 @@
 <?php
 require_once('../../assets/fpdf/fpdf.php');
 require_once('../../config/connect.php');
+require_once __DIR__ . '/_layout_pdf.php';
 class PDF extends connect
 {
     public function __construct()
@@ -8,32 +9,12 @@ class PDF extends connect
         parent::__construct();
         $this->main();
     }
-    function Header()
-    {
-        $pdf = new FPDF("L", "pt", "A4");
-        if ($pdf->PageNo() == 1) {
-            $pdf->Image('../../assets/img/logo.png', 20, 14, 50);
-            $pdf->Ln(20);
-
-            $pdf->SetX(20);
-            $pdf->SetFont('Arial', 'B', 20);
-            $pdf->SetTextColor(0, 122, 51);
-            $pdf->Cell($pdf->GetPageWidth() - 40, 20, utf8_decode('RELATÓRIO DE LIVROS EM ALTA'), 0, 1, 'C');
-
-            $pdf->SetX(20);
-            $pdf->SetFont('Arial', 'B', 14);
-            $pdf->SetTextColor(255, 165, 0);
-            $pdf->Cell($pdf->GetPageWidth() - 40, 20, "BIBLIOTECA STGM", 0, 1, 'C');
-
-            $pdf->Ln(10);
-        }
-        return $pdf;
-    }
     function  main()
     {
-        $pdf = $this->Header();
+        $pdf = new FPDF("L", "pt", "A4");
         $pdf->AliasNbPages();
         $pdf->AddPage();
+        aplicarCabecalhoRelatorioBiblioteca($pdf, 'RELATÓRIO DE LIVROS EM ALTA');
         $livrosEmAlta = $this->connect_biblioteca->prepare("SELECT 
         c.id,
         c.titulo_livro,

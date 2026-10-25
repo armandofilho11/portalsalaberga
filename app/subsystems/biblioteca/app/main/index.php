@@ -1,4 +1,6 @@
 <?php
+date_default_timezone_set('America/Fortaleza');
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -5361,7 +5363,7 @@ unset($category);
 
         <div class="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between h-full transform translate-y-12 opacity-0 animate-panel hover:shadow-lg transition-all duration-300 ease-in-out">
             <div class="flex items-start gap-4">
-                <div class="w-14 h-14 rounded-full flex items-center justify-center border bg-[#EEF7F0] text-green-600 shrink-0">
+                <div class="acervo-metric-icon w-14 h-14 rounded-full flex items-center justify-center border bg-[#EEF7F0] text-green-600 shrink-0">
                     <i class="fas fa-book-open text-2xl"></i>
                 </div>
                 <div>
@@ -5374,7 +5376,7 @@ unset($category);
 
         <div class="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between h-full transform translate-y-12 opacity-0 animate-panel hover:shadow-lg transition-all duration-300 ease-in-out">
             <div class="flex items-start gap-4">
-                <div class="w-14 h-14 rounded-full flex items-center justify-center border bg-[#EEF7F0] text-green-600 shrink-0">
+                <div class="acervo-metric-icon w-14 h-14 rounded-full flex items-center justify-center border bg-[#EEF7F0] text-green-600 shrink-0">
                     <i class="fas fa-check text-2xl"></i>
                 </div>
                 <div>
@@ -5387,7 +5389,7 @@ unset($category);
 
         <div class="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between h-[100%] transform translate-y-12 opacity-0 animate-panel hover:shadow-lg transition-all duration-300 ease-in-out">
             <div class="flex items-start gap-4">
-                <div class="w-14 h-14 rounded-full flex items-center justify-center border border-orange-100 bg-orange-50 text-[#FFA500] shrink-0">
+                <div class="acervo-metric-icon w-14 h-14 rounded-full flex items-center justify-center border border-orange-100 bg-orange-50 text-[#FFA500] shrink-0">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 64 64"
@@ -5418,7 +5420,7 @@ unset($category);
 
         <div class="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between h-full transform translate-y-12 opacity-0 animate-panel hover:shadow-lg transition-all duration-300 ease-in-out">
             <div class="flex items-start gap-4">
-                <div class="w-14 h-14 rounded-full flex items-center justify-center border bg-[#EEF7F0] text-green-600 shrink-0">
+                <div class="acervo-metric-icon w-14 h-14 rounded-full flex items-center justify-center border bg-[#EEF7F0] text-green-600 shrink-0">
                     <i class="fas fa-user text-2xl"></i>
                 </div>
                 <div>
@@ -5431,7 +5433,7 @@ unset($category);
 
         <div class="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between h-full transform translate-y-12 opacity-0 animate-panel hover:shadow-lg transition-all duration-300 ease-in-out">
             <div class="flex items-start gap-4">
-                <div class="w-14 h-14 rounded-full flex items-center justify-center border border-orange-100 bg-orange-50 text-[#FFA500] shrink-0">
+                <div class="acervo-metric-icon w-14 h-14 rounded-full flex items-center justify-center border border-orange-100 bg-orange-50 text-[#FFA500] shrink-0">
                     <i class="fas fa-tags text-2xl"></i>
                 </div>
                 <div>
@@ -6720,17 +6722,6 @@ $totalStudents = $selectModel->count_alunos_total();
             }
         }
 
-        .library-back-button {
-            left: calc(16vw + 1rem);
-        }
-
-        @media (max-width: 1023px) {
-            .library-back-button {
-                left: 1rem;
-                top: 7rem;
-            }
-        }
-
         .menu-section:not(.active) {
             display: none;
         }
@@ -6751,6 +6742,48 @@ $totalStudents = $selectModel->count_alunos_total();
         #section-dashboard.menu-section.active {
             display: flex;
             justify-content: center;
+        }
+
+        .dashboard-guide-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.65rem;
+            margin-top: 0.5rem;
+            padding: 0.8rem 1.25rem;
+            border: 1px solid rgba(0, 122, 51, 0.18);
+            border-radius: 9999px;
+            background: #fff;
+            color: #007a33;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-decoration: none;
+            box-shadow: 0 8px 22px rgba(15, 23, 42, 0.1);
+            transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+        }
+
+        .dashboard-guide-link:hover,
+        .dashboard-guide-link:focus-visible {
+            transform: translateY(-2px);
+            background: #f0fdf4;
+            box-shadow: 0 12px 26px rgba(0, 122, 51, 0.18);
+        }
+
+        .dashboard-guide-link:focus-visible {
+            outline: 3px solid #f59e0b;
+            outline-offset: 3px;
+        }
+
+        html[data-theme="dark"] .dashboard-guide-link {
+            border-color: #385541;
+            background: #17231c;
+            color: #c8f3d5;
+        }
+
+        html[data-theme="dark"] .dashboard-guide-link:hover,
+        html[data-theme="dark"] .dashboard-guide-link:focus-visible {
+            background: #203b2a;
+            box-shadow: 0 12px 26px rgba(0, 0, 0, 0.28);
         }
 
         #main-content {
@@ -6884,6 +6917,52 @@ $totalStudents = $selectModel->count_alunos_total();
             background-image: none !important;
         }
 
+        html[data-theme="dark"] #section-geral_turma .library-section-content .glass-effect {
+            border: 1px solid #304338;
+            background: linear-gradient(145deg, #1b2921 0%, #111b15 100%);
+            color: #e5eee8;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, .28);
+            backdrop-filter: blur(10px);
+        }
+
+        html[data-theme="dark"] #section-geral_turma .library-section-content label {
+            color: #d3ded6 !important;
+        }
+
+        html[data-theme="dark"] #section-geral_turma .library-section-content select {
+            border-color: #405449 !important;
+            background-color: #111b15 !important;
+            color: #e5eee8 !important;
+            color-scheme: dark;
+        }
+
+        html[data-theme="dark"] #section-geral_turma .library-section-content option {
+            background-color: #17231c;
+            color: #e5eee8;
+        }
+
+        html[data-theme="dark"] #section-emprestimo_livro #emprestimoForm,
+        html[data-theme="dark"] #section-devolucao_livro #devolucaoForm {
+            border: 1px solid #304338;
+            background: linear-gradient(145deg, #1b2921 0%, #111b15 100%);
+            color: #e5eee8;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, .28);
+            backdrop-filter: blur(10px);
+        }
+
+        html[data-theme="dark"] #section-emprestimo_livro #emprestimoForm [role="alert"].bg-red-50,
+        html[data-theme="dark"] #section-devolucao_livro #devolucaoForm [role="alert"].bg-red-50 {
+            border-color: #754343 !important;
+            background-color: #351f20 !important;
+            color: #ffd1d1 !important;
+        }
+
+        html[data-theme="dark"] #section-devolucao_livro #devolucaoForm [role="alert"].bg-green-50 {
+            border-color: #385541 !important;
+            background-color: #1c3a29 !important;
+            color: #a6deb9 !important;
+        }
+
         html[data-theme="dark"] #sidebar {
             background: #07110b !important;
             border-right-color: #26382c;
@@ -6907,6 +6986,11 @@ $totalStudents = $selectModel->count_alunos_total();
             background-color: #17231c !important;
             color: #e5eee8 !important;
             box-shadow: 0 8px 22px rgba(0, 0, 0, .2);
+        }
+
+        html[data-theme="dark"] #section-gerenciar_acervo .acervo-metric-icon {
+            border-color: #405449 !important;
+            background-color: #26382c !important;
         }
 
         html[data-theme="dark"] #main-content .hierarchy-card-header,
@@ -6942,6 +7026,15 @@ $totalStudents = $selectModel->count_alunos_total();
         html[data-theme="dark"] #main-content [class~="bg-gray-200"] {
             border-color: #35483c !important;
             background-color: #1b2921 !important;
+        }
+
+        html[data-theme="dark"] #section-consultar_livro #badgeCategoria.bg-gray-300,
+        html[data-theme="dark"] #section-consultar_livro #badgeFiccao.bg-gray-300,
+        html[data-theme="dark"] #section-consultar_livro #badgeLiteratura.bg-gray-300,
+        html[data-theme="dark"] #section-consultar_livro #badgeCativo.bg-gray-300 {
+            border: 1px solid #405449;
+            background-color: #35483c !important;
+            color: #e5eee8 !important;
         }
 
         html[data-theme="dark"] #main-content [class*="text-gray-"],
@@ -7163,6 +7256,7 @@ $totalStudents = $selectModel->count_alunos_total();
         }
 
     </style>
+    <link rel="stylesheet" href="<?= htmlspecialchars($mainUrl . 'assets/css/library-navigation.css', ENT_QUOTES, 'UTF-8') ?>">
 </head>
 
 <body class="bg-gradient-to-br from-ceara-white to-gray-100 text-gray-800 select-none flex flex-col relative items-center m-0 p-0 grid">
@@ -7268,6 +7362,16 @@ $totalStudents = $selectModel->count_alunos_total();
                                 style="font-family: 'Poppins', sans-serif;">
                                 Organize livros, gerencie empréstimos e simplifique a administração da sua biblioteca.
                             </p>
+                            <a
+                                class="dashboard-guide-link"
+                                href="<?= htmlspecialchars($mainUrl . 'docs/Guia_rapido_biblioteca.pdf?v=' . (int) filemtime(__DIR__ . '/docs/Guia_rapido_biblioteca.pdf'), ENT_QUOTES, 'UTF-8') ?>"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label="Abrir o guia rápido do sistema da biblioteca em uma nova aba">
+                                <i class="fas fa-book-open" aria-hidden="true"></i>
+                                <span>Guia rápido do sistema</span>
+                                <i class="fas fa-arrow-up-right-from-square text-xs" aria-hidden="true"></i>
+                            </a>
                         </div>
                     </div>
                 </section>

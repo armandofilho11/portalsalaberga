@@ -1,6 +1,7 @@
 <?php
 require_once('../../assets/fpdf/fpdf.php');
 require_once('../../config/connect.php');
+require_once __DIR__ . '/_layout_pdf.php';
 if (isset($_GET['estante']) && isset($_GET['prateleira'])) {
     $estante = $_GET['estante'];
     $prateleira = $_GET['prateleira'];
@@ -16,54 +17,17 @@ class PDF extends connect
         parent::__construct();
         $this->main($estante, $prateleira);
     }
-    public function Header()
-    {
-        $fpdf = new FPDF("L", "pt", "A4");
-        if ($fpdf->PageNo() == 1) {
-            $fpdf->Image('../../assets/img/logo.png', 20, 14, 50);
-            $fpdf->Ln(20);
-
-            $fpdf->SetX(20);
-            $fpdf->SetFont('Arial', 'B', 20);
-            $fpdf->SetTextColor(0, 122, 51);
-            $fpdf->Cell($fpdf->GetPageWidth() - 40, 20, utf8_decode('RELATÓRIO GERAL DE ACERVO'), 0, 1, 'C');
-
-            $fpdf->SetX(20);
-            $fpdf->SetFont('Arial', 'B', 14);
-            $fpdf->SetTextColor(255, 165, 0);
-            $fpdf->Cell($fpdf->GetPageWidth() - 40, 20, "BIBLIOTECA STGM", 0, 1, 'C');
-
-            $fpdf->SetX(20);
-            $fpdf->SetFont('Arial', 'B', 10);
-            $fpdf->SetTextColor(0, 122, 51);
-            // Alinhar Estante e Prateleira lado a lado
-            $estante = 'Estante: ' . $_GET['estante'];
-            $prateleira = 'Prateleira: ' . $_GET['prateleira'];
-            $texto = $estante . '    |    ' . $prateleira;
-            $fpdf->Cell($fpdf->GetPageWidth() - 38, 20, $texto, 0, 1, 'R');
-
-            $pageWidth = $fpdf->GetPageWidth() - 160;
-            $texto = utf8_decode('*ENI: Edição Não Informada');
-            $textoLargura = $fpdf->GetStringWidth($texto);
-            $colunaQtdLargura = $pageWidth * 0.08;
-            $posX = $pageWidth - $colunaQtdLargura;
-
-            $fpdf->SetX($posX);
-            $fpdf->SetFont('Arial', 'B', 10);
-            $fpdf->SetTextColor(0, 122, 51);
-            $fpdf->Cell(195, 10, $texto, 0, 1, 'R');
-
-            $fpdf->Ln(10);
-        }
-        return $fpdf;
-    }
-
     public function main($estante, $prateleira)
     {
 
-        $fpdf = $this->Header();
+        $fpdf = new FPDF("L", "pt", "A4");
         $fpdf->AliasNbPages();
         $fpdf->AddPage();
+        aplicarCabecalhoRelatorioBiblioteca(
+            $fpdf,
+            'RELATÓRIO GERAL DE ACERVO',
+            'Estante: ' . $estante . ' | Prateleira: ' . $prateleira . ' | *ENI: Edição Não Informada'
+        );
         $acervo = $this->connect_biblioteca->prepare("SELECT 
         c.id,
         c.titulo_livro, 

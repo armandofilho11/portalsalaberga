@@ -35,6 +35,8 @@
             -webkit-text-fill-color: transparent;
         }
     </style>
+    <link rel="stylesheet" href="../../assets/css/library-navigation.css">
+    <script src="../../assets/js/library-navigation.js"></script>
 </head>
 <script>
     tailwind.config = {
