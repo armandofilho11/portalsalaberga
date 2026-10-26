@@ -323,6 +323,12 @@ $feedbackLogin = $mensagensLogin[$loginStatus] ?? null;
             font-family: 'Nunito', sans-serif;
         }
 
+        .input-group .toggle-password {
+            top: 50%;
+            line-height: 1;
+            transform: translateY(-50%);
+        }
+
         .input-group input:focus + label,
         .input-group input:not(:placeholder-shown) + label {
             top: -12px;
@@ -649,7 +655,7 @@ $feedbackLogin = $mensagensLogin[$loginStatus] ?? null;
                                    required
                                    class="w-full px-4 py-3 sm:py-4 pl-10 sm:pl-12 pr-10 sm:pr-12 rounded-xl text-ghibli-forest focus:shadow-ghibli-soft transition-all duration-300 peer text-sm sm:text-base">
                             <label for="loginPassword" 
-                                   class="absolute left-10 mx-10 sm:left-12 top-3 sm:top-4 transition-all duration-300 peer-focus:text-ghibli-coral peer-focus:text-xs sm:peer-focus:text-sm peer-focus:-translate-y--1 peer-focus:font-semibold peer-[:not(:placeholder-shown)]:text-xs sm:peer-[:not(:placeholder-shown)]:text-sm peer-[:not(:placeholder-shown)]:-translate-y-7 peer-[:not(:placeholder-shown)]:text-ghibli-coral peer-[:not(:placeholder-shown)]:font-semibold text-sm sm:text-base">
+                                   class="absolute left-10 mx-10 sm:left-12 top-3 sm:top-4 text-sm sm:text-base">
                                 Senha
                             </label>
                             <i class="fas fa-lock absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 text-ghibli-green text-base sm:text-lg"></i>
@@ -801,10 +807,6 @@ $feedbackLogin = $mensagensLogin[$loginStatus] ?? null;
                 // Enhanced icon animation
                 this.classList.toggle('fa-eye');
                 this.classList.toggle('fa-eye-slash');
-                this.style.transform = 'scale(1.2) rotate(10deg)';
-                setTimeout(() => {
-                    this.style.transform = 'scale(1) rotate(0deg)';
-                }, 200);
             });
 
             // CPF mask para primeiro acesso
