@@ -44,7 +44,7 @@ try {
             $stmtAluno->execute([$usuarioId]);
             $alunoId = (int) $stmtAluno->fetchColumn();
         }
-        if ($alunoId <= 0) avaliacaoResponder(200, ['success' => true, 'aluno' => null, 'quesitos' => [], 'avaliacoes' => []]);
+        if ($alunoId <= 0) avaliacaoResponder(200, ['success' => true, 'aluno' => null, 'quesitos' => [], 'avaliacoes' => [], 'frequencias' => []]);
 
         $aluno = avaliacaoAluno($pdo, $alunoId, $usuarioId);
         $stmtQuesitos = $pdo->prepare('SELECT q.id, q.titulo, q.descricao, aq.peso FROM alunos_quesitos aq INNER JOIN quesitos_avaliacao q ON q.id = aq.quesito_id WHERE aq.aluno_id = ? AND aq.ativo = 1 AND q.ativo = 1 AND q.excluido = 0 ORDER BY q.titulo');
@@ -73,11 +73,19 @@ try {
             }
         }
 
+        $stmtFrequencias = $pdo->prepare('SELECT data, presente FROM frequencia_apoio WHERE aluno_id = ? ORDER BY data DESC');
+        $stmtFrequencias->execute([$alunoId]);
+        $frequencias = array_map(static function (array $frequencia): array {
+            $frequencia['presente'] = (int) $frequencia['presente'];
+            return $frequencia;
+        }, $stmtFrequencias->fetchAll(PDO::FETCH_ASSOC));
+
         avaliacaoResponder(200, [
             'success' => true,
             'aluno' => $aluno,
             'quesitos' => $stmtQuesitos->fetchAll(PDO::FETCH_ASSOC),
             'avaliacoes' => array_values($avaliacoes),
+            'frequencias' => $frequencias,
         ]);
     }
 
@@ -140,14 +148,24 @@ try {
     sort($idsPermitidos);
     if ($idsRecebidos !== $idsPermitidos) avaliacaoResponder(422, ['success' => false, 'message' => 'A avaliação deve conter exatamente os quesitos associados ao aluno.']);
 
+    $pdo->beginTransaction();
+    $stmtBloqueioAluno = $pdo->prepare('SELECT id FROM alunos WHERE id = ? AND id_apoio = ? FOR UPDATE');
+    $stmtBloqueioAluno->execute([$alunoId, $usuarioId]);
+    if (!$stmtBloqueioAluno->fetchColumn()) throw new RuntimeException('Você não possui vínculo com este aluno.');
+    $stmtFrequencia = $pdo->prepare('SELECT presente FROM frequencia_apoio WHERE aluno_id = ? AND data = ? LIMIT 1');
+    $stmtFrequencia->execute([$alunoId, $data]);
+    $presente = $stmtFrequencia->fetchColumn();
+    if ($presente !== false && (int) $presente === 0) {
+        throw new InvalidArgumentException('O aluno está marcado como faltoso nesta data e não pode ser avaliado.');
+    }
+
     $stmtExistente = $pdo->prepare('SELECT id FROM registros_apoio WHERE aluno_id = ? AND data = ? AND periodo = ? ORDER BY id DESC LIMIT 1');
     $stmtExistente->execute([$alunoId, $data, $periodo]);
     $registroId = (int) $stmtExistente->fetchColumn();
     if ($data !== date('Y-m-d') && $data !== $ontem && $registroId <= 0) {
-        avaliacaoResponder(422, ['success' => false, 'message' => 'Somente hoje e ontem podem receber avaliações ou edições.']);
+        throw new InvalidArgumentException('Somente hoje e ontem podem receber avaliações ou edições.');
     }
 
-    $pdo->beginTransaction();
     $foiAtualizacao = $registroId > 0;
     if ($foiAtualizacao) {
         $stmtRegistro = $pdo->prepare('UPDATE registros_apoio SET usuario_id = ?, observacao_geral = ? WHERE id = ?');

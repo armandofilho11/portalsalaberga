@@ -4,6 +4,24 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sistema PCD</title>
+  <script>
+    (() => {
+      let tema = 'light';
+      try {
+        const temaSalvo = localStorage.getItem('sgtm-theme');
+        const temaLegado = localStorage.getItem('sistema-pcd-dark-mode');
+        tema = temaSalvo === 'dark' || temaSalvo === 'light'
+          ? temaSalvo
+          : temaLegado !== null
+            ? temaLegado === 'true' ? 'dark' : 'light'
+            : window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      } catch (error) {
+        console.warn('Não foi possível carregar a preferência de tema:', error);
+      }
+      document.documentElement.setAttribute('data-theme', tema);
+      document.documentElement.style.colorScheme = tema;
+    })();
+  </script>
 
   <!-- Poppins -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -292,6 +310,18 @@
       }
       .avaliacao-dia-lista { padding:0 12px 8px; gap:12px; }
       .avaliacao-periodos { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+      .frequencia-apoio { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:16px 12px 0; margin-top:8px; border-top:1px solid var(--border); }
+      .frequencia-apoio-campo { min-width:0; }
+      .frequencia-apoio-titulo { margin-bottom:8px; color:#1f2a23; font-size:13px; font-weight:700; }
+      .frequencia-apoio-opcoes { display:flex; flex-wrap:wrap; gap:8px; }
+      .frequencia-apoio-opcao { position:relative; }
+      .frequencia-apoio-opcao input { position:absolute; opacity:0; pointer-events:none; }
+      .frequencia-apoio-opcao label { display:inline-flex; align-items:center; gap:7px; min-height:36px; padding:7px 12px; border:1px solid var(--border); border-radius:9px; background:#fbfdfb; color:#52675a; font-size:12px; font-weight:700; cursor:pointer; }
+      .frequencia-apoio-opcao label:hover { border-color:rgba(0,166,81,.42); background:#f1faf3; }
+      .frequencia-apoio-opcao input:focus-visible + label { outline:3px solid rgba(0,166,81,.22); outline-offset:2px; }
+      .frequencia-apoio-opcao input:checked + label { border-color:var(--c3); background:#e8f8ed; color:#075b2d; box-shadow:0 0 0 2px rgba(0,166,81,.12); }
+      .frequencia-apoio-opcao--falta input:checked + label { border-color:#dc2626; background:#fee2e2; color:#991b1b; box-shadow:0 0 0 2px rgba(220,38,38,.1); }
+      .frequencia-apoio-status { display:block; min-height:16px; margin-top:7px; color:var(--text-muted); font-size:11px; }
       .avaliacao-dia-lista > .avaliacao-dia-card + .avaliacao-dia-card { border-left:4px solid var(--gold); }
       .avaliacao-dia-card {
         min-height:116px;
@@ -408,6 +438,7 @@
       .avaliacao-opcao-emoji { font-size:23px; line-height:1; }
       .avaliacao-historico-dia { margin-top:20px; }
       .avaliacao-historico-data { display:flex; align-items:center; gap:10px; margin-bottom:10px; color:var(--c1); font-size:13px; font-weight:800; }
+      .avaliacao-historico-data .avaliacao-status { margin-top:0; padding:4px 9px; border:1px solid currentColor; border-radius:999px; font-size:10px; }
       .avaliacao-historico-data::after { content:''; height:1px; flex:1; background:var(--border); }
       .avaliacao-historico-topo { display:flex; align-items:center; justify-content:space-between; gap:14px; margin-bottom:16px; }
       .avaliacao-historico-titulo { display:flex; align-items:center; gap:8px; min-width:0; }
@@ -481,6 +512,9 @@
         .avaliacao-data-picker-trigger { width:100%; }
         .avaliacao-data-picker-popup { left:0; right:auto; width:min(270px,calc(100vw - 52px)); }
         .avaliacao-historico-filtro .btn-g { flex:0 0 34px; }
+        .frequencia-apoio { align-items:stretch; flex-direction:column; }
+        .frequencia-apoio-opcoes { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); }
+        .frequencia-apoio-opcao label { justify-content:center; width:100%; }
         .avaliacao-card-rodape { align-items:flex-start; flex-direction:column; }
         .avaliacao-card-rodape .avaliacao-acoes { width:auto; margin-left:auto; }
         .avaliacao-card-rodape .avaliacao-acoes button { flex:0 0 auto; justify-content:center; }
@@ -1008,6 +1042,137 @@
         transform:none !important;
       }
     }
+
+    .theme-toggle {
+      position:fixed;
+      right:24px;
+      bottom:24px;
+      z-index:1002;
+      display:grid;
+      width:48px;
+      height:48px;
+      place-items:center;
+      border:1px solid rgba(255,255,255,.22);
+      border-radius:50%;
+      background:linear-gradient(135deg,#1ea55f,#0c9a45);
+      color:#fff;
+      box-shadow:0 6px 18px rgba(0,0,0,.2);
+      cursor:pointer;
+      transition:transform .18s ease,box-shadow .18s ease,background .18s ease;
+    }
+    .theme-toggle:hover { transform:translateY(-2px); box-shadow:0 9px 22px rgba(0,0,0,.26); }
+    .theme-toggle:focus-visible { outline:3px solid #f3a11a; outline-offset:3px; }
+    .theme-toggle i { font-size:21px; }
+    html[data-theme="dark"] {
+      color-scheme:dark;
+      --bg:#121212;
+      --surface:#171717;
+      --surface2:#171717;
+      --border:rgba(255,255,255,.08);
+      --text-muted:#9ca3af;
+      --text:#f3f4f6;
+      --c1:#f3f4f6;
+      --c2:#1fae5a;
+      --c3:#1fae5a;
+      --c4:#55c87f;
+      --salaberga-workspace:#121212;
+      --salaberga-ink:#f3f4f6;
+      --salaberga-muted:#9ca3af;
+      --salaberga-green:#1fae5a;
+      --salaberga-dark:#1a1a1a;
+      --salaberga-active:rgba(31,174,90,.18);
+      --modal-overlay:rgba(0,0,0,.72);
+      --modal-border:rgba(255,255,255,.08);
+      --modal-shadow:0 24px 68px rgba(0,0,0,.42);
+      --modal-surface:#171717;
+    }
+    html[data-theme="dark"] body { background:#121212; color:#f3f4f6; transition:background-color .25s ease,color .25s ease; }
+    html[data-theme="dark"] .sidebar { background:linear-gradient(180deg,#1a1a1a 0%,#121212 100%); border-right:1px solid rgba(255,255,255,.06); }
+    html[data-theme="dark"] .main {
+      color:var(--text);
+    }
+    html[data-theme="dark"] .topbar { background:rgba(18,18,18,.94); }
+    html[data-theme="dark"] .content { background:#121212; }
+    html[data-theme="dark"] .card,
+    html[data-theme="dark"] .modal-box,
+    html[data-theme="dark"] #notif-dd,
+    html[data-theme="dark"] .student-profile-block,
+    html[data-theme="dark"] .avaliacao-dia-card,
+    html[data-theme="dark"] .avaliacao-data-picker-popup,
+    html[data-theme="dark"] .evolucao-grafico-box,
+    html[data-theme="dark"] .multi-select-menu,
+    html[data-theme="dark"] .apoio-quesito-leitura-item { background:#171717; border-color:rgba(255,255,255,.08); color:#f3f4f6; }
+    html[data-theme="dark"] .btn-g { background:#262626; border-color:rgba(255,255,255,.08); color:#e5e7eb; }
+    html[data-theme="dark"] .btn-g:hover { background:#333; color:#fff; }
+    html[data-theme="dark"] .inp,
+    html[data-theme="dark"] .multi-select-menu,
+    html[data-theme="dark"] .avaliacao-data-picker-popup { background:#262626; border-color:rgba(255,255,255,.12); color:#f3f4f6; }
+    html[data-theme="dark"] input[type="date"].inp { color-scheme:dark; color:#f3f4f6; }
+    html[data-theme="dark"] input[type="date"].inp::-webkit-calendar-picker-indicator { filter:invert(.85); }
+    html[data-theme="dark"] .inp::placeholder { color:#9ca3af; }
+    html[data-theme="dark"] .inp:focus { background:#262626; }
+    html[data-theme="dark"] select.inp option { background:#262626; color:#f3f4f6; }
+    html[data-theme="dark"] .lbl,
+    html[data-theme="dark"] .tab-btn,
+    html[data-theme="dark"] .multi-select-option,
+    html[data-theme="dark"] .avaliacao-card-titulo,
+    html[data-theme="dark"] .avaliacao-modal-title,
+    html[data-theme="dark"] .frequencia-apoio-titulo,
+    html[data-theme="dark"] .avaliacao-modal-conteudo legend,
+    html[data-theme="dark"] .confirm-modal-title { color:#f3f4f6; }
+    html[data-theme="dark"] .tab-btn:hover,
+    html[data-theme="dark"] .multi-select-option:hover { background:#262626; color:#f3f4f6; }
+    html[data-theme="dark"] .avaliacao-dia-card--avaliado { background:rgba(31,174,90,.12); }
+    html[data-theme="dark"] .avaliacao-opcao label,
+    html[data-theme="dark"] .frequencia-apoio-opcao label { background:#262626; border-color:rgba(255,255,255,.08); color:#e5e7eb; }
+    html[data-theme="dark"] .avaliacao-opcao input:checked + label,
+    html[data-theme="dark"] .frequencia-apoio-opcao input:checked + label { background:rgba(31,174,90,.18); color:#76d89e; }
+    html[data-theme="dark"] .frequencia-apoio-opcao--falta input:checked + label { background:rgba(201,54,43,.18); color:#fecaca; }
+    html[data-theme="dark"] .avaliacao-modal-conteudo fieldset { background:#1f1f1f; }
+    html[data-theme="dark"] .avaliacao-modal-conteudo textarea:disabled { background:#262626; }
+    html[data-theme="dark"] .cal-cell:hover,
+    html[data-theme="dark"] .trow:hover { background:rgba(31,174,90,.08); }
+    html[data-theme="dark"] .cal-day { color:#f3f4f6; }
+    html[data-theme="dark"] .ev-chip { color:#e5e7eb; }
+    html[data-theme="dark"] .table-scroll th { background:#1f1f1f !important; color:#d1d5db !important; }
+    html[data-theme="dark"] .table-scroll td { color:#f3f4f6; border-color:rgba(255,255,255,.08) !important; }
+    html[data-theme="dark"] .main [style*="background:#fff"],
+    html[data-theme="dark"] .main [style*="background: #fff"],
+    html[data-theme="dark"] .main [style*="background:#fbfdfb"],
+    html[data-theme="dark"] .main [style*="background:#f7faf6"],
+    html[data-theme="dark"] .main [style*="background:#f1f8ef"],
+    html[data-theme="dark"] .main [style*="background:#edf9f0"],
+    html[data-theme="dark"] .main [style*="background:#f2f7f3"],
+    html[data-theme="dark"] .main [style*="background:rgba(255,255,255"] { background-color:#171717 !important; }
+    html[data-theme="dark"] .main [style*="color:#102a1b"],
+    html[data-theme="dark"] .main [style*="color:#14251c"],
+    html[data-theme="dark"] .main [style*="color:#173b25"],
+    html[data-theme="dark"] .main [style*="color:#1f2a23"],
+    html[data-theme="dark"] .main [style*="color:#1f382b"],
+    html[data-theme="dark"] .main [style*="color:#294235"],
+    html[data-theme="dark"] .main [style*="color:#365342"],
+    html[data-theme="dark"] .main [style*="color:#52675a"],
+    html[data-theme="dark"] .main [style*="color:#5f7465"] { color:#f3f4f6 !important; }
+    html[data-theme="dark"] .main [style*="color:rgba(255,255,255"] { color:#9ca3af !important; }
+    html[data-theme="dark"] .main [style*="border-bottom:1px solid rgba(7,91,45"],
+    html[data-theme="dark"] .main [style*="border:1px solid rgba(7,91,45"] { border-color:rgba(255,255,255,.08) !important; }
+    html[data-theme="dark"] .sidebar .nav-item.active {
+      background:var(--salaberga-active);
+      color:#76d89e !important;
+      border-left-color:var(--salaberga-green);
+    }
+    html[data-theme="dark"] .sidebar .nav-item.active .ni {
+      background:rgba(31,174,90,.2);
+      color:#76d89e !important;
+    }
+    html[data-theme="dark"] .sidebar-collapse-toggle { color:#76d89e; }
+    html[data-theme="dark"] .theme-toggle { background:rgba(255,255,255,.05); border-color:rgba(255,255,255,.08); color:#f3f4f6; }
+    html[data-theme="dark"] .theme-toggle:hover { background:rgba(255,255,255,.08); }
+    html[data-theme="dark"] .toast { right:88px; background:#171717; border-color:rgba(255,255,255,.08); color:#f3f4f6; }
+    @media (max-width:768px) {
+      .theme-toggle { right:16px; bottom:16px; width:48px; height:48px; }
+      html[data-theme="dark"] .toast { right:12px; bottom:76px; }
+    }
   </style>
 </head>
 <body style="display:flex;height:100vh">
@@ -1308,6 +1473,23 @@ $fotoUsuario = $_SESSION['foto'] ?? null;
           <div id="avaliacao-dia" class="avaliacao-dia-lista avaliacao-periodos">
             <div class="empty" style="grid-column:1/-1;padding:34px 0"><i class="bi bi-hourglass-split"></i><span style="font-size:13px">Carregando avaliações...</span></div>
           </div>
+          <div class="frequencia-apoio">
+            <fieldset class="frequencia-apoio-campo" style="border:0;padding:0;margin:0">
+              <legend class="frequencia-apoio-titulo">Frequência do dia</legend>
+              <div class="frequencia-apoio-opcoes">
+                <div class="frequencia-apoio-opcao">
+                  <input type="radio" id="frequencia-apoio-veio" name="frequencia-apoio-presente" value="1" onchange="alterarSelecaoFrequenciaApoio()">
+                  <label for="frequencia-apoio-veio"><i class="bi bi-check-circle-fill"></i> Veio</label>
+                </div>
+                <div class="frequencia-apoio-opcao frequencia-apoio-opcao--falta">
+                  <input type="radio" id="frequencia-apoio-faltou" name="frequencia-apoio-presente" value="0" onchange="alterarSelecaoFrequenciaApoio()">
+                  <label for="frequencia-apoio-faltou"><i class="bi bi-x-circle-fill"></i> Faltou</label>
+                </div>
+              </div>
+              <span id="frequencia-apoio-status" class="frequencia-apoio-status" role="status"></span>
+            </fieldset>
+            <button type="button" id="frequencia-apoio-salvar" class="btn-p" onclick="salvarFrequenciaApoio()" disabled><i class="bi bi-check-circle-fill"></i> Salvar frequência</button>
+          </div>
         </div>
 
           <div class="card" style="padding:20px;margin-top:24px">
@@ -1343,7 +1525,7 @@ $fotoUsuario = $_SESSION['foto'] ?? null;
         <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
           <div>
             <div style="font-size:17px;font-weight:700"><i class="bi bi-graph-up-arrow" style="color:var(--gold);margin-right:7px"></i>Relatórios de evolução</div>
-            <div style="font-size:11px;color:var(--text-muted);margin-top:5px">Acompanhe a evolução dos quesitos avaliados ao longo dos registros.</div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:5px">Acompanhe avaliações, presenças e faltas registradas para cada aluno.</div>
           </div>
           <button type="button" class="btn-p" onclick="gerarRelatorioEvolucao()" title="Gerar relatório dos filtros atuais">
             <i class="bi bi-file-earmark-pdf"></i> Gerar relatório
@@ -1401,7 +1583,7 @@ $fotoUsuario = $_SESSION['foto'] ?? null;
         </div>
         <div class="table-scroll" style="margin-top:20px">
           <table style="width:100%;border-collapse:collapse;min-width:650px">
-            <thead><tr style="background:rgba(7,91,45,.06)"><th style="text-align:left;padding:11px;font-size:10px">DATA</th><th style="text-align:left;padding:11px;font-size:10px">PERÍODO</th><th style="text-align:left;padding:11px;font-size:10px">QUESITO</th><th style="text-align:left;padding:11px;font-size:10px">AVALIAÇÃO</th><th style="text-align:left;padding:11px;font-size:10px">OBSERVAÇÃO</th></tr></thead>
+            <thead><tr style="background:rgba(7,91,45,.06)"><th style="text-align:left;padding:11px;font-size:10px">DATA</th><th style="text-align:left;padding:11px;font-size:10px">PERÍODO / TIPO</th><th style="text-align:left;padding:11px;font-size:10px">QUESITO</th><th style="text-align:left;padding:11px;font-size:10px">AVALIAÇÃO / FREQUÊNCIA</th><th style="text-align:left;padding:11px;font-size:10px">OBSERVAÇÃO / REGISTRADO POR</th></tr></thead>
             <tbody id="evolucao-tabela"></tbody>
           </table>
         </div>
@@ -2048,8 +2230,11 @@ $fotoUsuario = $_SESSION['foto'] ?? null;
   <span id="toast-tx">Operação realizada!</span>
 </div>
 
+<button type="button" id="theme-toggle" class="theme-toggle" aria-label="Ativar modo escuro" aria-pressed="false" title="Ativar modo escuro">
+  <i class="bi bi-moon-fill" aria-hidden="true"></i>
+</button>
 
-<script src="js/app.js?v=20261020-sidebar-collapse-2">
+<script src="js/app.js?v=20261026-chevron-verde-5">
 
 </script>
 </body>

@@ -41,6 +41,7 @@ function carregarAlunos() {
 
 let curSid = null, relatorios = {}, laudos = {};
 let evolucaoRegistros = [];
+let evolucaoFrequencias = [];
 let evolucaoPagina = 1;
 const evolucaoItensPorPagina = 5;
 let calDate = new Date();
@@ -128,6 +129,39 @@ function alternarGrupoMenu(botao) {
 }
 
 window.alternarGrupoMenu = alternarGrupoMenu;
+
+function inicializarModoEscuro() {
+  const botao = document.getElementById('theme-toggle');
+  if (!botao) return;
+
+  const atualizarTema = modoEscuro => {
+    const tema = modoEscuro ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', tema);
+    document.documentElement.style.colorScheme = tema;
+    document.body.classList.toggle('dark-mode', modoEscuro);
+    botao.innerHTML = `<i class="bi ${modoEscuro ? 'bi-sun-fill' : 'bi-moon-fill'}" aria-hidden="true"></i>`;
+    const rotulo = `Tema atual: ${modoEscuro ? 'Escuro' : 'Claro'}. Mudar para ${modoEscuro ? 'Claro' : 'Escuro'}.`;
+    botao.setAttribute('aria-label', rotulo);
+    botao.setAttribute('title', rotulo);
+    botao.setAttribute('aria-pressed', String(modoEscuro));
+  };
+
+  let modoEscuro = document.documentElement.getAttribute('data-theme') === 'dark';
+  atualizarTema(modoEscuro);
+
+  botao.addEventListener('click', () => {
+    modoEscuro = document.documentElement.getAttribute('data-theme') !== 'dark';
+    atualizarTema(modoEscuro);
+    try {
+      localStorage.setItem('sgtm-theme', modoEscuro ? 'dark' : 'light');
+      localStorage.setItem('sistema-pcd-dark-mode', String(modoEscuro));
+    } catch (error) {
+      console.warn('Não foi possível salvar a preferência de tema:', error);
+    }
+  });
+}
+
+window.inicializarModoEscuro = inicializarModoEscuro;
 
 window.addEventListener('resize', () => {
   const sidebar = document.querySelector('.sidebar');
@@ -238,7 +272,8 @@ function carregarRelatoriosEvolucao() {
   fetch('controllers/listar_evolucao.php')
     .then(response => response.json())
     .then(data => {
-      evolucaoRegistros = Array.isArray(data) ? data : [];
+      evolucaoRegistros = Array.isArray(data) ? data : Array.isArray(data.avaliacoes) ? data.avaliacoes : [];
+      evolucaoFrequencias = Array.isArray(data.frequencias) ? data.frequencias : [];
       const alunosVisiveis = Array.isArray(students) ? students : [];
       if (alunoSelect.tagName === 'SELECT') {
         alunoSelect.innerHTML = alunosVisiveis.length
@@ -254,6 +289,7 @@ function carregarRelatoriosEvolucao() {
     })
     .catch(() => {
       evolucaoRegistros = [];
+      evolucaoFrequencias = [];
       alunoSelect.innerHTML = '<option value="">Não foi possível carregar</option>';
       renderRelatorioEvolucao();
     });
@@ -276,14 +312,16 @@ function renderRelatorioEvolucao() {
   const fim = document.getElementById('evolucao-fim')?.value || '';
   const aluno = students.find(student => String(student.id) === String(alunoId));
   const registros = evolucaoRegistros.filter(item => String(item.aluno_id) === String(alunoId) && (quesitoId === '__todos' || String(item.quesito_id) === String(quesitoId)) && (periodo === '__todos' || String(item.periodo) === periodo) && (!inicio || item.data >= inicio) && (!fim || item.data <= fim));
+  const frequencias = evolucaoFrequencias.filter(item => String(item.aluno_id) === String(alunoId) && (!inicio || item.data >= inicio) && (!fim || item.data <= fim));
+  const faltas = frequencias.filter(item => Number(item.presente) === 0);
   const nomeEl = document.getElementById('evolucao-aluno-nome');
   const metaEl = document.getElementById('evolucao-aluno-meta');
   if (nomeEl) nomeEl.textContent = aluno?.nome || 'Selecione um aluno';
   if (metaEl) metaEl.textContent = aluno ? `Matrícula ${aluno.matricula || '—'} · Turma ${aluno.turma || '—'} · ${aluno.curso || '—'}` : '';
   const resumo = document.getElementById('evolucao-resumo');
-  if (resumo) resumo.textContent = `${registros.length} registro${registros.length === 1 ? '' : 's'}`;
+  if (resumo) resumo.textContent = `${registros.length} ${registros.length === 1 ? 'avaliação' : 'avaliações'} · ${faltas.length} ${faltas.length === 1 ? 'falta' : 'faltas'}`;
   desenharGraficoEvolucao(registros);
-  renderTabelaEvolucao(registros);
+  renderTabelaEvolucao(registros, frequencias);
 }
 
 function desenharGraficoEvolucao(registros) {
@@ -358,19 +396,29 @@ function desenharGraficoEvolucao(registros) {
   tendenciaEl.innerHTML = `<strong>Tendência geral:</strong><br>${linhas.join('<br>')}`;
 }
 
-function renderTabelaEvolucao(registros) {
+function renderTabelaEvolucao(registros, frequencias = []) {
   const tbody = document.getElementById('evolucao-tabela');
   if (!tbody) return;
   const rotulos = { triste: 'Ruim', neutro: 'Neutro', feliz: 'Bom' };
-  const registrosOrdenados = [...registros].reverse();
-  const totalPaginas = Math.max(1, Math.ceil(registrosOrdenados.length / evolucaoItensPorPagina));
+  const linhas = [
+    ...registros.map(item => ({ ...item, tipoRegistro: 'avaliacao' })),
+    ...frequencias.map(item => ({ ...item, tipoRegistro: 'frequencia' })),
+  ].sort((a, b) => String(b.data).localeCompare(String(a.data))
+    || String(b.data_hora_registro || '').localeCompare(String(a.data_hora_registro || ''))
+    || String(a.tipoRegistro).localeCompare(String(b.tipoRegistro)));
+  const totalPaginas = Math.max(1, Math.ceil(linhas.length / evolucaoItensPorPagina));
   evolucaoPagina = Math.min(Math.max(1, evolucaoPagina), totalPaginas);
   const inicio = (evolucaoPagina - 1) * evolucaoItensPorPagina;
-  const registrosPagina = registrosOrdenados.slice(inicio, inicio + evolucaoItensPorPagina);
-  tbody.innerHTML = registrosPagina.length ? registrosPagina.map(item => `<tr><td style="padding:10px;border-bottom:1px solid var(--border)">${item.data.split('-').reverse().join('/')}</td><td style="padding:10px;border-bottom:1px solid var(--border)">${escapeEvolucao(item.periodo)}</td><td style="padding:10px;border-bottom:1px solid var(--border)">${escapeEvolucao(item.quesito)}</td><td style="padding:10px;border-bottom:1px solid var(--border)"><span class="tag ${item.avaliacao === 'feliz' ? 't-ok' : item.avaliacao === 'neutro' ? 't-warn' : 't-danger'}">${rotulos[item.avaliacao] || item.avaliacao}</span></td><td style="padding:10px;border-bottom:1px solid var(--border);color:var(--text-muted)">${escapeEvolucao(item.observacao || '—')}</td></tr>`).join('') : '<tr><td colspan="5" style="padding:22px;text-align:center;color:var(--text-muted)">Nenhum registro encontrado para este filtro.</td></tr>';
+  const linhasPagina = linhas.slice(inicio, inicio + evolucaoItensPorPagina);
+  tbody.innerHTML = linhasPagina.length ? linhasPagina.map(item => {
+    const falta = item.tipoRegistro === 'frequencia';
+    const avaliacao = falta ? (Number(item.presente) === 1 ? 'Presente' : 'Faltou') : rotulos[item.avaliacao] || item.avaliacao;
+    const classe = falta ? (Number(item.presente) === 1 ? 't-ok' : 't-danger') : item.avaliacao === 'feliz' ? 't-ok' : item.avaliacao === 'neutro' ? 't-warn' : 't-danger';
+    return `<tr><td style="padding:10px;border-bottom:1px solid var(--border)">${item.data.split('-').reverse().join('/')}</td><td style="padding:10px;border-bottom:1px solid var(--border)">${falta ? 'Frequência' : escapeEvolucao(item.periodo)}</td><td style="padding:10px;border-bottom:1px solid var(--border)">${falta ? '—' : escapeEvolucao(item.quesito)}</td><td style="padding:10px;border-bottom:1px solid var(--border)"><span class="tag ${classe}">${escapeEvolucao(avaliacao)}</span></td><td style="padding:10px;border-bottom:1px solid var(--border);color:var(--text-muted)">${escapeEvolucao(falta ? item.usuario_nome || '—' : item.observacao || '—')}</td></tr>`;
+  }).join('') : '<tr><td colspan="5" style="padding:22px;text-align:center;color:var(--text-muted)">Nenhuma avaliação ou frequência encontrada para este filtro.</td></tr>';
   const paginacao = document.getElementById('evolucao-paginacao');
   if (paginacao) {
-    paginacao.innerHTML = registrosOrdenados.length > evolucaoItensPorPagina ? `<button type="button" class="btn-g" ${evolucaoPagina === 1 ? 'disabled' : ''} onclick="mudarPaginaEvolucao(-1)"><i class="bi bi-chevron-left"></i> Anterior</button><span style="font-size:12px;color:var(--text-muted)">Página ${evolucaoPagina} de ${totalPaginas}</span><button type="button" class="btn-g" ${evolucaoPagina === totalPaginas ? 'disabled' : ''} onclick="mudarPaginaEvolucao(1)">Próxima <i class="bi bi-chevron-right"></i></button>` : '';
+    paginacao.innerHTML = linhas.length > evolucaoItensPorPagina ? `<button type="button" class="btn-g" ${evolucaoPagina === 1 ? 'disabled' : ''} onclick="mudarPaginaEvolucao(-1)"><i class="bi bi-chevron-left"></i> Anterior</button><span style="font-size:12px;color:var(--text-muted)">Página ${evolucaoPagina} de ${totalPaginas}</span><button type="button" class="btn-g" ${evolucaoPagina === totalPaginas ? 'disabled' : ''} onclick="mudarPaginaEvolucao(1)">Próxima <i class="bi bi-chevron-right"></i></button>` : '';
   }
 }
 
@@ -382,7 +430,8 @@ function mudarPaginaEvolucao(direcao) {
   const inicio = document.getElementById('evolucao-inicio')?.value || '';
   const fim = document.getElementById('evolucao-fim')?.value || '';
   const registros = evolucaoRegistros.filter(item => String(item.aluno_id) === String(alunoId) && (quesitoId === '__todos' || String(item.quesito_id) === String(quesitoId)) && (periodo === '__todos' || String(item.periodo) === periodo) && (!inicio || item.data >= inicio) && (!fim || item.data <= fim));
-  renderTabelaEvolucao(registros);
+  const frequencias = evolucaoFrequencias.filter(item => String(item.aluno_id) === String(alunoId) && (!inicio || item.data >= inicio) && (!fim || item.data <= fim));
+  renderTabelaEvolucao(registros, frequencias);
 }
 
 function gerarRelatorioEvolucao() {
@@ -401,21 +450,36 @@ function gerarRelatorioEvolucao() {
     && (quesitoId === '__todos' || String(item.quesito_id) === String(quesitoId))
     && (periodoSelecionado === '__todos' || String(item.periodo) === periodoSelecionado)
     && (!inicio || item.data >= inicio) && (!fim || item.data <= fim));
+  const frequencias = evolucaoFrequencias.filter(item => String(item.aluno_id) === String(alunoId)
+    && (!inicio || item.data >= inicio) && (!fim || item.data <= fim));
+  const faltas = frequencias.filter(item => Number(item.presente) === 0);
   const quesito = document.getElementById('evolucao-quesito')?.selectedOptions[0]?.textContent || 'Todos os quesitos';
   const periodoTexto = periodoSelecionado === '__todos' ? 'Todos os períodos' : periodoSelecionado === 'manha' ? 'Manhã' : 'Tarde';
   const periodo = `${periodoTexto} | ${inicio || fim ? `${formatDateBR(inicio)} a ${formatDateBR(fim)}` : 'Todos os registros disponíveis'}`;
-  const tabela = registros.length
-    ? [...registros].sort((a, b) => String(b.data).localeCompare(String(a.data))).map(item => `<tr><td>${formatDateBR(item.data)}</td><td>${escapeHtmlRelatorio(item.periodo)}</td><td>${escapeHtmlRelatorio(item.quesito)}</td><td><span class="status status-${item.avaliacao}">${escapeHtmlRelatorio({feliz:'Bom', neutro:'Neutro', triste:'Ruim'}[item.avaliacao] || item.avaliacao)}</span></td><td>${escapeHtmlRelatorio(item.observacao || '—')}</td></tr>`).join('')
+  const linhasRelatorio = [
+    ...registros.map(item => ({ ...item, tipoRegistro: 'avaliacao' })),
+    ...frequencias.map(item => ({ ...item, tipoRegistro: 'frequencia' })),
+  ].sort((a, b) => String(b.data).localeCompare(String(a.data))
+    || String(b.data_hora_registro || '').localeCompare(String(a.data_hora_registro || ''))
+    || String(a.tipoRegistro).localeCompare(String(b.tipoRegistro)));
+  const tabela = linhasRelatorio.length
+    ? linhasRelatorio.map(item => {
+      if (item.tipoRegistro === 'frequencia') {
+        const presente = Number(item.presente) === 1;
+        return `<tr><td>${formatDateBR(item.data)}</td><td>Frequência</td><td>—</td><td><span class="status status-${presente ? 'feliz' : 'triste'}">${presente ? 'Presente' : 'Faltou'}</span></td><td>${escapeHtmlRelatorio(item.usuario_nome || '—')}</td></tr>`;
+      }
+      return `<tr><td>${formatDateBR(item.data)}</td><td>${escapeHtmlRelatorio(item.periodo)}</td><td>${escapeHtmlRelatorio(item.quesito)}</td><td><span class="status status-${item.avaliacao}">${escapeHtmlRelatorio({feliz:'Bom', neutro:'Neutro', triste:'Ruim'}[item.avaliacao] || item.avaliacao)}</span></td><td>${escapeHtmlRelatorio(item.observacao || '—')}</td></tr>`;
+    }).join('')
     : '<tr><td colspan="5" class="vazio">Nenhum registro encontrado para os filtros selecionados.</td></tr>';
   const grafico = document.getElementById('evolucao-grafico')?.outerHTML || '';
   const tendencia = document.getElementById('evolucao-tendencia')?.textContent || 'Nenhuma tendência disponível.';
   const html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Relatório de evolução - ${escapeHtmlRelatorio(aluno.nome)}</title><style>
     @page{size:A4;margin:16mm}*{box-sizing:border-box}body{font-family:Arial,sans-serif;color:#203326;margin:0;font-size:11px;line-height:1.5}header{border-bottom:4px solid #ffb000;padding:0 0 16px;margin-bottom:22px;display:flex;justify-content:space-between;gap:20px;align-items:flex-start}h1{font-size:23px;color:#075b2d;margin:0 0 4px}h2{font-size:13px;color:#075b2d;margin:24px 0 8px;border-bottom:1px solid #d8e7d5;padding-bottom:6px;text-transform:uppercase;letter-spacing:.04em}.marca{font-size:10px;color:#718074;text-align:right}.identificacao{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;background:#f1f8ef;border:1px solid #d7e8d2;border-radius:8px;padding:14px}.campo b{display:block;color:#718074;font-size:9px;text-transform:uppercase;letter-spacing:.06em}.campo span{font-weight:bold;font-size:12px}.resumo{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.indicador{border-left:3px solid #2f8f5b;background:#f8fbf7;padding:10px}.indicador b{display:block;font-size:18px;color:#075b2d}.indicador span{color:#718074;font-size:10px}.grafico{border:1px solid #d8e7d5;border-radius:8px;padding:8px;margin-top:10px}.grafico svg{width:100%;height:auto;max-height:270px}table{width:100%;border-collapse:collapse;font-size:10px}th{text-align:left;background:#075b2d;color:white;padding:8px}td{padding:8px;border-bottom:1px solid #e3ece1;vertical-align:top}tr:nth-child(even){background:#f7faf6}.status{font-weight:bold}.status-feliz{color:#18794e}.status-neutro{color:#a66d00}.status-triste{color:#b42318}.vazio{text-align:center;color:#718074;padding:20px}footer{margin-top:30px;border-top:1px solid #d8e7d5;padding-top:12px;color:#718074;font-size:10px;display:flex;justify-content:space-between}@media print{.grafico{break-inside:avoid}table{break-inside:auto}tr{break-inside:avoid;break-after:auto}}
-  </style></head><body><header><div><h1>Relatório de evolução</h1><div>Acompanhamento pedagógico por registros de quesitos</div></div><div class="marca">Sistema PCD<br>Emitido em ${formatDateBR(new Date().toISOString().slice(0,10))}</div></header>
+  </style></head><body><header><div><h1>Relatório de evolução e frequência</h1><div>Acompanhamento pedagógico, avaliações e controle de faltas</div></div><div class="marca">Sistema PCD<br>Emitido em ${formatDateBR(new Date().toISOString().slice(0,10))}</div></header>
     <section class="identificacao"><div class="campo"><b>Aluno</b><span>${escapeHtmlRelatorio(aluno.nome)}</span></div><div class="campo"><b>Matrícula</b><span>${escapeHtmlRelatorio(aluno.matricula || '—')}</span></div><div class="campo"><b>Turma</b><span>${escapeHtmlRelatorio(aluno.turma || '—')}</span></div><div class="campo"><b>Curso</b><span>${escapeHtmlRelatorio(aluno.curso || '—')}</span></div><div class="campo"><b>Quesito</b><span>${escapeHtmlRelatorio(quesito)}</span></div><div class="campo"><b>Período</b><span>${escapeHtmlRelatorio(periodo)}</span></div></section>
-    <h2>Resumo do acompanhamento</h2><div class="resumo"><div class="indicador"><b>${registros.length}</b><span>registros analisados</span></div><div class="indicador"><b>${new Set(registros.map(item => item.data)).size}</b><span>datas de acompanhamento</span></div><div class="indicador"><b>${new Set(registros.map(item => item.quesito_id)).size}</b><span>quesitos avaliados</span></div></div>
+    <h2>Resumo do acompanhamento</h2><div class="resumo"><div class="indicador"><b>${registros.length}</b><span>avaliações de quesitos</span></div><div class="indicador"><b>${frequencias.length}</b><span>registros de frequência</span></div><div class="indicador"><b>${faltas.length}</b><span>faltas registradas</span></div></div>
     <h2>Evolução observada</h2><div class="grafico">${grafico}</div><p><strong>Síntese:</strong> ${escapeHtmlRelatorio(tendencia)}</p>
-    <h2>Registros detalhados</h2><table><thead><tr><th>Data</th><th>Período</th><th>Quesito</th><th>Avaliação</th><th>Observação</th></tr></thead><tbody>${tabela}</tbody></table>
+    <h2>Registros detalhados</h2><table><thead><tr><th>Data</th><th>Período / tipo</th><th>Quesito</th><th>Avaliação / frequência</th><th>Observação / registrado por</th></tr></thead><tbody>${tabela}</tbody></table>
     <footer><span>Documento gerado pelo Sistema PCD</span><span>Assinatura: ______________________________</span></footer></body></html>`;
   const janela = window.open('', '_blank', 'width=960,height=760');
   if (!janela) { toast('Permita pop-ups para gerar o relatório.', 'bi-x-circle', 'danger'); return; }
@@ -462,8 +526,17 @@ function avisarAvaliacaoIndisponivel(periodo) {
   toast(`A avaliação da ${rotuloPeriodoAvaliacao(periodo)} está disponível das ${horarioPermitidoAvaliacao(periodo)}.`, 'bi-clock', 'amber');
 }
 
+function obterFrequenciaApoio(data) {
+  return (avaliacaoDados.frequencias || []).find(item => item.data === data) || null;
+}
+
+function avisarAlunoFaltou() {
+  toast('O aluno está marcado como faltoso nesta data e não pode ser avaliado.', 'bi-exclamation-triangle', 'amber');
+}
+
 function montarCardAvaliacao(data, periodo, historico = false) {
   const registro = obterAvaliacao(data, periodo);
+  const faltaRegistrada = Number(obterFrequenciaApoio(data)?.presente) === 0;
   const editavel = podeEditarAvaliacao(data, periodo);
   const dataAtual = dataLocalAvaliacao();
   const ontem = new Date(`${dataAtual}T12:00:00`);
@@ -472,20 +545,24 @@ function montarCardAvaliacao(data, periodo, historico = false) {
   const podeAvaliarHistorico = historico && !registro && data === dataAnterior && editavel;
   const titulo = rotuloPeriodoAvaliacao(periodo);
   const icone = periodo === 'manha' ? 'bi-sun-fill' : 'bi-sunset-fill';
-  const bloqueado = Boolean(registro && !editavel);
+  const bloqueado = Boolean(registro && (!editavel || faltaRegistrada));
   const classe = registro ? (bloqueado ? 'avaliacao-dia-card avaliacao-dia-card--bloqueado' : 'avaliacao-dia-card avaliacao-dia-card--avaliado') : 'avaliacao-dia-card avaliacao-dia-card--pendente';
   const status = registro
-    ? `<span class="avaliacao-status ${bloqueado ? 'avaliacao-status--bloqueado' : 'avaliacao-status--ok'}"><i class="bi ${bloqueado ? 'bi-eye' : 'bi-check-circle-fill'}"></i>${bloqueado ? 'Avaliado · somente leitura' : 'Avaliado'}</span>`
-    : '<span class="avaliacao-status"><i class="bi bi-dash-circle"></i>Não avaliado</span>';
-  const acao = registro ? (bloqueado ? 'Visualizar' : 'Editar') : (editavel ? 'Avaliar' : 'Indisponível');
-  const acaoIcone = registro ? (bloqueado ? 'bi-eye' : 'bi-pencil-square') : (editavel ? 'bi-clipboard2-check' : 'bi-lock');
+    ? `<span class="avaliacao-status ${bloqueado ? 'avaliacao-status--bloqueado' : 'avaliacao-status--ok'}"><i class="bi ${bloqueado ? 'bi-eye' : 'bi-check-circle-fill'}"></i>${faltaRegistrada ? 'Falta registrada · somente leitura' : bloqueado ? 'Avaliado · somente leitura' : 'Avaliado'}</span>`
+    : faltaRegistrada
+      ? '<span class="avaliacao-status avaliacao-status--bloqueado"><i class="bi bi-person-x"></i>Aluno faltou</span>'
+      : '<span class="avaliacao-status"><i class="bi bi-dash-circle"></i>Não avaliado</span>';
+  const acao = registro ? (bloqueado ? 'Visualizar' : 'Editar') : (faltaRegistrada || !editavel ? 'Indisponível' : 'Avaliar');
+  const acaoIcone = registro ? (bloqueado ? 'bi-eye' : 'bi-pencil-square') : (faltaRegistrada || !editavel ? 'bi-lock' : 'bi-clipboard2-check');
   const podeExcluir = Boolean(registro && !historico && data === dataAtual && !bloqueado);
   let botao = '';
   if (registro) {
     const botaoExcluir = podeExcluir ? `<button type="button" class="btn-g avaliacao-excluir-btn" title="Excluir avaliação do dia" aria-label="Excluir avaliação de ${rotuloPeriodoAvaliacao(periodo)}" onclick="excluirAvaliacaoAtual(${registro.id}, '${periodo}')"><i class="bi bi-trash3"></i></button>` : '';
     botao = `${botaoExcluir}<div class="avaliacao-acoes"><button type="button" class="avaliacao-acao-principal ${bloqueado ? 'btn-g' : 'btn-g avaliacao-editar-btn'}" onclick="abrirAvaliacao('${data}','${periodo}', '${bloqueado ? 'visualizar' : 'editar'}')"><i class="bi ${acaoIcone}"></i> ${acao}</button></div>`;
   } else if (!historico || podeAvaliarHistorico) {
-    botao = editavel
+    botao = faltaRegistrada
+      ? `<button type="button" class="btn-p avaliacao-acao-principal avaliacao-acao-indisponivel" aria-disabled="true" onclick="avisarAlunoFaltou()" title="O aluno está marcado como faltoso"><i class="bi bi-person-x"></i> Indisponível</button>`
+      : editavel
       ? `<button type="button" class="btn-p avaliacao-acao-principal" onclick="abrirAvaliacao('${data}','${periodo}', 'avaliar')"><i class="bi bi-clipboard2-check"></i> Avaliar</button>`
       : `<button type="button" class="btn-p avaliacao-acao-principal avaliacao-acao-indisponivel" aria-disabled="true" onclick="avisarAvaliacaoIndisponivel('${periodo}')" title="Avaliação disponível das ${horarioPermitidoAvaliacao(periodo)}"><i class="bi bi-lock"></i> Indisponível</button>`;
   }
@@ -619,7 +696,13 @@ function renderizarHistoricoAvaliacao() {
 
   const input = document.getElementById('avaliacao-historico-data-valor');
   const registros = Array.isArray(avaliacaoDados?.avaliacoes) ? avaliacaoDados.avaliacoes : [];
-  const filtrados = input && input.value ? registros.filter(item => String(item.data) === String(input.value)) : registros;
+  const frequencias = Array.isArray(avaliacaoDados?.frequencias) ? avaliacaoDados.frequencias : [];
+  const dataSelecionada = input?.value || '';
+  const datasRegistros = new Set(registros.map(item => String(item.data)));
+  const datasFrequencias = new Set(frequencias.map(item => String(item.data)));
+  const datas = [...new Set([...datasRegistros, ...datasFrequencias])]
+    .filter(data => !dataSelecionada || data === dataSelecionada)
+    .sort((a, b) => b.localeCompare(a));
 
   const button = document.getElementById('avaliacao-historico-data-filtro');
   if (button) {
@@ -627,15 +710,19 @@ function renderizarHistoricoAvaliacao() {
     if (label) label.textContent = input && input.value ? formatDateBR(input.value) : 'Selecionar data';
   }
 
-  if (!filtrados.length) {
-    container.innerHTML = '<div class="empty" style="padding:30px 0"><i class="bi bi-calendar2-x"></i><span style="font-size:13px">Nenhuma avaliação registrada</span></div>';
+  if (!datas.length) {
+    container.innerHTML = '<div class="empty" style="padding:30px 0"><i class="bi bi-calendar2-x"></i><span style="font-size:13px">Nenhuma avaliação ou frequência registrada</span></div>';
     return;
   }
 
-  const datas = [...new Set(filtrados.map(item => item.data))].sort((a, b) => String(b).localeCompare(String(a)));
   container.innerHTML = datas.map(data => {
-    const periodos = ['manha', 'tarde'].map(periodo => montarCardAvaliacao(data, periodo, true)).join('');
-    return `<div class="avaliacao-historico-dia"><div class="avaliacao-historico-data">${formatDateBR(data)}</div><div class="avaliacao-historico-periodos">${periodos}</div></div>`;
+    const frequencia = obterFrequenciaApoio(data);
+    const falta = Number(frequencia?.presente) === 0;
+    const statusFrequencia = frequencia
+      ? `<span class="avaliacao-status ${falta ? 'avaliacao-status--bloqueado' : 'avaliacao-status--ok'}"><i class="bi ${falta ? 'bi-person-x' : 'bi-person-check'}"></i>${falta ? 'Faltou' : 'Presente'}</span>`
+      : '';
+    const periodos = falta || !avaliacaoDados.quesitos?.length ? '' : `<div class="avaliacao-historico-periodos">${['manha', 'tarde'].map(periodo => montarCardAvaliacao(data, periodo, true)).join('')}</div>`;
+    return `<div class="avaliacao-historico-dia"><div class="avaliacao-historico-data">${formatDateBR(data)}${statusFrequencia}</div>${periodos}</div>`;
   }).join('');
 }
 
@@ -661,6 +748,7 @@ function renderizarPaginaAvaliacao() {
   if (apoio) apoio.textContent = aluno?.apoio_nome || '—';
   const dataEl = document.getElementById('avaliacao-data-atual');
   if (dataEl) dataEl.textContent = formatDateBR(dataAtual);
+  renderizarFrequenciaApoio();
   if (!aluno) {
     if (dia) dia.innerHTML = '<div class="empty" style="grid-column:1/-1;padding:34px 0"><i class="bi bi-person-x"></i><span style="font-size:13px">Nenhum aluno vinculado ao seu perfil.</span></div>';
     if (historico) historico.innerHTML = '';
@@ -668,7 +756,7 @@ function renderizarPaginaAvaliacao() {
   }
   if (!avaliacaoDados.quesitos.length) {
     if (dia) dia.innerHTML = '<div class="empty" style="grid-column:1/-1;padding:34px 0"><i class="bi bi-ui-checks"></i><span style="font-size:13px">Nenhum quesito associado a este aluno.</span></div>';
-    if (historico) historico.innerHTML = '';
+    if (historico) renderizarHistoricoAvaliacao();
     return;
   }
   if (dia) dia.innerHTML = ['manha', 'tarde'].map(periodo => montarCardAvaliacao(dataAtual, periodo)).join('');
@@ -684,15 +772,98 @@ window.abrirAvaliacao = abrirAvaliacao;
 window.fecharModalAvaliacao = fecharModalAvaliacao;
 window.salvarAvaliacaoAtual = salvarAvaliacaoAtual;
 window.excluirAvaliacaoAtual = excluirAvaliacaoAtual;
+window.alterarSelecaoFrequenciaApoio = alterarSelecaoFrequenciaApoio;
+window.salvarFrequenciaApoio = salvarFrequenciaApoio;
 
 function carregarPaginaAvaliacao() {
   const alvo = document.getElementById('avaliacao-dia');
   if (!alvo || window.usuarioTipo !== 'apoio') return;
   alvo.innerHTML = '<div class="empty" style="grid-column:1/-1;padding:34px 0"><i class="bi bi-hourglass-split"></i><span style="font-size:13px">Carregando avaliações...</span></div>';
+  avaliacaoDados.frequenciaErro = '';
   fetch('controllers/avaliacao.php')
     .then(response => response.json().then(data => ({ ok: response.ok, data })))
-    .then(({ ok, data }) => { if (!ok || !data.success) throw new Error(data.message || 'Não foi possível carregar as avaliações.'); avaliacaoDados = data; renderizarPaginaAvaliacao(); })
+    .then(async ({ ok, data }) => {
+      if (!ok || !data.success) throw new Error(data.message || 'Não foi possível carregar as avaliações.');
+      avaliacaoDados = data;
+      avaliacaoDados.frequencia = null;
+      if (data.aluno?.id) {
+        try {
+          const parametros = new URLSearchParams({ aluno_id: data.aluno.id, data: dataLocalAvaliacao() });
+          const resposta = await fetch(`controllers/frequencia_apoio.php?${parametros.toString()}`);
+          const frequencia = await resposta.json();
+          if (!resposta.ok || !frequencia.success) throw new Error(frequencia.message || 'Não foi possível carregar a frequência.');
+          avaliacaoDados.frequencia = frequencia.frequencia;
+          avaliacaoDados.frequencias = Array.isArray(avaliacaoDados.frequencias) ? avaliacaoDados.frequencias : [];
+          avaliacaoDados.frequencias = avaliacaoDados.frequencias.filter(item => item.data !== dataLocalAvaliacao());
+          if (frequencia.frequencia) avaliacaoDados.frequencias.push(frequencia.frequencia);
+        } catch (error) {
+          avaliacaoDados.frequenciaErro = error.message || 'Não foi possível carregar a frequência.';
+        }
+      }
+      renderizarPaginaAvaliacao();
+    })
     .catch(error => { alvo.innerHTML = `<div class="empty" style="grid-column:1/-1;padding:34px 0"><i class="bi bi-exclamation-circle"></i><span style="font-size:13px">${escaparUsuario(error.message)}</span></div>`; });
+}
+
+function renderizarFrequenciaApoio() {
+  const veio = document.getElementById('frequencia-apoio-veio');
+  const faltou = document.getElementById('frequencia-apoio-faltou');
+  const botao = document.getElementById('frequencia-apoio-salvar');
+  const status = document.getElementById('frequencia-apoio-status');
+  if (!veio || !faltou || !botao || !status) return;
+
+  const frequencia = avaliacaoDados.frequencia;
+  const valor = frequencia ? String(frequencia.presente) : '';
+  veio.checked = valor === '1';
+  faltou.checked = valor === '0';
+  veio.disabled = !avaliacaoDados.aluno || Boolean(avaliacaoDados.frequenciaErro);
+  faltou.disabled = veio.disabled;
+  botao.disabled = veio.disabled || !document.querySelector('input[name="frequencia-apoio-presente"]:checked');
+  status.textContent = avaliacaoDados.frequenciaErro
+    ? avaliacaoDados.frequenciaErro
+    : frequencia
+      ? `Frequência registrada: ${valor === '1' ? 'Veio' : 'Faltou'}.`
+      : avaliacaoDados.aluno ? 'Selecione se o aluno veio ou faltou.' : 'Nenhum aluno vinculado.';
+}
+
+function alterarSelecaoFrequenciaApoio() {
+  const selecao = document.querySelector('input[name="frequencia-apoio-presente"]:checked');
+  const botao = document.getElementById('frequencia-apoio-salvar');
+  const status = document.getElementById('frequencia-apoio-status');
+  if (botao) botao.disabled = !avaliacaoDados.aluno || Boolean(avaliacaoDados.frequenciaErro) || !selecao;
+  if (status && !avaliacaoDados.frequenciaErro) status.textContent = selecao ? 'Confirme a frequência selecionada.' : 'Selecione se o aluno veio ou faltou.';
+}
+
+function salvarFrequenciaApoio() {
+  const presente = document.querySelector('input[name="frequencia-apoio-presente"]:checked')?.value;
+  const botao = document.getElementById('frequencia-apoio-salvar');
+  if (!avaliacaoDados.aluno?.id || !['0', '1'].includes(presente || '')) {
+    toast('Selecione se o aluno veio ou faltou.', 'bi-exclamation-triangle', 'amber');
+    return;
+  }
+  if (botao) botao.disabled = true;
+  fetch('controllers/frequencia_apoio.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ aluno_id: avaliacaoDados.aluno.id, data: dataLocalAvaliacao(), presente: Number(presente) })
+  })
+    .then(response => response.json().then(data => ({ ok: response.ok, data })))
+    .then(({ ok, data }) => {
+      if (!ok || !data.success) throw new Error(data.message || 'Não foi possível salvar a frequência.');
+      avaliacaoDados.frequencia = data.frequencia;
+      avaliacaoDados.frequenciaErro = '';
+      avaliacaoDados.frequencias = (avaliacaoDados.frequencias || []).filter(item => item.data !== data.frequencia.data);
+      avaliacaoDados.frequencias.push(data.frequencia);
+      renderizarFrequenciaApoio();
+      renderizarPaginaAvaliacao();
+      toast(data.message || 'Frequência salva com sucesso.', 'bi-check-circle', 'success');
+    })
+    .catch(error => {
+      toast(error.message || 'Erro ao salvar a frequência.', 'bi-x-circle', 'danger');
+    })
+    .finally(() => {
+      if (botao) botao.disabled = !document.querySelector('input[name="frequencia-apoio-presente"]:checked');
+    });
 }
 
 function abrirAvaliacao(data, periodo, modo) {
@@ -757,6 +928,7 @@ function excluirAvaliacaoAtual(registroId, periodo) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  inicializarModoEscuro();
   document.getElementById('evolucao-aluno')?.addEventListener('change', () => { atualizarQuesitosEvolucao(); renderRelatorioEvolucao(); });
   document.getElementById('evolucao-quesito')?.addEventListener('change', renderRelatorioEvolucao);
   document.querySelectorAll('input[name="evolucao-periodo"]').forEach(radio => {
@@ -780,7 +952,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fetch('controllers/listar_evolucao.php')
       .then(response => response.json())
-      .then(registros => {
+      .then(payload => {
+        const registros = Array.isArray(payload) ? payload : Array.isArray(payload.avaliacoes) ? payload.avaliacoes : [];
         if (!Array.isArray(registros) || !registros.length) {
           container.innerHTML = '<div class="empty" style="padding:30px 0"><i class="bi bi-bar-chart-line"></i><span>Nenhuma avaliação registrada</span><span style="font-size:11.5px;margin-top:3px">As pontuações aparecerão após os registros.</span></div>';
           return;
