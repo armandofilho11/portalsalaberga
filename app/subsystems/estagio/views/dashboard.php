@@ -942,21 +942,6 @@ $CLS = [
             line-height: 1.35;
         }
 
-        .estagio-sidebar .sidebar-section-heading {
-            display: flex;
-            align-items: center;
-            height: 34px;
-            margin: 0.25rem 0 0.55rem;
-            padding: 0 0.65rem;
-            border: 1px solid rgba(183, 215, 200, 0.2);
-            border-radius: 6px;
-            color: #bdd9cb;
-            font-size: 0.65rem;
-            font-weight: 700;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-        }
-
         .estagio-sidebar .nav-link {
             position: relative;
             min-height: 40px;
@@ -2352,7 +2337,6 @@ $CLS = [
                 </div>
             </div>
             <nav class="flex-1">
-                <div class="sidebar-section-heading">Menu principal</div>
                 <a href="#dashboard" data-view="dashboard" onclick="showView('dashboard')" class="<?= $CLS['sidebar_link'] ?>">
                     <i class="fas fa-home w-5 mr-3"></i> Dashboard
                 </a>
@@ -2394,7 +2378,6 @@ $CLS = [
                 <button id="closeSidebar" aria-label="Fechar menu" class="p-2 text-gray-300 hover:text-white transition-colors"><i class="fas fa-times"></i></button>
             </div>
             <nav class="flex-1">
-                <div class="sidebar-section-heading">Menu principal</div>
                 <a href="#dashboard" data-view="dashboard" onclick="showView('dashboard')" class="<?= $CLS['sidebar_link'] ?> mobile-nav-link">
                     <i class="fas fa-home w-5 mr-3"></i> Dashboard
                 </a>
