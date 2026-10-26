@@ -41,6 +41,7 @@ function carregarAlunos() {
 
 let curSid = null, relatorios = {}, laudos = {};
 let evolucaoRegistros = [];
+let frequenciaRegistros = [];
 let evolucaoPagina = 1;
 const evolucaoItensPorPagina = 5;
 let calDate = new Date();
@@ -235,10 +236,20 @@ function obterCorQuesito(quesitoId, titulo, mapaCores) {
 function carregarRelatoriosEvolucao() {
   const alunoSelect = document.getElementById('evolucao-aluno');
   if (!alunoSelect) return;
-  fetch('controllers/listar_evolucao.php')
-    .then(response => response.json())
-    .then(data => {
-      evolucaoRegistros = Array.isArray(data) ? data : [];
+  Promise.all([
+    fetch('controllers/listar_evolucao.php'),
+    fetch('controllers/frequencia_apoio.php')
+  ])
+    .then(async ([respostaEvolucao, respostaFrequencia]) => {
+      const [dadosEvolucao, dadosFrequencia] = await Promise.all([respostaEvolucao.json(), respostaFrequencia.json()]);
+      if (!respostaEvolucao.ok || !Array.isArray(dadosEvolucao)) {
+        throw new Error(dadosEvolucao.message || 'Não foi possível carregar os registros de evolução.');
+      }
+      if (!respostaFrequencia.ok || !dadosFrequencia.success || !Array.isArray(dadosFrequencia.frequencias)) {
+        throw new Error(dadosFrequencia.message || 'Não foi possível carregar os registros de frequência.');
+      }
+      evolucaoRegistros = dadosEvolucao;
+      frequenciaRegistros = dadosFrequencia.frequencias;
       const alunosVisiveis = Array.isArray(students) ? students : [];
       if (alunoSelect.tagName === 'SELECT') {
         alunoSelect.innerHTML = alunosVisiveis.length
@@ -252,10 +263,12 @@ function carregarRelatoriosEvolucao() {
       atualizarQuesitosEvolucao();
       renderRelatorioEvolucao();
     })
-    .catch(() => {
+    .catch(error => {
       evolucaoRegistros = [];
+      frequenciaRegistros = [];
       alunoSelect.innerHTML = '<option value="">Não foi possível carregar</option>';
       renderRelatorioEvolucao();
+      toast(error.message || 'Não foi possível carregar os relatórios.', 'bi-x-circle', 'danger');
     });
 }
 
@@ -284,6 +297,18 @@ function renderRelatorioEvolucao() {
   if (resumo) resumo.textContent = `${registros.length} registro${registros.length === 1 ? '' : 's'}`;
   desenharGraficoEvolucao(registros);
   renderTabelaEvolucao(registros);
+  renderTabelaFrequencia(alunoId, inicio, fim);
+}
+
+function renderTabelaFrequencia(alunoId, inicio = '', fim = '') {
+  const tbody = document.getElementById('frequencia-tabela');
+  if (!tbody) return;
+  const registros = frequenciaRegistros
+    .filter(item => String(item.aluno_id) === String(alunoId) && (!inicio || item.data >= inicio) && (!fim || item.data <= fim))
+    .sort((a, b) => String(b.data).localeCompare(String(a.data)));
+  tbody.innerHTML = registros.length
+    ? registros.map(item => `<tr><td style="padding:10px;border-bottom:1px solid var(--border)">${formatDateBR(item.data)}</td><td style="padding:10px;border-bottom:1px solid var(--border)">${Number(item.presente) === 1 ? 'Veio' : 'Faltou'}</td><td style="padding:10px;border-bottom:1px solid var(--border)">${escapeEvolucao(item.usuario_nome || '—')}</td></tr>`).join('')
+    : '<tr><td colspan="3" style="padding:22px;text-align:center;color:var(--text-muted)">Nenhum registro de frequência encontrado para este aluno e período.</td></tr>';
 }
 
 function desenharGraficoEvolucao(registros) {
@@ -401,12 +426,17 @@ function gerarRelatorioEvolucao() {
     && (quesitoId === '__todos' || String(item.quesito_id) === String(quesitoId))
     && (periodoSelecionado === '__todos' || String(item.periodo) === periodoSelecionado)
     && (!inicio || item.data >= inicio) && (!fim || item.data <= fim));
+  const frequencias = frequenciaRegistros.filter(item => String(item.aluno_id) === String(alunoId)
+    && (!inicio || item.data >= inicio) && (!fim || item.data <= fim));
   const quesito = document.getElementById('evolucao-quesito')?.selectedOptions[0]?.textContent || 'Todos os quesitos';
   const periodoTexto = periodoSelecionado === '__todos' ? 'Todos os períodos' : periodoSelecionado === 'manha' ? 'Manhã' : 'Tarde';
   const periodo = `${periodoTexto} | ${inicio || fim ? `${formatDateBR(inicio)} a ${formatDateBR(fim)}` : 'Todos os registros disponíveis'}`;
   const tabela = registros.length
     ? [...registros].sort((a, b) => String(b.data).localeCompare(String(a.data))).map(item => `<tr><td>${formatDateBR(item.data)}</td><td>${escapeHtmlRelatorio(item.periodo)}</td><td>${escapeHtmlRelatorio(item.quesito)}</td><td><span class="status status-${item.avaliacao}">${escapeHtmlRelatorio({feliz:'Bom', neutro:'Neutro', triste:'Ruim'}[item.avaliacao] || item.avaliacao)}</span></td><td>${escapeHtmlRelatorio(item.observacao || '—')}</td></tr>`).join('')
     : '<tr><td colspan="5" class="vazio">Nenhum registro encontrado para os filtros selecionados.</td></tr>';
+  const tabelaFrequencia = frequencias.length
+    ? [...frequencias].sort((a, b) => String(b.data).localeCompare(String(a.data))).map(item => `<tr><td>${formatDateBR(item.data)}</td><td>${Number(item.presente) === 1 ? 'Veio' : 'Faltou'}</td><td>${escapeHtmlRelatorio(item.usuario_nome || '—')}</td></tr>`).join('')
+    : '<tr><td colspan="3" class="vazio">Nenhum registro de frequência encontrado para os filtros selecionados.</td></tr>';
   const grafico = document.getElementById('evolucao-grafico')?.outerHTML || '';
   const tendencia = document.getElementById('evolucao-tendencia')?.textContent || 'Nenhuma tendência disponível.';
   const html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Relatório de evolução - ${escapeHtmlRelatorio(aluno.nome)}</title><style>
@@ -416,6 +446,7 @@ function gerarRelatorioEvolucao() {
     <h2>Resumo do acompanhamento</h2><div class="resumo"><div class="indicador"><b>${registros.length}</b><span>registros analisados</span></div><div class="indicador"><b>${new Set(registros.map(item => item.data)).size}</b><span>datas de acompanhamento</span></div><div class="indicador"><b>${new Set(registros.map(item => item.quesito_id)).size}</b><span>quesitos avaliados</span></div></div>
     <h2>Evolução observada</h2><div class="grafico">${grafico}</div><p><strong>Síntese:</strong> ${escapeHtmlRelatorio(tendencia)}</p>
     <h2>Registros detalhados</h2><table><thead><tr><th>Data</th><th>Período</th><th>Quesito</th><th>Avaliação</th><th>Observação</th></tr></thead><tbody>${tabela}</tbody></table>
+    <h2>Frequência do aluno</h2><table><thead><tr><th>Data</th><th>Presença</th><th>Registrado por</th></tr></thead><tbody>${tabelaFrequencia}</tbody></table>
     <footer><span>Documento gerado pelo Sistema PCD</span><span>Assinatura: ______________________________</span></footer></body></html>`;
   const janela = window.open('', '_blank', 'width=960,height=760');
   if (!janela) { toast('Permita pop-ups para gerar o relatório.', 'bi-x-circle', 'danger'); return; }
@@ -639,6 +670,56 @@ function renderizarHistoricoAvaliacao() {
   }).join('');
 }
 
+function renderizarPresencaAvaliacao() {
+  const fieldset = document.getElementById('avaliacao-presenca');
+  const status = document.getElementById('avaliacao-presenca-status');
+  if (!fieldset || !status) return;
+  const radios = fieldset.querySelectorAll('input[name="avaliacao-presenca-radio"]');
+  const presente = avaliacaoDados.frequencia;
+  radios.forEach(radio => {
+    radio.checked = presente !== null && presente !== undefined && String(presente) === radio.value;
+  });
+  fieldset.disabled = !avaliacaoDados.aluno || fieldset.dataset.salvando === 'true';
+  if (fieldset.dataset.salvando === 'true') {
+    status.textContent = 'Salvando presença...';
+  } else if (!avaliacaoDados.aluno) {
+    status.textContent = 'Nenhum aluno disponível.';
+  } else if (presente === null || presente === undefined) {
+    status.textContent = 'Selecione se o aluno veio ou faltou.';
+  } else {
+    status.textContent = `Presença registrada: ${Number(presente) === 1 ? 'veio' : 'faltou'}.`;
+  }
+}
+
+function salvarPresencaAvaliacao(presente) {
+  const aluno = avaliacaoDados.aluno;
+  const fieldset = document.getElementById('avaliacao-presenca');
+  const status = document.getElementById('avaliacao-presenca-status');
+  if (!aluno || !fieldset || !status || !['0', '1'].includes(presente)) return;
+  const valorAnterior = avaliacaoDados.frequencia;
+  fieldset.dataset.salvando = 'true';
+  renderizarPresencaAvaliacao();
+  fetch('controllers/frequencia_apoio.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ aluno_id: Number(aluno.id), data: dataLocalAvaliacao(), presente: Number(presente) })
+  })
+    .then(response => response.json().then(data => ({ ok: response.ok, data })))
+    .then(({ ok, data }) => {
+      if (!ok || !data.success) throw new Error(data.message || 'Não foi possível registrar a presença.');
+      avaliacaoDados.frequencia = Number(presente);
+      toast(data.message || 'Presença registrada com sucesso.', 'bi-check-circle', 'success');
+    })
+    .catch(error => {
+      avaliacaoDados.frequencia = valorAnterior;
+      toast(error.message || 'Erro ao registrar presença.', 'bi-x-circle', 'danger');
+    })
+    .finally(() => {
+      fieldset.dataset.salvando = 'false';
+      renderizarPresencaAvaliacao();
+    });
+}
+
 function renderizarPaginaAvaliacao() {
   const dia = document.getElementById('avaliacao-dia');
   const historico = document.getElementById('avaliacao-historico');
@@ -661,6 +742,7 @@ function renderizarPaginaAvaliacao() {
   if (apoio) apoio.textContent = aluno?.apoio_nome || '—';
   const dataEl = document.getElementById('avaliacao-data-atual');
   if (dataEl) dataEl.textContent = formatDateBR(dataAtual);
+  renderizarPresencaAvaliacao();
   if (!aluno) {
     if (dia) dia.innerHTML = '<div class="empty" style="grid-column:1/-1;padding:34px 0"><i class="bi bi-person-x"></i><span style="font-size:13px">Nenhum aluno vinculado ao seu perfil.</span></div>';
     if (historico) historico.innerHTML = '';
@@ -757,6 +839,9 @@ function excluirAvaliacaoAtual(registroId, periodo) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('input[name="avaliacao-presenca-radio"]').forEach(radio => {
+    radio.addEventListener('change', () => salvarPresencaAvaliacao(radio.value));
+  });
   document.getElementById('evolucao-aluno')?.addEventListener('change', () => { atualizarQuesitosEvolucao(); renderRelatorioEvolucao(); });
   document.getElementById('evolucao-quesito')?.addEventListener('change', renderRelatorioEvolucao);
   document.querySelectorAll('input[name="evolucao-periodo"]').forEach(radio => {

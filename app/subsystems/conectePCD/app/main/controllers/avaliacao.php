@@ -44,11 +44,14 @@ try {
             $stmtAluno->execute([$usuarioId]);
             $alunoId = (int) $stmtAluno->fetchColumn();
         }
-        if ($alunoId <= 0) avaliacaoResponder(200, ['success' => true, 'aluno' => null, 'quesitos' => [], 'avaliacoes' => []]);
+        if ($alunoId <= 0) avaliacaoResponder(200, ['success' => true, 'aluno' => null, 'quesitos' => [], 'avaliacoes' => [], 'frequencia' => null]);
 
         $aluno = avaliacaoAluno($pdo, $alunoId, $usuarioId);
         $stmtQuesitos = $pdo->prepare('SELECT q.id, q.titulo, q.descricao, aq.peso FROM alunos_quesitos aq INNER JOIN quesitos_avaliacao q ON q.id = aq.quesito_id WHERE aq.aluno_id = ? AND aq.ativo = 1 AND q.ativo = 1 AND q.excluido = 0 ORDER BY q.titulo');
         $stmtQuesitos->execute([$alunoId]);
+        $stmtFrequencia = $pdo->prepare('SELECT presente FROM frequencia_apoio WHERE aluno_id = ? AND data = ? LIMIT 1');
+        $stmtFrequencia->execute([$alunoId, date('Y-m-d')]);
+        $frequencia = $stmtFrequencia->fetchColumn();
 
         $stmtRegistros = $pdo->prepare('SELECT r.id, r.data, r.periodo, r.observacao_geral, r.usuario_id, u.nome AS usuario_nome, a.quesito_id, a.avaliacao, a.observacao AS resposta_observacao FROM registros_apoio r INNER JOIN usuarios u ON u.id = r.usuario_id LEFT JOIN respostas_apoio a ON a.registro_id = r.id WHERE r.aluno_id = ? ORDER BY r.data DESC, FIELD(r.periodo, \'manha\', \'tarde\'), r.id DESC');
         $stmtRegistros->execute([$alunoId]);
@@ -78,6 +81,7 @@ try {
             'aluno' => $aluno,
             'quesitos' => $stmtQuesitos->fetchAll(PDO::FETCH_ASSOC),
             'avaliacoes' => array_values($avaliacoes),
+            'frequencia' => $frequencia === false ? null : (int) $frequencia,
         ]);
     }
 

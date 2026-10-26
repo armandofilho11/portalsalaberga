@@ -960,6 +960,25 @@
     }
 
     @media (max-width: 768px) {
+      /* Condições: exibe cada registro como cartão para evitar rolagem lateral. */
+      #page-condicoes .table-scroll { overflow:visible; }
+      #page-condicoes .table-scroll table { display:block; width:100%; min-width:0 !important; table-layout:fixed; }
+      #page-condicoes .table-scroll thead { display:none; }
+      #page-condicoes .table-scroll tbody,
+      #page-condicoes .table-scroll tr { display:block; width:100%; }
+      #page-condicoes .table-scroll tr { padding:10px 14px; border-bottom:1px solid var(--border); }
+      #page-condicoes .table-scroll td { box-sizing:border-box; display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%; padding:7px 0 !important; font-size:12px !important; overflow-wrap:anywhere; }
+      #page-condicoes .table-scroll td:first-child { display:block; }
+      #page-condicoes .table-scroll td:first-child > div:first-child { font-size:13px !important; overflow-wrap:anywhere; }
+      #page-condicoes .table-scroll td:first-child > div:last-child { max-width:none !important; overflow-wrap:anywhere; }
+      #page-condicoes .table-scroll td:nth-child(2)::before { content:'Sigla'; }
+      #page-condicoes .table-scroll td:nth-child(3)::before { content:'Status'; }
+      #page-condicoes .table-scroll td:nth-child(2)::before,
+      #page-condicoes .table-scroll td:nth-child(3)::before,
+      #page-condicoes .table-scroll td:nth-child(4)::before { flex:0 0 64px; color:var(--text-muted); font-size:9px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; }
+      #page-condicoes .table-scroll td:nth-child(4) { justify-content:flex-start; gap:6px; flex-wrap:wrap; }
+      #page-condicoes .table-scroll td:nth-child(4)::before { content:'Ações'; }
+
       /* Usuários: filtros em coluna e registros como cartões legíveis. */
       #page-usuarios > .card > div:first-child {
         display:grid !important;
@@ -1308,6 +1327,14 @@ $fotoUsuario = $_SESSION['foto'] ?? null;
           <div id="avaliacao-dia" class="avaliacao-dia-lista avaliacao-periodos">
             <div class="empty" style="grid-column:1/-1;padding:34px 0"><i class="bi bi-hourglass-split"></i><span style="font-size:13px">Carregando avaliações...</span></div>
           </div>
+          <fieldset id="avaliacao-presenca" style="margin:0 20px 18px;padding:14px;border:1px solid var(--border);border-radius:12px" disabled>
+            <legend style="padding:0 6px;font-size:13px;font-weight:700">Presença do aluno</legend>
+            <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+              <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input type="radio" name="avaliacao-presenca-radio" value="1" class="apoio-periodo-radio"> Veio</label>
+              <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input type="radio" name="avaliacao-presenca-radio" value="0" class="apoio-periodo-radio"> Faltou</label>
+              <span id="avaliacao-presenca-status" role="status" aria-live="polite" style="font-size:11px;color:var(--text-muted)">Carregando presença...</span>
+            </div>
+          </fieldset>
         </div>
 
           <div class="card" style="padding:20px;margin-top:24px">
@@ -1406,6 +1433,15 @@ $fotoUsuario = $_SESSION['foto'] ?? null;
           </table>
         </div>
         <div id="evolucao-paginacao" style="display:flex;align-items:center;justify-content:center;gap:12px;margin-top:14px"></div>
+        <div style="margin-top:24px">
+          <div style="font-size:14px;font-weight:700;margin-bottom:10px">Frequência do aluno</div>
+          <div class="table-scroll">
+            <table style="width:100%;border-collapse:collapse;min-width:0">
+              <thead><tr style="background:rgba(7,91,45,.06)"><th style="text-align:left;padding:11px;font-size:10px">DATA</th><th style="text-align:left;padding:11px;font-size:10px">PRESENÇA</th><th style="text-align:left;padding:11px;font-size:10px">REGISTRADO POR</th></tr></thead>
+              <tbody id="frequencia-tabela"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
       </div>
     </div>
