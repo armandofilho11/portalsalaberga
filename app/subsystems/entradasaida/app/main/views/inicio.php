@@ -590,6 +590,20 @@ html,body{margin:0;min-height:100%;font-family:'Inter',sans-serif;color:var(--sa
             border-bottom: 1px solid #f3f4f6;
         }
 
+        .select-option-student {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .select-option-student__turma {
+            flex-shrink: 0;
+            color: #718074;
+            font-size: 0.8em;
+            white-space: nowrap;
+        }
+
         .select-option:hover {
             background-color: #f9fafb;
         }
@@ -597,6 +611,10 @@ html,body{margin:0;min-height:100%;font-family:'Inter',sans-serif;color:var(--sa
         .select-option.selected {
             background-color: #008C45;
             color: white;
+        }
+
+        .select-option.selected .select-option-student__turma {
+            color: rgba(255,255,255,.82);
         }
 
         .select-option.hidden {
@@ -2511,6 +2529,24 @@ html,body{margin:0;min-height:100%;font-family:'Inter',sans-serif;color:var(--sa
             padding: 12px 16px !important;
             font-size: 14px !important;
             color: #374151 !important;
+        }
+
+        #estagio .estagio-aluno-opcao {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        #estagio .estagio-aluno-turma {
+            flex-shrink: 0;
+            color: #718074;
+            font-size: .85em;
+            white-space: nowrap;
+        }
+
+        #estagio .select2-results__option--highlighted .estagio-aluno-turma {
+            color: rgba(255,255,255,.82);
         }
 
         .select2-container--default .select2-results__option--highlighted[aria-selected] {
@@ -6224,12 +6260,15 @@ input[type="radio"] {
                                             <?php
                                             $dados = $select->select_alunos();
                                             foreach ($dados as $dado) {
+                                                $nomeAluno = htmlspecialchars((string) $dado['nome'], ENT_QUOTES, 'UTF-8');
+                                                $nomeAlunoBusca = htmlspecialchars(strtolower((string) $dado['nome']), ENT_QUOTES, 'UTF-8');
                                                 $matriculaAluno = htmlspecialchars((string) ($dado['matricula'] ?? ''), ENT_QUOTES, 'UTF-8');
                                                 $turmaAluno = htmlspecialchars($turmasPorId[(int) ($dado['id_turma'] ?? 0)] ?? 'Não informada', ENT_QUOTES, 'UTF-8');
                                                 $cursoAluno = htmlspecialchars($cursosPorId[(int) ($dado['id_curso'] ?? 0)] ?? 'Não informado', ENT_QUOTES, 'UTF-8');
                                             ?>
-                                                <div class="select-option" data-value="<?= (int) $dado['id_aluno'] ?>" data-nome="<?= strtolower($dado['nome']) ?>" data-matricula="<?= $matriculaAluno ?>" data-turma="<?= $turmaAluno ?>" data-curso="<?= $cursoAluno ?>">
-                                                    <?= $dado['nome'] ?>
+                                                <div class="select-option select-option-student" data-value="<?= (int) $dado['id_aluno'] ?>" data-nome="<?= $nomeAlunoBusca ?>" data-label="<?= $nomeAluno ?>" data-matricula="<?= $matriculaAluno ?>" data-turma="<?= $turmaAluno ?>" data-curso="<?= $cursoAluno ?>">
+                                                    <span><?= $nomeAluno ?></span>
+                                                    <span class="select-option-student__turma"><?= $turmaAluno ?></span>
                                                 </div>
                                             <?php
                                             }
@@ -6240,11 +6279,12 @@ input[type="radio"] {
                                         <option value="" disabled selected>Selecione o Nome do Aluno</option>
                                         <?php
                                         foreach ($dados as $dado) {
+                                            $nomeAluno = htmlspecialchars((string) $dado['nome'], ENT_QUOTES, 'UTF-8');
                                             $matriculaAluno = htmlspecialchars((string) ($dado['matricula'] ?? ''), ENT_QUOTES, 'UTF-8');
                                             $turmaAluno = htmlspecialchars($turmasPorId[(int) ($dado['id_turma'] ?? 0)] ?? 'Não informada', ENT_QUOTES, 'UTF-8');
                                             $cursoAluno = htmlspecialchars($cursosPorId[(int) ($dado['id_curso'] ?? 0)] ?? 'Não informado', ENT_QUOTES, 'UTF-8');
                                         ?>
-                                            <option value="<?= (int) $dado['id_aluno'] ?>" data-matricula="<?= $matriculaAluno ?>" data-turma="<?= $turmaAluno ?>" data-curso="<?= $cursoAluno ?>"><?= $dado['nome'] ?></option>
+                                            <option value="<?= (int) $dado['id_aluno'] ?>" data-matricula="<?= $matriculaAluno ?>" data-turma="<?= $turmaAluno ?>" data-curso="<?= $cursoAluno ?>"><?= $nomeAluno ?></option>
                                         <?php
                                         }
                                         ?>
@@ -6410,7 +6450,7 @@ $(document).ready(function() {
             selectOptions.forEach(option => {
                 option.addEventListener('click', function() {
                     const value = this.getAttribute('data-value');
-                    const text = this.textContent;
+                    const text = this.dataset.label;
 
                     // Update hidden select
                     hiddenSelect.value = value;
@@ -6580,7 +6620,7 @@ $(document).ready(function() {
             const curso = opcaoAlunoVisivel?.dataset.curso || alunoSelecionado?.dataset.curso || 'Não informado';
             const ano = turma.match(/\d+/)?.[0];
             return {
-                aluno: opcaoAlunoVisivel?.textContent.trim() || selectedText('id_aluno'),
+                aluno: opcaoAlunoVisivel?.dataset.label || selectedText('id_aluno'),
                 matricula: opcaoAlunoVisivel?.dataset.matricula || alunoSelecionado?.dataset.matricula || '',
                 turma: ano ? `${ano}º ${curso}` : curso,
                 motivo: selectedText('id_motivo'),
@@ -6721,12 +6761,15 @@ $(document).ready(function() {
                                             <?php
                                             $dados = $select->select_alunos();
                                             foreach ($dados as $dado) {
+                                                $nomeAluno = htmlspecialchars((string) $dado['nome'], ENT_QUOTES, 'UTF-8');
+                                                $nomeAlunoBusca = htmlspecialchars(strtolower((string) $dado['nome']), ENT_QUOTES, 'UTF-8');
                                                 $matriculaAluno = htmlspecialchars((string) ($dado['matricula'] ?? ''), ENT_QUOTES, 'UTF-8');
                                                 $turmaAluno = htmlspecialchars($turmasPorId[(int) ($dado['id_turma'] ?? 0)] ?? 'Não informada', ENT_QUOTES, 'UTF-8');
                                                 $cursoAluno = htmlspecialchars($cursosPorId[(int) ($dado['id_curso'] ?? 0)] ?? 'Não informado', ENT_QUOTES, 'UTF-8');
                                             ?>
-                                            <div class="select-option" data-value="<?=$dado['id_aluno']?>" data-nome="<?=strtolower($dado['nome'])?>" data-matricula="<?= $matriculaAluno ?>" data-turma="<?= $turmaAluno ?>" data-curso="<?= $cursoAluno ?>">
-                                                <?=$dado['nome']?>
+                                            <div class="select-option select-option-student" data-value="<?= (int) $dado['id_aluno'] ?>" data-nome="<?= $nomeAlunoBusca ?>" data-label="<?= $nomeAluno ?>" data-matricula="<?= $matriculaAluno ?>" data-turma="<?= $turmaAluno ?>" data-curso="<?= $cursoAluno ?>">
+                                                <span><?= $nomeAluno ?></span>
+                                                <span class="select-option-student__turma"><?= $turmaAluno ?></span>
                                             </div>
                                             <?php
                                             }
@@ -6737,11 +6780,12 @@ $(document).ready(function() {
                                         <option value="" disabled selected>Selecione o Nome do Aluno</option>
                                         <?php
                                         foreach ($dados as $dado) {
+                                            $nomeAluno = htmlspecialchars((string) $dado['nome'], ENT_QUOTES, 'UTF-8');
                                             $matriculaAluno = htmlspecialchars((string) ($dado['matricula'] ?? ''), ENT_QUOTES, 'UTF-8');
                                             $turmaAluno = htmlspecialchars($turmasPorId[(int) ($dado['id_turma'] ?? 0)] ?? 'Não informada', ENT_QUOTES, 'UTF-8');
                                             $cursoAluno = htmlspecialchars($cursosPorId[(int) ($dado['id_curso'] ?? 0)] ?? 'Não informado', ENT_QUOTES, 'UTF-8');
                                         ?>
-                                        <option value="<?=$dado['id_aluno']?>" data-matricula="<?= $matriculaAluno ?>" data-turma="<?= $turmaAluno ?>" data-curso="<?= $cursoAluno ?>"><?=$dado['nome']?></option>
+                                        <option value="<?= (int) $dado['id_aluno'] ?>" data-matricula="<?= $matriculaAluno ?>" data-turma="<?= $turmaAluno ?>" data-curso="<?= $cursoAluno ?>"><?= $nomeAluno ?></option>
                                         <?php
                                         }
                                         ?>
@@ -6964,7 +7008,7 @@ $(document).ready(function() {
             selectOptions.forEach(option => {
                 option.addEventListener('click', function() {
                     const value = this.getAttribute('data-value');
-                    const text = this.textContent;
+                    const text = this.dataset.label;
                     
                     // Update hidden select
                     hiddenSelect.value = value;
@@ -7134,7 +7178,7 @@ $(document).ready(function() {
             const curso = opcaoAlunoVisivel?.dataset.curso || alunoSelecionado?.dataset.curso || 'Não informado';
             const ano = turma.match(/\d+/)?.[0];
             return {
-                aluno: opcaoAlunoVisivel?.textContent.trim() || selectedText('id_aluno'),
+                aluno: opcaoAlunoVisivel?.dataset.label || selectedText('id_aluno'),
                 matricula: opcaoAlunoVisivel?.dataset.matricula || alunoSelecionado?.dataset.matricula || '',
                 turma: ano ? `${ano}º ${curso}` : curso,
                 responsavel: form.elements.namedItem('nome_responsavel').value.trim(),
@@ -7272,8 +7316,9 @@ $(document).ready(function() {
                                 <?php
                                 $dados = $select->select_alunosE();
                                 foreach ($dados as $dado) {
+                                    $turmaAlunoEstagio = htmlspecialchars($turmasPorId[(int) ($dado['id_turma'] ?? 0)] ?? 'Não informada', ENT_QUOTES, 'UTF-8');
                                 ?>
-                                    <option value="<?= (int) $dado['id_aluno'] ?>" data-matricula="<?= htmlspecialchars((string) $dado['matricula'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars((string) $dado['nome'], ENT_QUOTES, 'UTF-8') ?></option>
+                                    <option value="<?= (int) $dado['id_aluno'] ?>" data-matricula="<?= htmlspecialchars((string) $dado['matricula'], ENT_QUOTES, 'UTF-8') ?>" data-turma="<?= $turmaAlunoEstagio ?>"><?= htmlspecialchars((string) $dado['nome'], ENT_QUOTES, 'UTF-8') ?></option>
                                 <?php
                                 }
                                 ?>
@@ -7402,7 +7447,19 @@ $(document).ready(function() {
                 dropdownParent: $('#estagio'),
                 width: '100%',
                 language: 'pt-BR',
-                minimumResultsForSearch: 0
+                minimumResultsForSearch: 0,
+                templateResult: function(aluno) {
+                    if (!aluno.id || !aluno.element) return aluno.text;
+                    const $opcao = $('<span class="estagio-aluno-opcao">');
+                    $('<span>').text(aluno.text).appendTo($opcao);
+                    $('<span class="estagio-aluno-turma">')
+                        .text(aluno.element.dataset.turma || 'Não informada')
+                        .appendTo($opcao);
+                    return $opcao;
+                },
+                templateSelection: function(aluno) {
+                    return aluno.text;
+                }
             });
         });
 

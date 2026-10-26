@@ -1165,7 +1165,18 @@
       background:rgba(31,174,90,.2);
       color:#76d89e !important;
     }
-    html[data-theme="dark"] .sidebar-collapse-toggle { color:#76d89e; }
+    html[data-theme="dark"] .sidebar-collapse-toggle {
+      background:#121212;
+      color:#76d89e;
+      border:0;
+      box-shadow:4px 0 12px rgba(0,0,0,.3);
+    }
+    html[data-theme="dark"] .sidebar-collapse-toggle::before { background:transparent; }
+    html[data-theme="dark"] .sidebar-collapse-toggle:hover {
+      background:#171717;
+      border:0;
+      box-shadow:5px 0 15px rgba(0,0,0,.36);
+    }
     html[data-theme="dark"] .theme-toggle { background:rgba(255,255,255,.05); border-color:rgba(255,255,255,.08); color:#f3f4f6; }
     html[data-theme="dark"] .theme-toggle:hover { background:rgba(255,255,255,.08); }
     html[data-theme="dark"] .toast { right:88px; background:#171717; border-color:rgba(255,255,255,.08); color:#f3f4f6; }
