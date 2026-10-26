@@ -7256,7 +7256,7 @@ $totalStudents = $selectModel->count_alunos_total();
         }
 
     </style>
-    <link rel="stylesheet" href="<?= htmlspecialchars($mainUrl . 'assets/css/library-navigation.css', ENT_QUOTES, 'UTF-8') ?>">
+    <link rel="stylesheet" href="<?= htmlspecialchars($mainUrl . 'assets/css/library-navigation.css', ENT_QUOTES, 'UTF-8') ?>?v=<?= (int) filemtime(__DIR__ . '/assets/css/library-navigation.css') ?>-<?= substr(md5_file(__DIR__ . '/assets/css/library-navigation.css'), 0, 8) ?>">
 </head>
 
 <body class="bg-gradient-to-br from-ceara-white to-gray-100 text-gray-800 select-none flex flex-col relative items-center m-0 p-0 grid">
