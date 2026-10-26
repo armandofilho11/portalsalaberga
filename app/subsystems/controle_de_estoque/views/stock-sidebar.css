@@ -4,6 +4,62 @@
     box-shadow: 8px 0 24px rgba(4, 35, 20, 0.16);
 }
 
+.stock-sidebar-collapse-toggle {
+    position: fixed;
+    top: 50%;
+    left: calc(16rem - 1px);
+    z-index: 51;
+    display: grid;
+    width: 30px;
+    height: 72px;
+    place-items: center;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-left: 0;
+    border-radius: 0 10px 10px 0;
+    background: linear-gradient(145deg, #0b7042, #064923);
+    color: #ffb21a;
+    box-shadow: 4px 0 12px rgba(4, 35, 20, 0.25);
+    transform: translateY(-50%);
+    cursor: pointer;
+    transition: left 180ms ease, background 180ms ease, color 180ms ease;
+}
+
+.stock-sidebar-collapse-toggle:hover {
+    background: linear-gradient(145deg, #0d7a49, #075b34);
+}
+
+.stock-sidebar-collapse-toggle:focus-visible {
+    outline: 2px solid #ffb21a;
+    outline-offset: 2px;
+}
+
+.stock-sidebar-collapse-toggle i {
+    transition: transform 180ms ease;
+}
+
+body.stock-sidebar-collapsed .stock-sidebar-collapse-toggle {
+    left: 0;
+}
+
+body.stock-sidebar-collapsed .stock-sidebar-collapse-toggle i {
+    transform: rotate(180deg);
+}
+
+body.stock-sidebar-collapsed #sidebar {
+    transform: translateX(-100%);
+}
+
+body.stock-sidebar-collapsed main {
+    margin-left: 0 !important;
+}
+
+body.stock-sidebar-collapsed > footer.stock-footer #footerContent {
+    width: min(100%, 80rem);
+    margin-left: 0 !important;
+    transform: none;
+}
+
 #sidebar > div > div:first-child {
     min-height: 5rem;
     padding: 1rem 1.15rem;
@@ -134,7 +190,11 @@
     font-size: 1rem;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 768px) {
+    .stock-sidebar-collapse-toggle {
+        display: none;
+    }
+
     #sidebar > div > div:first-child {
         min-height: 4.75rem;
         padding: 0.75rem 1rem;
@@ -207,6 +267,21 @@ html.stock-dark #sidebar {
     background: linear-gradient(180deg, #1a1a1a 0%, #121212 100%) !important;
     border-right: 1px solid rgba(255, 255, 255, 0.06);
     color: var(--stock-dark-text);
+}
+
+html.stock-dark .stock-sidebar-collapse-toggle {
+    border-color: rgba(255, 255, 255, 0.18);
+    background: linear-gradient(145deg, #303030, #171717);
+    color: #76d89e;
+    box-shadow: 4px 0 12px rgba(0, 0, 0, 0.4);
+}
+
+html.stock-dark .stock-sidebar-collapse-toggle:hover {
+    background: linear-gradient(145deg, #3a3a3a, #202020);
+}
+
+html.stock-dark .stock-sidebar-collapse-toggle:focus-visible {
+    outline-color: #76d89e;
 }
 
 html.stock-dark #sidebar > div > div:first-child {

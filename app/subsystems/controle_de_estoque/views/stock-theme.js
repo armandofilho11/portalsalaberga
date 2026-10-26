@@ -43,9 +43,61 @@
         document.body.appendChild(button);
     }
 
+    function setupSidebarCollapseToggle() {
+        const sidebar = document.getElementById('sidebar');
+        if (!sidebar || document.querySelector('.stock-sidebar-collapse-toggle')) {
+            return;
+        }
+
+        const storageKey = 'controle-estoque-sidebar-collapsed';
+        const desktopQuery = window.matchMedia('(min-width: 769px)');
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'stock-sidebar-collapse-toggle';
+        button.innerHTML = '<i class="fas fa-chevron-left" aria-hidden="true"></i>';
+
+        let collapsedPreference = false;
+        try {
+            collapsedPreference = localStorage.getItem(storageKey) === 'true';
+        } catch (error) {
+            console.warn('Não foi possível carregar a preferência da sidebar do estoque:', error);
+        }
+
+        function updateButton() {
+            const collapsed = desktopQuery.matches && collapsedPreference;
+            document.body.classList.toggle('stock-sidebar-collapsed', collapsed);
+            sidebar.setAttribute('aria-hidden', String(collapsed));
+            sidebar.inert = collapsed;
+            button.setAttribute('aria-expanded', String(!collapsed));
+            button.setAttribute('aria-label', collapsed ? 'Mostrar menu lateral' : 'Ocultar menu lateral');
+            button.title = collapsed ? 'Mostrar menu lateral' : 'Ocultar menu lateral';
+            button.querySelector('i').className = collapsed
+                ? 'fas fa-chevron-right'
+                : 'fas fa-chevron-left';
+        }
+
+        button.addEventListener('click', function () {
+            collapsedPreference = !collapsedPreference;
+            try {
+                localStorage.setItem(storageKey, String(collapsedPreference));
+            } catch (error) {
+                console.warn('Não foi possível salvar a preferência da sidebar do estoque:', error);
+            }
+            updateButton();
+        });
+
+        desktopQuery.addEventListener('change', updateButton);
+        updateButton();
+        document.body.appendChild(button);
+    }
+
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', setupThemeToggle, { once: true });
+        document.addEventListener('DOMContentLoaded', function () {
+            setupThemeToggle();
+            setupSidebarCollapseToggle();
+        }, { once: true });
     } else {
         setupThemeToggle();
+        setupSidebarCollapseToggle();
     }
 })();
