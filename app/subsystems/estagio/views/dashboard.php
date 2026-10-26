@@ -920,6 +920,80 @@ $CLS = [
             scrollbar-width: thin;
         }
 
+        #desktopSidebar {
+            flex: 0 0 16rem;
+            overflow: hidden;
+            transition: flex-basis 220ms ease, width 220ms ease;
+        }
+
+        .estagio-sidebar-collapse-toggle {
+            position: fixed;
+            top: 50%;
+            left: calc(16rem - 1px);
+            z-index: 30;
+            display: grid;
+            width: 30px;
+            height: 72px;
+            place-items: center;
+            padding: 0;
+            border: 1px solid rgba(183, 215, 200, 0.35);
+            border-left: 0;
+            border-radius: 0 10px 10px 0;
+            background: linear-gradient(145deg, #0b7042, #064c2b);
+            color: #ffc04d;
+            box-shadow: 4px 0 12px rgba(4, 35, 20, 0.3);
+            transform: translateY(-50%);
+            cursor: pointer;
+            transition: left 220ms ease, background 180ms ease, color 180ms ease;
+        }
+
+        .estagio-sidebar-collapse-toggle:hover {
+            background: linear-gradient(145deg, #0d7a49, #075b34);
+        }
+
+        .estagio-sidebar-collapse-toggle:focus-visible {
+            outline: 2px solid #ffc04d;
+            outline-offset: 2px;
+        }
+
+        .estagio-sidebar-collapse-toggle i {
+            transition: transform 220ms ease;
+        }
+
+        body.estagio-sidebar-collapsed #desktopSidebar {
+            width: 0 !important;
+            flex-basis: 0;
+        }
+
+        body.estagio-sidebar-collapsed .estagio-sidebar-collapse-toggle {
+            left: 0;
+        }
+
+        html.light-mode .estagio-sidebar-collapse-toggle {
+            border-color: rgba(183, 215, 200, 0.35);
+            background: linear-gradient(145deg, #0b7042, #064d2b);
+            color: #ffc04d;
+        }
+
+        html.light-mode .estagio-sidebar-collapse-toggle:hover {
+            background: linear-gradient(145deg, #0d7a49, #075b34);
+        }
+
+        html:not(.light-mode) .estagio-sidebar-collapse-toggle {
+            border-color: rgba(255, 255, 255, 0.16);
+            background: linear-gradient(145deg, #303030, #171717);
+            color: #86efac;
+            box-shadow: 4px 0 12px rgba(0, 0, 0, 0.4);
+        }
+
+        html:not(.light-mode) .estagio-sidebar-collapse-toggle:hover {
+            background: linear-gradient(145deg, #3a3a3a, #202020);
+        }
+
+        html:not(.light-mode) .estagio-sidebar-collapse-toggle:focus-visible {
+            outline-color: #86efac;
+        }
+
         html:not(.light-mode) .estagio-sidebar {
             background: linear-gradient(180deg, #1a1a1a 0%, #121212 100%) !important;
             border-color: rgba(255, 255, 255, 0.08) !important;
@@ -940,21 +1014,6 @@ $CLS = [
             color: #bdd9cb !important;
             font-size: 0.65rem;
             line-height: 1.35;
-        }
-
-        .estagio-sidebar .sidebar-section-heading {
-            display: flex;
-            align-items: center;
-            height: 34px;
-            margin: 0.25rem 0 0.55rem;
-            padding: 0 0.65rem;
-            border: 1px solid rgba(183, 215, 200, 0.2);
-            border-radius: 6px;
-            color: #bdd9cb;
-            font-size: 0.65rem;
-            font-weight: 700;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
         }
 
         .estagio-sidebar .nav-link {
@@ -1105,6 +1164,15 @@ $CLS = [
         }
 
         @media (max-width: 767px) {
+            .estagio-sidebar-collapse-toggle {
+                display: none;
+            }
+
+            #desktopSidebar {
+                flex-basis: 0;
+                width: 0;
+            }
+
             .floating-theme-toggle {
                 right: 1rem;
                 bottom: 5rem;
@@ -1114,6 +1182,9 @@ $CLS = [
         @media (prefers-reduced-motion: reduce) {
             .estagio-sidebar .nav-link,
             .estagio-sidebar .nav-link i,
+            #desktopSidebar,
+            .estagio-sidebar-collapse-toggle,
+            .estagio-sidebar-collapse-toggle i,
             .floating-theme-toggle {
                 transition-duration: 0.01ms;
             }
@@ -2342,7 +2413,7 @@ $CLS = [
 <body class="select-none font-sans bg-[#1a1a1a] text-white min-h-screen overflow-hidden">
 <div class="flex h-screen overflow-hidden">
 
-    <aside class="estagio-sidebar hidden md:flex md:flex-col w-64 h-full border-r shadow-lg">
+    <aside id="desktopSidebar" class="estagio-sidebar hidden md:flex md:flex-col w-64 h-full border-r shadow-lg">
         <div class="p-5 flex flex-col h-full">
             <div class="flex items-center gap-3 mb-7">
                 <img src="https://i.postimg.cc/Dy40VtFL/Design-sem-nome-13-removebg-preview.png" alt="Logo" class="h-10 w-auto">
@@ -2352,7 +2423,6 @@ $CLS = [
                 </div>
             </div>
             <nav class="flex-1">
-                <div class="sidebar-section-heading">Menu principal</div>
                 <a href="#dashboard" data-view="dashboard" onclick="showView('dashboard')" class="<?= $CLS['sidebar_link'] ?>">
                     <i class="fas fa-home w-5 mr-3"></i> Dashboard
                 </a>
@@ -2374,6 +2444,9 @@ $CLS = [
             </div>
         </div>
     </aside>
+    <button type="button" id="desktopSidebarToggle" class="estagio-sidebar-collapse-toggle" aria-label="Ocultar menu lateral" aria-expanded="true" title="Ocultar menu lateral">
+        <i class="fas fa-chevron-left" aria-hidden="true"></i>
+    </button>
 
     <div class="md:hidden fixed top-3 left-3 z-50">
         <button id="hamburgerMenu" class="w-12 h-12 flex items-center justify-center rounded-xl bg-green-700 border border-green-600 shadow-lg hover:bg-green-600 active:scale-95 transition-all">
@@ -2394,7 +2467,6 @@ $CLS = [
                 <button id="closeSidebar" aria-label="Fechar menu" class="p-2 text-gray-300 hover:text-white transition-colors"><i class="fas fa-times"></i></button>
             </div>
             <nav class="flex-1">
-                <div class="sidebar-section-heading">Menu principal</div>
                 <a href="#dashboard" data-view="dashboard" onclick="showView('dashboard')" class="<?= $CLS['sidebar_link'] ?> mobile-nav-link">
                     <i class="fas fa-home w-5 mr-3"></i> Dashboard
                 </a>
@@ -3708,6 +3780,44 @@ function closeMobileSidebar() {
 
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('themeToggle')?.addEventListener('click', toggleTheme);
+
+    const desktopSidebar = document.getElementById('desktopSidebar');
+    const desktopSidebarToggle = document.getElementById('desktopSidebarToggle');
+    const desktopSidebarQuery = window.matchMedia('(min-width: 768px)');
+    const sidebarCollapseStorageKey = 'estagio-sidebar-collapsed';
+    let sidebarCollapsedPreference = false;
+    try {
+        sidebarCollapsedPreference = localStorage.getItem(sidebarCollapseStorageKey) === 'true';
+    } catch (error) {
+        console.warn('Não foi possível carregar a preferência da sidebar do Estágio:', error);
+    }
+
+    const updateDesktopSidebar = () => {
+        const collapsed = desktopSidebarQuery.matches && sidebarCollapsedPreference;
+        document.body.classList.toggle('estagio-sidebar-collapsed', collapsed);
+        if (desktopSidebar) {
+            desktopSidebar.setAttribute('aria-hidden', String(collapsed));
+            desktopSidebar.inert = collapsed;
+        }
+        const label = collapsed ? 'Mostrar menu lateral' : 'Ocultar menu lateral';
+        desktopSidebarToggle?.setAttribute('aria-expanded', String(!collapsed));
+        desktopSidebarToggle?.setAttribute('aria-label', label);
+        if (desktopSidebarToggle) desktopSidebarToggle.title = label;
+        const icon = desktopSidebarToggle?.querySelector('i');
+        if (icon) icon.className = collapsed ? 'fas fa-chevron-right' : 'fas fa-chevron-left';
+    };
+
+    desktopSidebarToggle?.addEventListener('click', () => {
+        sidebarCollapsedPreference = !sidebarCollapsedPreference;
+        try {
+            localStorage.setItem(sidebarCollapseStorageKey, String(sidebarCollapsedPreference));
+        } catch (error) {
+            console.warn('Não foi possível salvar a preferência da sidebar do Estágio:', error);
+        }
+        updateDesktopSidebar();
+    });
+    desktopSidebarQuery.addEventListener('change', updateDesktopSidebar);
+    updateDesktopSidebar();
 
     const initial = (location.hash || '#dashboard').replace('#', '');
     showView(initial);
