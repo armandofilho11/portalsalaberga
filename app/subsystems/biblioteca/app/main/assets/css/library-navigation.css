@@ -1,9 +1,9 @@
 #main-content {
-    --library-back-button-left: 272px;
+    --library-back-button-left: 2.5rem;
 }
 
 body.library-sidebar-collapsed #main-content {
-    --library-back-button-left: 1rem;
+    --library-back-button-left: 2.5rem;
 }
 
 .library-back-button {
@@ -47,6 +47,14 @@ html[data-theme="dark"] .library-back-button:focus-visible {
 .library-back-button:focus-visible {
     outline: 3px solid #f59e0b;
     outline-offset: 3px;
+}
+
+html[data-theme="dark"] #sidebar-collapse-toggle {
+    background: #11271a;
+}
+
+html[data-theme="dark"] #sidebar-collapse-toggle:hover {
+    background: #193a26;
 }
 
 @media (max-width: 1023px) {
