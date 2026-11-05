@@ -139,7 +139,8 @@ function inicializarModoEscuro() {
     document.documentElement.setAttribute('data-theme', tema);
     document.documentElement.style.colorScheme = tema;
     document.body.classList.toggle('dark-mode', modoEscuro);
-    botao.innerHTML = `<i class="bi ${modoEscuro ? 'bi-sun-fill' : 'bi-moon-fill'}" aria-hidden="true"></i>`;
+    const icone = botao.querySelector('.theme-toggle__icon');
+    if (icone) icone.className = `theme-toggle__icon fas ${modoEscuro ? 'fa-sun' : 'fa-moon'}`;
     const rotulo = `Tema atual: ${modoEscuro ? 'Escuro' : 'Claro'}. Mudar para ${modoEscuro ? 'Claro' : 'Escuro'}.`;
     botao.setAttribute('aria-label', rotulo);
     botao.setAttribute('title', rotulo);

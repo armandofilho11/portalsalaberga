@@ -27,6 +27,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
 
@@ -1064,24 +1066,27 @@
 
     .theme-toggle {
       position:fixed;
-      right:24px;
-      bottom:24px;
-      z-index:1002;
-      display:grid;
-      width:48px;
-      height:48px;
-      place-items:center;
-      border:1px solid rgba(255,255,255,.22);
-      border-radius:50%;
+      right:1.5rem;
+      bottom:1.5rem;
+      z-index:1100;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:3rem;
+      height:3rem;
+      padding:0;
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:9999px;
       background:linear-gradient(135deg,#1ea55f,#0c9a45);
       color:#fff;
-      box-shadow:0 6px 18px rgba(0,0,0,.2);
+      box-shadow:0 8px 24px rgba(0,0,0,.2);
+      font-size:1rem;
       cursor:pointer;
-      transition:transform .18s ease,box-shadow .18s ease,background .18s ease;
+      transition:transform .25s ease,background-color .25s ease;
     }
-    .theme-toggle:hover { transform:translateY(-2px); box-shadow:0 9px 22px rgba(0,0,0,.26); }
+    .theme-toggle:hover { transform:translateY(-2px); }
     .theme-toggle:focus-visible { outline:3px solid #f3a11a; outline-offset:3px; }
-    .theme-toggle i { font-size:21px; }
+    .theme-toggle__label { display:none; }
     html[data-theme="dark"] {
       color-scheme:dark;
       --bg:#121212;
@@ -1196,11 +1201,11 @@
       border:0;
       box-shadow:5px 0 15px rgba(0,0,0,.36);
     }
-    html[data-theme="dark"] .theme-toggle { background:rgba(255,255,255,.05); border-color:rgba(255,255,255,.08); color:#f3f4f6; }
+    html[data-theme="dark"] .theme-toggle { border-color:rgba(255,255,255,.08); background:rgba(255,255,255,.05); color:#f3f4f6; }
     html[data-theme="dark"] .theme-toggle:hover { background:rgba(255,255,255,.08); }
     html[data-theme="dark"] .toast { right:88px; background:#171717; border-color:rgba(255,255,255,.08); color:#f3f4f6; }
     @media (max-width:768px) {
-      .theme-toggle { right:16px; bottom:16px; width:48px; height:48px; }
+      .theme-toggle { right:1rem; bottom:1rem; }
       html[data-theme="dark"] .toast { right:12px; bottom:76px; }
     }
   </style>
@@ -2270,10 +2275,10 @@ $fotoUsuario = $_SESSION['foto'] ?? null;
 </div>
 
 <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Ativar modo escuro" aria-pressed="false" title="Ativar modo escuro">
-  <i class="bi bi-moon-fill" aria-hidden="true"></i>
+  <i class="theme-toggle__icon fas fa-moon" aria-hidden="true"></i>
 </button>
 
-<script src="js/app.js?v=20261026-chevron-verde-5">
+<script src="js/app.js?v=20261105-theme-toggle-entryexit">
 
 </script>
 </body>
