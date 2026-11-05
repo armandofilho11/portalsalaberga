@@ -61,7 +61,7 @@ const pageMeta = {
   relatorios:['Relatórios de evolução','Acompanhe o progresso dos quesitos avaliados'],
   avaliacao: ['Avaliação','Registre e acompanhe as avaliações do aluno'],
   perfil:    ['Perfil','Gerencie suas informações e foto de perfil']
-  ,paee:     ['PAEE','Planos por aluno e disciplina']
+  ,paee:     ['PAEE','Documentos do Plano de Atendimento Educacional Especializado']
   ,pei:      ['PEI','Planos Educacionais Individualizados']
 };
 
@@ -1383,11 +1383,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (tab === 'apoio' && curSid) loadRegistrosApoio(curSid);
     if (window.usuarioTipo === 'apoio' && curSid && !manterDocumentoAberto) {
       if (tab === 'pei') {
-        document.querySelector('#tc-pei .document-view-form')?.classList.add('document-view-form--hidden');
         loadPEI(curSid);
       }
       if (tab === 'paee') {
-        document.querySelector('#tc-paee .document-view-form')?.classList.add('document-view-form--hidden');
         loadPAEE(curSid);
       }
     }
@@ -1402,10 +1400,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const ids = [
       'rel-data','rel-responsavel','rel-desenvolvimento','rel-dificuldades',
       'rel-potencialidades','rel-recomendacoes','rel-conclusao',
-      'pei-nome','pei-data','pei-responsavel','pei-objetivos','pei-habilidades','pei-estrategias',
-      'pei-recursos','pei-adaptacoes','pei-avaliacao','pei-observacoes',
-      'paee-nome','paee-data','paee-responsavel','paee-necessidades','paee-objetivos','paee-recursos',
-      'paee-estrategias','paee-tecnologias','paee-resultados','paee-encaminhamentos','paee-observacoes',
       'apoio-data','apoio-observacao-geral'
     ];
     ids.forEach(id => setField(id, ''));
@@ -1417,14 +1411,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const el = document.getElementById(id);
       if (el) el.innerHTML = '';
     });
-    document.querySelectorAll('.document-view-form').forEach(form => {
-      if (String(window.usuarioTipo || '').trim().toLowerCase() === 'apoio') form.classList.add('document-view-form--hidden');
-    });
-  }
-
-  function mostrarDocumentoParaLeitura(tipo) {
-    if (String(window.usuarioTipo || '').trim().toLowerCase() !== 'apoio') return;
-    document.querySelector(`#tc-${tipo} .document-view-form`)?.classList.remove('document-view-form--hidden');
   }
 
   function formatDateBR(value) {
@@ -1438,10 +1424,10 @@ document.addEventListener('DOMContentLoaded', () => {
   (function ensureHistoryStyles(){
     try {
       const css = `
-        #rel-history, #pei-history, #paee-history, #lau-list { max-height:240px; overflow-y:auto; padding-right:8px; }
-        #rel-history::-webkit-scrollbar, #pei-history::-webkit-scrollbar, #paee-history::-webkit-scrollbar, #lau-list::-webkit-scrollbar { width:8px; }
-        #rel-history::-webkit-scrollbar-thumb, #pei-history::-webkit-scrollbar-thumb, #paee-history::-webkit-scrollbar-thumb, #lau-list::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.06); border-radius:6px; }
-        #rel-history::-webkit-scrollbar-track, #pei-history::-webkit-scrollbar-track, #paee-history::-webkit-scrollbar-track, #lau-list::-webkit-scrollbar-track { background:transparent; }
+        #rel-history, #lau-list { max-height:240px; overflow-y:auto; padding-right:8px; }
+        #rel-history::-webkit-scrollbar, #lau-list::-webkit-scrollbar { width:8px; }
+        #rel-history::-webkit-scrollbar-thumb, #lau-list::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.06); border-radius:6px; }
+        #rel-history::-webkit-scrollbar-track, #lau-list::-webkit-scrollbar-track { background:transparent; }
       `;
       const s=document.createElement('style'); s.appendChild(document.createTextNode(css)); document.head.appendChild(s);
     } catch(e){/* fail silently */}
@@ -1501,57 +1487,52 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!target) return;
     target.style.display = 'block';
     target.innerHTML = '<div style="padding:14px 0;color:var(--text-muted);font-size:12px">Carregando PEI...</div>';
-    fetch(`controllers/listar_pei.php?aluno_id=${id}`)
+    fetch(`controllers/recurso_planos.php?action=peis_aluno&aluno_id=${id}`, { cache: 'no-store' })
       .then(r => r.json())
-      .then(items => {
-        if (!Array.isArray(items) || items.length === 0) {
-          target.innerHTML = '<div class="empty" style="padding:20px 0"><i class="bi bi-journal-text" style="font-size:32px;margin-bottom:8px"></i><span style="font-size:13px;font-weight:600">Nenhum PEI encontrado</span><span style="font-size:11px;margin-top:3px">Os registros de PEI aparecerão aqui.</span></div>';
-          return;
-        }
-        target.innerHTML = items.map(item => `
-          <div class="doc-item document-summary-block${String(window.usuarioTipo || '').trim().toLowerCase() === 'apoio' ? ' document-summary-block--apoio' : ''}" style="margin-bottom:10px;">
-            <div style="display:flex;gap:10px;align-items:center">
-              <i class="bi bi-journal-text" style="font-size:18px;color:var(--c3)"></i>
-              <div>
-                <div style="font-size:13px;font-weight:700;color:#fff">${item.nome_documento || 'PEI'}</div>
-                <div style="font-size:12px;color:var(--text-muted);margin-top:2px">${formatDateBR(item.data_elaboracao)} • ${item.responsavel_preenchimento || '—'}</div>
-              </div>
-            </div>
-            <div style="display:flex;gap:8px;align-items:center">
-              <button onclick="abrirPEI(${item.id})" class="btn-g" style="padding:6px 12px;font-size:12px">Abrir</button>
-              ${String(window.usuarioTipo || '').trim().toLowerCase() !== 'apoio' ? `<button onclick="deletePEI(${item.id})" class="btn-g" style="padding:6px 12px;font-size:12px;background:rgba(255,0,0,0.06);border-color:rgba(255,0,0,0.12)">Excluir</button>` : ''}
-            </div>
-          </div>
-        `).join('');
+      .then(data => {
+        if (!data.success) throw new Error(data.message || 'Não foi possível carregar os documentos PEI.');
+        const items = Array.isArray(data.registros) ? data.registros : [];
+        target.innerHTML = items.map(item => renderCartaoDocumentoPerfil('pei', item)).join('');
       })
-      .catch(() => {
-        target.innerHTML = '<div class="empty" style="padding:20px 0"><span style="font-size:12px">Erro ao carregar PEI.</span></div>';
+      .catch(error => {
+        target.innerHTML = `<div class="empty" style="padding:20px 0"><span style="font-size:12px">${escaparPlano(error.message || 'Erro ao carregar PEI.')}</span></div>`;
       });
   }
 
-  function abrirPEI(id) {
-    fetch(`controllers/abrir_pei.php?id=${id}`)
-      .then(r => r.json())
-      .then(data => {
-        if (!data || !Object.keys(data).length) return;
-        const peiTitulo = document.getElementById('pei-titulo');
-        if (peiTitulo) peiTitulo.textContent = data.nome_documento || 'PEI - Plano Educacional Individualizado';
-        setField('pei-data', data.data_elaboracao || '');
-        setField('pei-nome', data.nome_documento || '');
-        setField('pei-responsavel', data.responsavel_preenchimento || '');
-        setField('pei-objetivos', data.objetivos_pedagogicos || '');
-        setField('pei-habilidades', data.habilidades_desenvolver || '');
-        setField('pei-estrategias', data.estrategias_ensino || '');
-        setField('pei-recursos', data.recursos_acessibilidade || '');
-        setField('pei-adaptacoes', data.adaptacoes_curriculares || '');
-        setField('pei-avaliacao', data.criterios_avaliacao || '');
-        setField('pei-observacoes', data.observacoes || '');
-        mostrarDocumentoParaLeitura('pei');
-        const historico = document.getElementById('pei-history');
-        if (historico) historico.style.display = 'none';
-        swTab('pei', document.getElementById('tb-pei'), true);
-      })
-      .catch(() => toast('Erro ao abrir PEI.','bi-x-circle','danger'));
+  function renderCartaoDocumentoPerfil(tipo, item) {
+    const apoio = String(window.usuarioTipo || '').trim().toLowerCase() === 'apoio';
+    const pei = tipo === 'pei';
+    const titulo = escaparPlano(item.nome_documento || (pei ? 'PEI' : 'PAEE'));
+    const data = formatDateBR(item.data_elaboracao || item.data_atendimento);
+    const responsavel = escaparPlano(item.responsavel_preenchimento || item.profissional_responsavel || '—');
+    const campos = pei
+      ? [
+          ['Objetivos pedagógicos', item.objetivos_pedagogicos],
+          ['Habilidades a desenvolver', item.habilidades_desenvolver],
+          ['Estratégias de ensino', item.estrategias_ensino],
+          ['Recursos de acessibilidade', item.recursos_acessibilidade],
+          ['Adaptações curriculares', item.adaptacoes_curriculares],
+          ['Critérios de avaliação', item.criterios_avaliacao],
+          ['Observações', item.observacoes]
+        ]
+      : [
+          ['Objetivos pedagógicos', item.objetivos_pedagogicos || item.objetivos_atendimento],
+          ['Habilidades a desenvolver', item.habilidades_desenvolver],
+          ['Estratégias de ensino', item.estrategias_ensino || item.estrategias_aplicadas],
+          ['Recursos de acessibilidade', item.recursos_acessibilidade || item.recursos_utilizados],
+          ['Adaptações curriculares', item.adaptacoes_curriculares],
+          ['Critérios de avaliação', item.criterios_avaliacao],
+          ['Observações', item.observacoes || item.observacoes_gerais],
+          ['Necessidades identificadas', item.necessidades_identificadas],
+          ['Tecnologias assistivas', item.tecnologias_assistivas],
+          ['Resultados observados', item.resultados_observados],
+          ['Encaminhamentos', item.encaminhamentos]
+        ];
+    const blocos = campos.filter(([, valor]) => String(valor || '').trim() !== '').map(([rotulo, valor]) =>
+      `<div style="padding:12px;border:1px solid var(--border);border-radius:10px;background:rgba(255,255,255,.02)"><div style="font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:6px">${rotulo}</div><div style="font-size:12px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere">${escaparPlano(valor)}</div></div>`
+    ).join('');
+    const semInformacoes = item.sem_informacoes || !blocos;
+    return `<article style="margin-bottom:14px;padding:16px;border:1px solid var(--border);border-radius:14px;background:var(--surface2)"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px"><div style="display:flex;gap:10px;align-items:center;min-width:0"><i class="bi ${pei ? 'bi-journal-text' : 'bi-person-workspace'}" style="font-size:19px;color:${pei ? 'var(--c3)' : 'var(--c4)'}"></i><div style="min-width:0"><div style="font-size:14px;font-weight:700;overflow-wrap:anywhere">${titulo}</div><div style="font-size:11px;color:var(--text-muted);margin-top:3px">${semInformacoes ? 'Não possui informações' : `${escaparPlano(data)} · ${responsavel}`}</div></div></div>${!apoio && Number(item.id) > 0 ? `<button type="button" onclick="delete${pei ? 'PEI' : 'PAEE'}(${Number(item.id)})" class="btn-g" style="padding:6px 12px;font-size:12px;background:rgba(255,0,0,0.06);border-color:rgba(255,0,0,0.12);color:#c62828"><i class="bi bi-trash3"></i> Excluir</button>` : ''}</div>${blocos ? `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px">${blocos}</div>` : '<div style="font-size:12px;color:var(--text-muted)">Não possui informações cadastradas.</div>'}</article>`;
   }
 
   function loadPAEE(id) {
@@ -1562,55 +1543,14 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch(`controllers/listar_paee.php?aluno_id=${id}`)
       .then(r => r.json())
       .then(items => {
-        if (!Array.isArray(items) || items.length === 0) {
-          target.innerHTML = '<div class="empty" style="padding:20px 0"><i class="bi bi-person-workspace" style="font-size:32px;margin-bottom:8px"></i><span style="font-size:13px;font-weight:600">Nenhum PAEE encontrado</span><span style="font-size:11px;margin-top:3px">Os registros de PAEE aparecerão aqui.</span></div>';
-          return;
-        }
-        target.innerHTML = items.map(item => `
-          <div class="doc-item document-summary-block${String(window.usuarioTipo || '').trim().toLowerCase() === 'apoio' ? ' document-summary-block--apoio' : ''}" style="margin-bottom:10px;">
-            <div style="display:flex;gap:10px;align-items:center">
-              <i class="bi bi-person-workspace" style="font-size:18px;color:var(--c4)"></i>
-              <div>
-                <div style="font-size:13px;font-weight:700;color:#fff">${item.nome_documento || 'PAEE'}</div>
-                <div style="font-size:12px;color:var(--text-muted);margin-top:2px">${formatDateBR(item.data_atendimento)} • ${item.profissional_responsavel || '—'}</div>
-              </div>
-            </div>
-            <div style="display:flex;gap:8px;align-items:center">
-              <button onclick="abrirPAEE(${item.id})" class="btn-g" style="padding:6px 12px;font-size:12px">Abrir</button>
-              ${String(window.usuarioTipo || '').trim().toLowerCase() !== 'apoio' ? `<button onclick="deletePAEE(${item.id})" class="btn-g" style="padding:6px 12px;font-size:12px;background:rgba(255,0,0,0.06);border-color:rgba(255,0,0,0.12)">Excluir</button>` : ''}
-            </div>
-          </div>
-        `).join('');
+        const registros = Array.isArray(items) && items.length
+          ? items
+          : [{ id: 0, nome_documento: 'PAEE', sem_informacoes: true }];
+        target.innerHTML = registros.map(item => renderCartaoDocumentoPerfil('paee', item)).join('');
       })
       .catch(() => {
         target.innerHTML = '<div class="empty" style="padding:20px 0"><span style="font-size:12px">Erro ao carregar PAEE.</span></div>';
       });
-  }
-
-  function abrirPAEE(id) {
-    fetch(`controllers/abrir_paee.php?id=${id}`)
-      .then(r => r.json())
-      .then(data => {
-        if (!data || !Object.keys(data).length) return;
-        const paeeTitulo = document.getElementById('paee-titulo');
-        if (paeeTitulo) paeeTitulo.textContent = data.nome_documento || 'PAEE - Plano de Atendimento Educacional Especializado';
-        setField('paee-data', data.data_atendimento || '');
-        setField('paee-nome', data.nome_documento || '');
-        setField('paee-responsavel', data.profissional_responsavel || '');
-        setField('paee-necessidades', data.necessidades_identificadas || '');
-        setField('paee-objetivos', data.objetivos_atendimento || '');
-        setField('paee-recursos', data.recursos_utilizados || '');
-        setField('paee-estrategias', data.estrategias_aplicadas || '');
-        setField('paee-tecnologias', data.tecnologias_assistivas || '');
-        setField('paee-resultados', data.resultados_observados || '');
-        setField('paee-encaminhamentos', data.encaminhamentos || '');
-        setField('paee-observacoes', data.observacoes_gerais || '');
-        mostrarDocumentoParaLeitura('paee');
-        const historico = document.getElementById('paee-history');
-        if (historico) historico.style.display = 'none';
-        swTab('paee', document.getElementById('tb-paee'), true);
-      })
-      .catch(() => toast('Erro ao abrir PAEE.','bi-x-circle','danger'));
   }
 
   // ===== DELETE DOCUMENTS =====
@@ -1624,8 +1564,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function deletePEI(id) {
     openConfirm('Confirma exclusão do PEI?', function(){
-      fetch('controllers/excluir_pei.php', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({id}) })
-        .then(r=>r.json()).then(resp=>{ if(resp.success){ toast('PEI excluído','bi-trash3','danger'); loadPEI(curSid);} else toast(resp.message||'Erro ao excluir PEI','bi-x-circle','danger'); })
+      fetch('controllers/excluir_pei.php', { method:'POST', cache:'no-store', headers:{'Content-Type':'application/json'}, body:JSON.stringify({id}) })
+        .then(r=>r.json()).then(resp=>{ if(resp.success){ toast(resp.message || 'PEI excluído','bi-trash3','danger'); loadPEI(curSid);} else toast(resp.message||'Erro ao excluir PEI','bi-x-circle','danger'); })
         .catch(()=>toast('Erro de conexão','bi-x-circle','danger'));
     });
   }
@@ -2006,85 +1946,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
  
 
-  function savePEI() {
-    if (!curSid) return;
-    const payload = {
-      aluno_id: curSid,
-      nome: document.getElementById('pei-nome').value.trim(),
-      dataElaboracao: document.getElementById('pei-data').value,
-      responsavel: document.getElementById('pei-responsavel').value.trim(),
-      objetivos: document.getElementById('pei-objetivos').value.trim(),
-      habilidades: document.getElementById('pei-habilidades').value.trim(),
-      estrategias: document.getElementById('pei-estrategias').value.trim(),
-      recursos: document.getElementById('pei-recursos').value.trim(),
-      adaptacoes: document.getElementById('pei-adaptacoes').value.trim(),
-      avaliacao: document.getElementById('pei-avaliacao').value.trim(),
-      observacoes: document.getElementById('pei-observacoes').value.trim()
-    };
-    if (!payload.nome || !payload.dataElaboracao || !payload.responsavel) {
-      toast('Informe a matéria escolar, a data de elaboração e o responsável pelo preenchimento.','bi-exclamation-triangle','amber');
-      return;
-    }
-    fetch('controllers/salvar_pei.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    })
-    .then(r => r.json())
-    .then(data => {
-      if (data.success) {
-        toast(`${payload.nome} salvo!`,'bi-check-circle','success');
-        loadPEI(curSid);
-        ['pei-nome','pei-data','pei-responsavel','pei-objetivos','pei-habilidades','pei-estrategias','pei-recursos','pei-adaptacoes','pei-avaliacao','pei-observacoes']
-          .forEach(id=>{const el=document.getElementById(id); if(el) el.value='';});
-      } else {
-        toast(data.message || 'Erro ao salvar o PEI.','bi-x-circle','danger');
-      }
-    })
-    .catch(() => toast('Erro de conexão ao salvar o PEI.','bi-x-circle','danger'));
-  }
-
-  function savePAEE() {
-  if (!curSid) return;
-  const payload = {
-    aluno_id: curSid,
-    nome: document.getElementById('paee-nome').value.trim(),
-    dataAtendimento: document.getElementById('paee-data').value,
-    responsavel: document.getElementById('paee-responsavel').value.trim(),
-    necessidades: document.getElementById('paee-necessidades').value.trim(),
-    objetivos: document.getElementById('paee-objetivos').value.trim(),
-    recursos: document.getElementById('paee-recursos').value.trim(),
-    estrategias: document.getElementById('paee-estrategias').value.trim(),
-    tecnologias: document.getElementById('paee-tecnologias').value.trim(),
-    resultados: document.getElementById('paee-resultados').value.trim(),
-    encaminhamentos: document.getElementById('paee-encaminhamentos').value.trim(),
-    observacoes: document.getElementById('paee-observacoes').value.trim()
-  };
-
-  if (!payload.nome || !payload.dataAtendimento || !payload.responsavel) {
-    toast('Informe o nome do documento, a data do atendimento e o profissional responsável.','bi-exclamation-triangle','amber');
-    return;
-  }
-
-  fetch('controllers/salvar_paee.php', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  })
-  .then(r => r.json())
-  .then(data => {
-    if (data.success) {
-      toast(`${payload.nome} salvo!`,'bi-check-circle','success');
-        loadPAEE(curSid);
-        ['paee-nome','paee-data','paee-responsavel','paee-necessidades','paee-objetivos','paee-recursos','paee-estrategias','paee-tecnologias','paee-resultados','paee-encaminhamentos','paee-observacoes']
-          .forEach(id=>{const el=document.getElementById(id); if(el) el.value='';});
-    } else {
-      toast(data.message || 'Erro ao salvar o PAEE.','bi-x-circle','danger');
-    }
-  })
-  .catch(() => toast('Erro de conexão ao salvar o PAEE.','bi-x-circle','danger'));
-}
-  function handleLaudoUpload() {
+function handleLaudoUpload() {
     if (!curSid) return;
     const input = document.getElementById('lau-file');
     const file = input && input.files && input.files[0];
@@ -2156,8 +2018,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 let planosEstado = {
-  pei: { etapa: 'alunos', aluno: null, disciplina: null, pei: null, registro: null, token: 0 },
-  paee: { etapa: 'alunos', aluno: null, disciplina: null, pei: null, registro: null, token: 0 }
+  pei: { etapa: 'alunos', aluno: null, disciplina: null, registro: null, token: 0 },
+  paee: { etapa: 'alunos', aluno: null, disciplina: null, registros: [], registro: null, token: 0 }
 };
 
 function escaparPlano(valor) {
@@ -2166,7 +2028,7 @@ function escaparPlano(valor) {
 
 function abrirModuloPlano(modulo, alunoId = null) {
   const estado = planosEstado[modulo];
-  estado.etapa = 'alunos'; estado.aluno = null; estado.disciplina = null; estado.registro = null; estado.token += 1;
+  estado.etapa = 'alunos'; estado.aluno = null; estado.disciplina = null; estado.registros = []; estado.registro = null; estado.token += 1;
   document.getElementById(`plano-${modulo}-voltar`)?.style.setProperty('display', 'none');
   if (alunoId != null && Number(alunoId) > 0) {
     selecionarAlunoPlano(modulo, Number(alunoId));
@@ -2192,13 +2054,17 @@ function carregarAlunosPlano(modulo, token) {
 }
 
 function selecionarAlunoPlano(modulo, alunoId) {
-  const estado = planosEstado[modulo]; estado.aluno = { id: alunoId }; estado.disciplina = null; estado.pei = null; estado.registro = null; estado.etapa = 'disciplinas'; estado.token += 1;
+  const estado = planosEstado[modulo]; estado.aluno = { id: alunoId }; estado.disciplina = null; estado.registro = null; estado.etapa = modulo === 'paee' ? 'documentos' : 'disciplinas'; estado.token += 1;
   const token = estado.token;
   const alvo = document.getElementById(`plano-${modulo}-conteudo`);
   document.getElementById(`plano-${modulo}-voltar`)?.style.setProperty('display', window.usuarioTipo === 'apoio' ? 'none' : 'inline-flex');
-  alvo.innerHTML = `<div class="empty" style="padding:30px 0"><i class="bi bi-hourglass-split"></i><span>Carregando ${modulo === 'paee' ? 'PEIs' : 'disciplinas'}...</span></div>`;
-  if (modulo === 'paee') { carregarPeisParaPaee(estado, token, alvo); return; }
-  fetch(`controllers/recurso_planos.php?action=disciplinas&aluno_id=${Number(alunoId)}`)
+  if (modulo === 'paee') {
+    carregarPaeesDoAluno(estado, token, alvo);
+    return;
+  }
+  estado.disciplina = null;
+  alvo.innerHTML = '<div class="empty" style="padding:30px 0"><i class="bi bi-hourglass-split"></i><span>Carregando disciplinas...</span></div>';
+  fetch(`controllers/recurso_planos.php?action=disciplinas&aluno_id=${Number(alunoId)}`, { cache: 'no-store' })
     .then(r => r.json()).then(data => {
       if (estado.token !== token) return;
       if (!data.success) throw new Error(data.message || 'Falha ao consultar disciplinas.');
@@ -2210,29 +2076,45 @@ function selecionarAlunoPlano(modulo, alunoId) {
     }).catch(error => { alvo.innerHTML = `<div class="empty" style="padding:30px 0"><i class="bi bi-exclamation-circle"></i><span>${escaparPlano(error.message)}</span></div>`; });
 }
 
-function carregarPeisParaPaee(estado, token, alvo) {
-  fetch(`controllers/recurso_planos.php?action=peis_paee&aluno_id=${Number(estado.aluno.id)}`)
-    .then(r => r.json()).then(data => {
-      if (estado.token !== token) return;
-      if (!data.success) throw new Error(data.message || 'Falha ao consultar os PEIs.');
-      if (!data.peis.length) { alvo.innerHTML = '<div class="empty" style="padding:26px 0"><i class="bi bi-journal-x"></i><span>Nenhum PEI com disciplina foi cadastrado para este aluno.</span></div>'; return; }
-      if (data.aluno) estado.aluno = data.aluno;
-      document.getElementById('plano-paee-contexto').textContent = `${estado.aluno.nome} · selecione um PEI`;
-      alvo.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px">${data.peis.map(pei => `<button type="button" class="card" style="padding:16px;text-align:left;cursor:pointer" onclick="selecionarPeiParaPaee(${Number(pei.id)},${Number(pei.aluno_id)},${Number(pei.disciplina_id)})"><div style="font-weight:700">PEI · ${escaparPlano(pei.disciplina_nome)}</div><div style="font-size:11px;color:var(--text-muted);margin-top:7px">Elaborado em: ${escaparPlano(formatDateBR(pei.data_elaboracao))}</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">${Number(pei.tem_paee) ? 'PAEE cadastrado' : 'Criar PAEE para este PEI'}</div></button>`).join('')}</div>`;
-    }).catch(error => { alvo.innerHTML = `<div class="empty" style="padding:30px 0"><i class="bi bi-exclamation-circle"></i><span>${escaparPlano(error.message)}</span></div>`; });
+function carregarPaeesDoAluno(estado, token, alvo) {
+  alvo.innerHTML = '<div class="empty" style="padding:30px 0"><i class="bi bi-hourglass-split"></i><span>Carregando documentos PAEE...</span></div>';
+  return fetch(`controllers/recurso_planos.php?action=paees_aluno&aluno_id=${Number(estado.aluno.id)}`)
+    .then(r => r.json()).then(documentos => {
+    if (estado.token !== token) return;
+    if (!documentos.success) throw new Error(documentos.message || 'Falha ao consultar os documentos PAEE.');
+    estado.aluno = documentos.aluno;
+    estado.registros = documentos.registros;
+    document.getElementById('plano-paee-contexto').textContent = `${estado.aluno.nome} · documentos PAEE`;
+    const novo = ['master', 'aee'].includes(window.usuarioTipo)
+      ? `<div style="margin-bottom:16px"><input class="inp" id="novo-documento-paee" placeholder="Nome do documento PAEE"><button class="btn-p" type="button" style="margin-top:8px" onclick="cadastrarDocumentoPaee()"><i class="bi bi-plus-lg"></i> Cadastrar PAEE</button></div>`
+      : '';
+    const lista = estado.registros.length
+      ? `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">${estado.registros.map(item => `<button type="button" class="card" style="padding:16px;text-align:left;cursor:pointer" onclick="abrirDocumentoPaee(${Number(item.id)})"><div style="font-weight:700">${escaparPlano(item.nome_documento || 'PAEE')}</div><div style="font-size:11px;color:var(--text-muted);margin-top:7px">${item.data_elaboracao || item.data_atendimento ? `${escaparPlano(formatDateBR(item.data_elaboracao || item.data_atendimento))} · ${escaparPlano(item.responsavel_preenchimento || item.profissional_responsavel || 'Sem responsável informado')}` : 'Documento não preenchido'}</div></button>`).join('')}</div>`
+      : '';
+    alvo.innerHTML = novo + lista;
+  }).catch(error => {
+    alvo.innerHTML = `<div class="empty" style="padding:30px 0"><i class="bi bi-exclamation-circle"></i><span>${escaparPlano(error.message)}</span></div>`;
+    throw error;
+  });
 }
 
-function selecionarPeiParaPaee(peiId, alunoId, disciplinaId) {
+function cadastrarDocumentoPaee() {
   const estado = planosEstado.paee;
-  estado.aluno = estado.aluno || { id: alunoId }; estado.disciplina = { id: disciplinaId }; estado.pei = { id: peiId }; estado.registro = null; estado.etapa = 'documento'; estado.token += 1;
-  const token = estado.token; const alvo = document.getElementById('plano-paee-conteudo');
-  fetch(`controllers/recurso_planos.php?action=historico&modulo=paee&aluno_id=${Number(alunoId)}&disciplina_id=${Number(disciplinaId)}&pei_id=${Number(peiId)}`).then(r=>r.json()).then(data => {
-    if (estado.token !== token) return;
-    if (!data.success) throw new Error(data.message || 'Falha ao consultar o PAEE.');
-    const historico = data.registros || []; estado.registro = historico[0] || null;
-    document.getElementById('plano-paee-contexto').textContent = `${estado.aluno.nome} · ${historico[0]?.disciplina_nome || 'Disciplina do PEI'}`;
-    alvo.innerHTML = renderDocumentoPlano('paee', estado.registro, historico);
-  }).catch(error => { alvo.innerHTML = `<div class="empty" style="padding:30px 0"><i class="bi bi-exclamation-circle"></i><span>${escaparPlano(error.message)}</span></div>`; });
+  const nome = document.getElementById('novo-documento-paee')?.value.trim() || '';
+  if (!nome) return toast('Informe o nome do documento PAEE.', 'bi-exclamation-triangle', 'amber');
+  fetch('controllers/recurso_planos.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'cadastrar_paee', aluno_id: estado.aluno.id, nome_documento: nome })
+  }).then(r => r.json()).then(data => {
+    if (!data.success) throw new Error(data.message || 'Não foi possível cadastrar o documento PAEE.');
+    toast(data.message, 'bi-check-circle', 'success');
+    carregarPaeesDoAluno(estado, estado.token, document.getElementById('plano-paee-conteudo'));
+  }).catch(error => toast(error.message, 'bi-x-circle', 'danger'));
+}
+
+function abrirDocumentoPaee(id) {
+  abrirHistoricoPlano('paee', id);
 }
 
 function cadastrarDisciplinaPlano(modulo) {
@@ -2243,38 +2125,62 @@ function cadastrarDisciplinaPlano(modulo) {
 
 function selecionarDisciplinaPlano(modulo, disciplinaId) {
   const estado = planosEstado[modulo]; estado.disciplina = { id: disciplinaId }; estado.registro = null; estado.etapa = 'documento'; estado.token += 1; const token = estado.token; const alvo = document.getElementById(`plano-${modulo}-conteudo`);
-  fetch(`controllers/recurso_planos.php?action=historico&modulo=${modulo}&aluno_id=${estado.aluno.id}&disciplina_id=${disciplinaId}`).then(r=>r.json()).then(data => { if (estado.token !== token) return; if (!data.success) throw new Error(data.message); const historico = data.registros || []; const recente = historico[0]; estado.registro = recente || null; document.getElementById(`plano-${modulo}-contexto`).textContent = `${estado.aluno.nome} · ${recente?.disciplina_nome || 'Disciplina selecionada'}`; alvo.innerHTML = renderDocumentoPlano(modulo, recente, historico); }).catch(error => { alvo.innerHTML = `<div class="empty" style="padding:30px 0"><i class="bi bi-exclamation-circle"></i><span>${escaparPlano(error.message)}</span></div>`; });
+  fetch(`controllers/recurso_planos.php?action=historico&modulo=${modulo}&aluno_id=${estado.aluno.id}&disciplina_id=${disciplinaId}`, { cache: 'no-store' }).then(r=>r.json()).then(data => { if (estado.token !== token) return; if (!data.success) throw new Error(data.message); const historico = data.registros || []; const recente = historico[0]; estado.registro = recente || null; document.getElementById(`plano-${modulo}-contexto`).textContent = `${estado.aluno.nome} · ${recente?.disciplina_nome || 'Disciplina selecionada'}`; alvo.innerHTML = renderDocumentoPlano(modulo, recente, historico); }).catch(error => { alvo.innerHTML = `<div class="empty" style="padding:30px 0"><i class="bi bi-exclamation-circle"></i><span>${escaparPlano(error.message)}</span></div>`; });
 }
 
 function renderDocumentoPlano(modulo, registro, historico) {
   const apoio = window.usuarioTipo === 'apoio'; const prefixo = modulo === 'pei' ? 'pei' : 'paee';
-  const campos = modulo === 'pei' ? [['data_elaboracao','Data de elaboração'],['responsavel_preenchimento','Responsável'],['objetivos_pedagogicos','Objetivos pedagógicos'],['habilidades_desenvolver','Habilidades a desenvolver'],['estrategias_ensino','Estratégias de ensino'],['recursos_acessibilidade','Recursos de acessibilidade'],['adaptacoes_curriculares','Adaptações curriculares'],['criterios_avaliacao','Critérios de avaliação'],['observacoes','Observações']] : [['data_atendimento','Data do atendimento'],['profissional_responsavel','Profissional responsável'],['necessidades_identificadas','Necessidades identificadas'],['objetivos_atendimento','Objetivos do atendimento'],['recursos_utilizados','Recursos utilizados'],['estrategias_aplicadas','Estratégias aplicadas'],['tecnologias_assistivas','Tecnologias assistivas'],['resultados_observados','Resultados observados'],['encaminhamentos','Encaminhamentos'],['observacoes_gerais','Observações gerais']];
-  const form = registro ? campos.map(([campo, label]) => `<div style="margin-bottom:12px"><label class="lbl">${label}</label><div class="inp" style="min-height:42px;white-space:pre-wrap">${escaparPlano(registro[campo] || '—')}</div></div>`).join('') : '<div class="empty" style="padding:20px 0"><i class="bi bi-file-earmark-text"></i><span>Este plano ainda não foi cadastrado.</span></div>';
+  const rascunhoPaee = modulo === 'paee' && registro && !registro.data_elaboracao;
+  const campos = modulo === 'pei'
+    ? [['data_elaboracao','Data de elaboração'],['responsavel_preenchimento','Responsável pelo preenchimento'],['objetivos_pedagogicos','Objetivos pedagógicos'],['habilidades_desenvolver','Habilidades a desenvolver'],['estrategias_ensino','Estratégias de ensino'],['recursos_acessibilidade','Recursos de acessibilidade'],['adaptacoes_curriculares','Adaptações curriculares'],['criterios_avaliacao','Critérios de avaliação'],['observacoes','Observações']]
+    : [['nome_documento','Matéria escolar'],['data_elaboracao','Data de elaboração'],['responsavel_preenchimento','Responsável pelo preenchimento'],['objetivos_pedagogicos','Objetivos pedagógicos'],['habilidades_desenvolver','Habilidades a desenvolver'],['estrategias_ensino','Estratégias de ensino'],['recursos_acessibilidade','Recursos de acessibilidade'],['adaptacoes_curriculares','Adaptações curriculares'],['criterios_avaliacao','Critérios de avaliação'],['observacoes','Observações']];
+  const form = rascunhoPaee
+    ? '<div class="empty" style="padding:20px 0"><i class="bi bi-file-earmark-text"></i><span>Este documento PAEE ainda não foi preenchido.</span></div>'
+    : registro
+      ? campos.map(([campo, label]) => `<div style="margin-bottom:12px"><label class="lbl">${label}</label><div class="inp" style="min-height:42px;white-space:pre-wrap">${escaparPlano(registro[campo] || '—')}</div></div>`).join('')
+      : '<div class="empty" style="padding:20px 0"><i class="bi bi-file-earmark-text"></i><span>Este plano ainda não foi cadastrado.</span></div>';
   const historicoHtml = historico.length > 1 ? `<div style="margin-top:18px"><div style="font-weight:700;font-size:13px;margin-bottom:8px">Documentos anteriores</div>${historico.slice(1).map(item => `<button type="button" class="btn-g" style="margin:0 6px 6px 0" onclick="abrirHistoricoPlano('${modulo}',${Number(item.id)})">${escaparPlano(formatDateBR(item.data_elaboracao || item.data_atendimento))} #${Number(item.id)}</button>`).join('')}</div>` : '';
   const estado = planosEstado[modulo];
-  return `<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap"><div><div style="font-size:14px;font-weight:700">${prefixo === 'pei' ? 'PEI' : 'PAEE'} · ${escaparPlano(estado.aluno.nome)}</div><div style="font-size:11px;color:var(--text-muted)">${escaparPlano(registro?.disciplina_nome || 'Disciplina do PEI')}</div></div>${!apoio ? `<button type="button" class="btn-p" onclick="editarPlano('${modulo}',${registro ? Number(registro.id) : 0})"><i class="bi bi-pencil"></i> ${registro ? 'Editar' : 'Criar documento'}</button>` : ''}</div>${form}${historicoHtml}`;
+  const contexto = modulo === 'paee'
+    ? 'Documento PAEE'
+    : escaparPlano(registro?.disciplina_nome || 'Disciplina selecionada');
+  const acao = rascunhoPaee ? 'Preencher documento' : registro ? 'Editar' : 'Criar documento';
+  return `<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap"><div><div style="font-size:14px;font-weight:700">${prefixo === 'pei' ? 'PEI' : escaparPlano(registro?.nome_documento || 'PAEE')} · ${escaparPlano(estado.aluno.nome)}</div><div style="font-size:11px;color:var(--text-muted)">${contexto}</div></div>${!apoio ? `<button type="button" class="btn-p" onclick="editarPlano('${modulo}',${registro ? Number(registro.id) : 0})"><i class="bi bi-pencil"></i> ${acao}</button>` : ''}</div>${form}${historicoHtml}`;
 }
 
 function editarPlano(modulo, id) {
   const estado = planosEstado[modulo]; const registro = id ? estado.registro : null;
-  const campos = modulo === 'pei' ? [['data_elaboracao','Data de elaboração','date'],['responsavel_preenchimento','Responsável','text'],['objetivos_pedagogicos','Objetivos pedagógicos','textarea'],['habilidades_desenvolver','Habilidades a desenvolver','textarea'],['estrategias_ensino','Estratégias de ensino','textarea'],['recursos_acessibilidade','Recursos de acessibilidade','textarea'],['adaptacoes_curriculares','Adaptações curriculares','textarea'],['criterios_avaliacao','Critérios de avaliação','textarea'],['observacoes','Observações','textarea']] : [['data_atendimento','Data do atendimento','date'],['profissional_responsavel','Profissional responsável','text'],['necessidades_identificadas','Necessidades identificadas','textarea'],['objetivos_atendimento','Objetivos do atendimento','textarea'],['recursos_utilizados','Recursos utilizados','textarea'],['estrategias_aplicadas','Estratégias aplicadas','textarea'],['tecnologias_assistivas','Tecnologias assistivas','textarea'],['resultados_observados','Resultados observados','textarea'],['encaminhamentos','Encaminhamentos','textarea'],['observacoes_gerais','Observações gerais','textarea']];
+  const campos = modulo === 'pei'
+    ? [['data_elaboracao','Data de elaboração','date'],['responsavel_preenchimento','Responsável pelo preenchimento','text'],['objetivos_pedagogicos','Objetivos pedagógicos','textarea'],['habilidades_desenvolver','Habilidades a desenvolver','textarea'],['estrategias_ensino','Estratégias de ensino','textarea'],['recursos_acessibilidade','Recursos de acessibilidade','textarea'],['adaptacoes_curriculares','Adaptações curriculares','textarea'],['criterios_avaliacao','Critérios de avaliação','textarea'],['observacoes','Observações','textarea']]
+    : [['nome_documento','Matéria escolar','text'],['data_elaboracao','Data de elaboração','date'],['responsavel_preenchimento','Responsável pelo preenchimento','text'],['objetivos_pedagogicos','Objetivos pedagógicos','textarea'],['habilidades_desenvolver','Habilidades a desenvolver','textarea'],['estrategias_ensino','Estratégias de ensino','textarea'],['recursos_acessibilidade','Recursos de acessibilidade','textarea'],['adaptacoes_curriculares','Adaptações curriculares','textarea'],['criterios_avaliacao','Critérios de avaliação','textarea'],['observacoes','Observações','textarea']];
   const camposHtml = campos.map(([campo, label, tipo]) => `<div style="margin-bottom:12px"><label class="lbl">${label}</label>${tipo === 'textarea' ? `<textarea class="inp plano-campo" data-campo="${campo}" rows="3">${escaparPlano(registro?.[campo] || '')}</textarea>` : `<input class="inp plano-campo" data-campo="${campo}" type="${tipo}" value="${escaparPlano(registro?.[campo] || '')}">`}</div>`).join('');
   document.getElementById(`plano-${modulo}-conteudo`).innerHTML = `<div style="font-size:14px;font-weight:700;margin-bottom:14px">${registro ? 'Editar documento' : 'Novo documento'} · ${escaparPlano(estado.aluno.nome)}</div>${camposHtml}<button type="button" class="btn-p" onclick="salvarPlanoModulo('${modulo}',${id})"><i class="bi bi-save2"></i> Salvar</button>`;
 }
 
 function salvarPlanoModulo(modulo, id) {
-  const estado = planosEstado[modulo]; const payload = { action:'salvar', modulo, id, aluno_id:estado.aluno.id, disciplina_id:estado.disciplina.id };
-  if (modulo === 'paee') payload.pei_id = estado.pei?.id || 0;
+  const estado = planosEstado[modulo]; const payload = { action:'salvar', modulo, id, aluno_id:estado.aluno.id, disciplina_id:estado.disciplina?.id || 0 };
+  if (modulo === 'paee') {
+    const nome = document.querySelector('#page-paee-conteudo [data-campo="nome_documento"]')?.value.trim();
+    const data = document.querySelector('#page-paee-conteudo [data-campo="data_elaboracao"]')?.value;
+    const responsavel = document.querySelector('#page-paee-conteudo [data-campo="responsavel_preenchimento"]')?.value.trim();
+    if (!nome || !data || !responsavel) return toast('Informe a matéria escolar, a data de elaboração e o responsável pelo preenchimento.', 'bi-exclamation-triangle', 'amber');
+  }
   document.querySelectorAll(`#plano-${modulo}-conteudo .plano-campo`).forEach(campo => { payload[campo.dataset.campo] = campo.value; });
-  fetch('controllers/recurso_planos.php', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) }).then(r=>r.json()).then(data => { if (!data.success) throw new Error(data.message); toast(data.message, 'bi-check-circle', 'success'); if (modulo === 'paee') selecionarPeiParaPaee(estado.pei.id, estado.aluno.id, estado.disciplina.id); else selecionarDisciplinaPlano(modulo, estado.disciplina.id); }).catch(error => toast(error.message, 'bi-x-circle', 'danger'));
+  fetch('controllers/recurso_planos.php', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) }).then(r=>r.json()).then(data => { if (!data.success) throw new Error(data.message); toast(data.message, 'bi-check-circle', 'success'); if (modulo === 'paee') carregarPaeesDoAluno(estado, estado.token, document.getElementById('plano-paee-conteudo')).then(() => { if (data.id) abrirDocumentoPaee(data.id); }).catch(error => toast(error.message, 'bi-x-circle', 'danger')); else selecionarDisciplinaPlano(modulo, estado.disciplina.id); }).catch(error => toast(error.message, 'bi-x-circle', 'danger'));
 }
 
 function abrirHistoricoPlano(modulo, id) {
-  fetch(`controllers/recurso_planos.php?action=abrir&modulo=${modulo}&id=${Number(id)}`).then(r=>r.json()).then(data => { if (!data.success) throw new Error(data.message); const estado = planosEstado[modulo]; estado.registro = data.registro; document.getElementById(`plano-${modulo}-conteudo`).innerHTML = renderDocumentoPlano(modulo, data.registro, [data.registro]); }).catch(error => toast(error.message, 'bi-x-circle', 'danger'));
+  fetch(`controllers/recurso_planos.php?action=abrir&modulo=${modulo}&id=${Number(id)}`).then(r=>r.json()).then(data => { if (!data.success) throw new Error(data.message); const estado = planosEstado[modulo]; estado.aluno = { id: Number(data.registro.aluno_id), nome: data.registro.aluno_nome }; estado.disciplina = data.registro.disciplina_id ? { id: Number(data.registro.disciplina_id), nome: data.registro.disciplina_nome } : null; estado.registro = data.registro; estado.etapa = 'documento'; document.getElementById(`plano-${modulo}-contexto`).textContent = modulo === 'paee' ? `${estado.aluno.nome} · documento PAEE` : `${estado.aluno.nome} · ${data.registro.disciplina_nome || 'Disciplina selecionada'}`; document.getElementById(`plano-${modulo}-conteudo`).innerHTML = renderDocumentoPlano(modulo, data.registro, [data.registro]); }).catch(error => toast(error.message, 'bi-x-circle', 'danger'));
 }
 
 function planoVoltar(modulo) {
-  const estado = planosEstado[modulo]; if (estado.etapa === 'documento') { selecionarAlunoPlano(modulo, estado.aluno.id); return; } abrirModuloPlano(modulo);
+  const estado = planosEstado[modulo];
+  if (estado.etapa === 'documento') {
+    if (modulo === 'paee') { selecionarAlunoPlano(modulo, estado.aluno.id); return; }
+    selecionarAlunoPlano(modulo, estado.aluno.id);
+    return;
+  }
+  abrirModuloPlano(modulo);
 }
 
   // ===== DELETE =====

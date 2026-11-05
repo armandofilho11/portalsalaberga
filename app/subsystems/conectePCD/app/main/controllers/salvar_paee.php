@@ -19,48 +19,56 @@ try {
         exit;
     }
 
-  $sql = "INSERT INTO paee (
-    aluno_id,
-    nome_documento,
-    data_atendimento,
-    profissional_responsavel,
-    necessidades_identificadas,
-    objetivos_atendimento,
-    recursos_utilizados,
-    estrategias_aplicadas,
-    tecnologias_assistivas,
-    resultados_observados,
-    encaminhamentos,
-    observacoes_gerais
-) VALUES (
-    :aluno_id,
-    :nome_documento,
-    :data_atendimento,
-    :profissional_responsavel,
-    :necessidades_identificadas,
-    :objetivos_atendimento,
-    :recursos_utilizados,
-    :estrategias_aplicadas,
-    :tecnologias_assistivas,
-    :resultados_observados,
-    :encaminhamentos,
-    :observacoes_gerais
-)";
+    $nome = trim((string) ($dados['nome'] ?? ''));
+    $dataElaboracao = (string) ($dados['dataElaboracao'] ?? '');
+    $responsavel = trim((string) ($dados['responsavel'] ?? ''));
+    if ($nome === '' || mb_strlen($nome) > 150 || $dataElaboracao === '' || $responsavel === '') {
+        http_response_code(422);
+        echo json_encode(['success' => false, 'message' => 'Informe a matéria escolar, a data de elaboração e o responsável pelo preenchimento.']);
+        exit;
+    }
+
+    $sql = "INSERT INTO paee (
+        aluno_id,
+        nome_documento,
+        data_atendimento,
+        data_elaboracao,
+        responsavel_preenchimento,
+        objetivos_pedagogicos,
+        habilidades_desenvolver,
+        estrategias_ensino,
+        recursos_acessibilidade,
+        adaptacoes_curriculares,
+        criterios_avaliacao,
+        observacoes
+    ) VALUES (
+        :aluno_id,
+        :nome_documento,
+        NULL,
+        :data_elaboracao,
+        :responsavel_preenchimento,
+        :objetivos_pedagogicos,
+        :habilidades_desenvolver,
+        :estrategias_ensino,
+        :recursos_acessibilidade,
+        :adaptacoes_curriculares,
+        :criterios_avaliacao,
+        :observacoes
+    )";
     $stmt = $pdo->prepare($sql);
     $resultado = $stmt->execute([
-    ':aluno_id' => $dados['aluno_id'] ?? 0,
-    ':nome_documento' => trim((string) ($dados['nome'] ?? '')),
-    ':data_atendimento' => $dados['dataAtendimento'] ?? null,
-    ':profissional_responsavel' => $dados['responsavel'] ?? null,
-    ':necessidades_identificadas' => $dados['necessidades'] ?? null,
-    ':objetivos_atendimento' => $dados['objetivos'] ?? null,
-    ':recursos_utilizados' => $dados['recursos'] ?? null,
-    ':estrategias_aplicadas' => $dados['estrategias'] ?? null,
-    ':tecnologias_assistivas' => $dados['tecnologias'] ?? null,
-    ':resultados_observados' => $dados['resultados'] ?? null,
-    ':encaminhamentos' => $dados['encaminhamentos'] ?? null,
-    ':observacoes_gerais' => $dados['observacoes'] ?? null
-]);
+        ':aluno_id' => $dados['aluno_id'] ?? 0,
+        ':nome_documento' => $nome,
+        ':data_elaboracao' => $dataElaboracao,
+        ':responsavel_preenchimento' => $responsavel,
+        ':objetivos_pedagogicos' => $dados['objetivos'] ?? null,
+        ':habilidades_desenvolver' => $dados['habilidades'] ?? null,
+        ':estrategias_ensino' => $dados['estrategias'] ?? null,
+        ':recursos_acessibilidade' => $dados['recursos'] ?? null,
+        ':adaptacoes_curriculares' => $dados['adaptacoes'] ?? null,
+        ':criterios_avaliacao' => $dados['avaliacao'] ?? null,
+        ':observacoes' => $dados['observacoes'] ?? null
+    ]);
 
     echo json_encode(['success' => $resultado, 'message' => $resultado ? 'PAEE salvo com sucesso' : 'Erro ao salvar PAEE']);
 } catch (Exception $e) {

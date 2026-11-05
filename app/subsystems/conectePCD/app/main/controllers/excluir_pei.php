@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../auth.php';
 requireLogin(['master', 'aee']);
 header('Content-Type: application/json');
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../models/Autorizacao.php';
 
@@ -27,4 +28,7 @@ $sql = "DELETE FROM pei WHERE id = :id";
 $stmt = $pdo->prepare($sql);
 $res = $stmt->execute([':id' => $id]);
 
-echo json_encode(['success' => (bool)$res]);
+echo json_encode([
+    'success' => $res && $stmt->rowCount() === 1,
+    'message' => $res && $stmt->rowCount() === 1 ? 'PEI excluído com sucesso.' : 'O PEI não foi encontrado ou já foi excluído.'
+]);

@@ -228,7 +228,6 @@
       .student-profile-block__label { color:var(--text-muted); font-size:10px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; }
       .student-profile-block__details strong { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--text); font-size:12px; }
       .student-profile-block__empty-value { color:var(--text-muted); font-size:12px; }
-      .document-view-form--hidden { display:none !important; }
       .document-summary-block { display:flex; align-items:center; justify-content:space-between; gap:14px; padding:14px 16px; border:1px solid var(--border); border-radius:12px; background:rgba(255,255,255,.02); }
       .document-summary-block:hover { border-color:rgba(0,166,81,.35); }
       .apoio-quesito-trigger { display:flex; align-items:center; justify-content:space-between; gap:14px; width:100%; padding:14px 16px; border:1px solid var(--border); border-radius:10px; background:rgba(255,255,255,.02); color:var(--text); text-align:left; cursor:pointer; font-family:inherit; }
@@ -1300,7 +1299,7 @@ $fotoUsuario = $_SESSION['foto'] ?? null;
   </nav>
   <div class="sidebar-footer">
     <div class="nav-item sidebar-logout"
-      onclick="window.location.href='controllers/usuario_controller.php?action=logout'">
+      onclick="window.location.href='../../../../main/views/subsystems.php'">
       <i class="bi bi-box-arrow-right ni"></i><span>Sair</span>
     </div>
   </div>
@@ -1360,7 +1359,7 @@ $fotoUsuario = $_SESSION['foto'] ?? null;
     <div class="page" id="page-paee">
       <div class="card" style="padding:20px">
         <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap">
-          <div><div id="plano-paee-titulo" style="font-size:17px;font-weight:700"><i class="bi bi-person-workspace" style="color:var(--gold);margin-right:7px"></i>PAEE</div><div id="plano-paee-contexto" style="font-size:11px;color:var(--text-muted);margin-top:5px">Selecione um aluno para consultar os PEIs.</div></div>
+          <div><div id="plano-paee-titulo" style="font-size:17px;font-weight:700"><i class="bi bi-person-workspace" style="color:var(--gold);margin-right:7px"></i>PAEE</div><div id="plano-paee-contexto" style="font-size:11px;color:var(--text-muted);margin-top:5px">Selecione um aluno para consultar documentos PAEE.</div></div>
           <button type="button" class="btn-g" onclick="planoVoltar('paee')" id="plano-paee-voltar" style="display:none"><i class="bi bi-arrow-left"></i> Voltar</button>
         </div>
         <div id="plano-paee-conteudo" style="margin-top:20px"></div>
@@ -2027,106 +2026,12 @@ $fotoUsuario = $_SESSION['foto'] ?? null;
           <!-- PEI -->
           <div id="tc-pei" style="padding:18px;display:none">
             <div id="pei-titulo" style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.55);margin-bottom:14px">PEI - Plano Educacional Individualizado</div>
-            <div class="document-view-form<?= $tipoUsuario === 'apoio' ? ' document-view-form--hidden' : '' ?>" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px">
-              <div style="grid-column:1/-1">
-                <label class="lbl" for="pei-nome">Matéria escolar</label>
-                <input type="text" id="pei-nome" class="inp" maxlength="150" placeholder="Ex.: Matemática" />
-              </div>
-              <div>
-                <label class="lbl">Data de elaboração</label>
-                <input type="date" id="pei-data" class="inp" />
-              </div>
-              <div>
-                <label class="lbl">Responsável pelo preenchimento</label>
-                <input type="text" id="pei-responsavel" class="inp" placeholder="Nome do responsável" />
-              </div>
-              <div style="grid-column:1/-1">
-                <label class="lbl">Objetivos pedagógicos</label>
-                <textarea id="pei-objetivos" class="inp" rows="4" placeholder="Descreva os objetivos pedagógicos..."></textarea>
-              </div>
-              <div style="grid-column:1/-1">
-                <label class="lbl">Habilidades a desenvolver</label>
-                <textarea id="pei-habilidades" class="inp" rows="4" placeholder="Descreva as habilidades..."></textarea>
-              </div>
-              <div style="grid-column:1/-1">
-                <label class="lbl">Estratégias de ensino</label>
-                <textarea id="pei-estrategias" class="inp" rows="4" placeholder="Descreva as estratégias..."></textarea>
-              </div>
-              <div style="grid-column:1/-1">
-                <label class="lbl">Recursos de acessibilidade</label>
-                <textarea id="pei-recursos" class="inp" rows="4" placeholder="Liste os recursos de acessibilidade..."></textarea>
-              </div>
-              <div style="grid-column:1/-1">
-                <label class="lbl">Adaptações curriculares</label>
-                <textarea id="pei-adaptacoes" class="inp" rows="4" placeholder="Descreva as adaptações..."></textarea>
-              </div>
-              <div style="grid-column:1/-1">
-                <label class="lbl">Critérios de avaliação</label>
-                <textarea id="pei-avaliacao" class="inp" rows="4" placeholder="Defina os critérios de avaliação..."></textarea>
-              </div>
-              <div style="grid-column:1/-1">
-                <label class="lbl">Observações</label>
-                <textarea id="pei-observacoes" class="inp" rows="4" placeholder="Observações adicionais..."></textarea>
-              </div>
-            </div>
-            <?php if ($tipoUsuario !== 'apoio'): ?><button onclick="savePEI()" class="btn-p" style="width:100%;justify-content:center;font-size:13px;margin-top:16px">
-              <i class="bi bi-save2"></i> Salvar PEI
-            </button><?php endif; ?>
             <div id="pei-history" style="margin-top:24px"></div>
           </div>
 
           <!-- PAEE -->
           <div id="tc-paee" style="padding:18px;display:none">
             <div id="paee-titulo" style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.55);margin-bottom:14px">PAEE - Plano de Atendimento Educacional Especializado</div>
-            <div class="document-view-form<?= $tipoUsuario === 'apoio' ? ' document-view-form--hidden' : '' ?>" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px">
-              <div style="grid-column:1/-1">
-                <label class="lbl" for="paee-nome">Nome do documento</label>
-                <input type="text" id="paee-nome" class="inp" maxlength="150" placeholder="Ex.: PAEE - João Silva" />
-              </div>
-              <div>
-                <label class="lbl">Data do atendimento</label>
-                <input type="date" id="paee-data" class="inp" />
-              </div>
-              <div>
-                <label class="lbl">Profissional responsável</label>
-                <input type="text" id="paee-responsavel" class="inp" placeholder="Nome do profissional" />
-              </div>
-              <div style="grid-column:1/-1">
-                <label class="lbl">Necessidades identificadas</label>
-                <textarea id="paee-necessidades" class="inp" rows="4" placeholder="Descreva as necessidades..."></textarea>
-              </div>
-              <div style="grid-column:1/-1">
-                <label class="lbl">Objetivos do atendimento</label>
-                <textarea id="paee-objetivos" class="inp" rows="4" placeholder="Descreva os objetivos..."></textarea>
-              </div>
-              <div style="grid-column:1/-1">
-                <label class="lbl">Recursos utilizados</label>
-                <textarea id="paee-recursos" class="inp" rows="4" placeholder="Liste os recursos utilizados..."></textarea>
-              </div>
-              <div style="grid-column:1/-1">
-                <label class="lbl">Estratégias aplicadas</label>
-                <textarea id="paee-estrategias" class="inp" rows="4" placeholder="Descreva as estratégias..."></textarea>
-              </div>
-              <div style="grid-column:1/-1">
-                <label class="lbl">Tecnologias assistivas</label>
-                <textarea id="paee-tecnologias" class="inp" rows="4" placeholder="Liste as tecnologias..."></textarea>
-              </div>
-              <div style="grid-column:1/-1">
-                <label class="lbl">Resultados observados</label>
-                <textarea id="paee-resultados" class="inp" rows="4" placeholder="Descreva os resultados..."></textarea>
-              </div>
-              <div style="grid-column:1/-1">
-                <label class="lbl">Encaminhamentos</label>
-                <textarea id="paee-encaminhamentos" class="inp" rows="4" placeholder="Descreva os encaminhamentos..."></textarea>
-              </div>
-              <div style="grid-column:1/-1">
-                <label class="lbl">Observações gerais</label>
-                <textarea id="paee-observacoes" class="inp" rows="4" placeholder="Observações gerais..."></textarea>
-              </div>
-            </div>
-            <?php if ($tipoUsuario !== 'apoio'): ?><button onclick="savePAEE()" class="btn-p" style="width:100%;justify-content:center;font-size:13px;margin-top:16px">
-              <i class="bi bi-save2"></i> Salvar PAEE
-            </button><?php endif; ?>
             <div id="paee-history" style="margin-top:24px"></div>
           </div>
 
@@ -2278,7 +2183,7 @@ $fotoUsuario = $_SESSION['foto'] ?? null;
   <i class="theme-toggle__icon fas fa-moon" aria-hidden="true"></i>
 </button>
 
-<script src="js/app.js?v=20261105-theme-toggle-entryexit">
+<script src="js/app.js?v=20261105-paee-documento-autonomo-16">
 
 </script>
 </body>

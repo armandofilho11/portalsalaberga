@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../auth.php';
 requireLogin(['master', 'aee', 'apoio', 'responsavel']);
 header('Content-Type: application/json');
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../models/Autorizacao.php';
 
